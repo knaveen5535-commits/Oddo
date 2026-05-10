@@ -23,7 +23,7 @@ export default function ActivitySearchPage() {
   ];
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-10 w-full">
       <header className="mb-10">
         <h1 className="text-3xl font-bold mb-2">Explore Activities</h1>
         <p className="text-muted-foreground">Find the best things to do in your destination.</p>

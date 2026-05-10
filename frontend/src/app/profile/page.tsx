@@ -34,7 +34,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-10 w-full">
       <header className="flex justify-between items-start mb-16">
         <div className="flex gap-12 items-center">
           <div className="relative">

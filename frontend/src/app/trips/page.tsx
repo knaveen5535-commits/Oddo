@@ -31,7 +31,7 @@ export default function TripsPage() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-10 w-full space-y-10">
       <header className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold mb-2">Your Trips</h1>
