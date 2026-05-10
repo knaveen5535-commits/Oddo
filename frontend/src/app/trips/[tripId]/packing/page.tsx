@@ -77,8 +77,8 @@ export default function PackingPage() {
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            <StatBox label="Packed" value={items.filter(i => i.packed).length} color="text-teal-400" />
-            <StatBox label="Remaining" value={items.filter(i => !i.packed).length} color="text-orange-400" />
+            <StatBox label="Packed" value={items.filter(i => i.packed).length} color="text-slate-400" />
+            <StatBox label="Remaining" value={items.filter(i => !i.packed).length} color="text-rose-400" />
           </div>
         </div>
 

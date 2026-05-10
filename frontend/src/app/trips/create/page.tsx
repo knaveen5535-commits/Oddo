@@ -17,7 +17,8 @@ import {
   Hotel,
   Activity,
   Check,
-  RefreshCw
+  RefreshCw,
+  ArrowRight
 } from "lucide-react";
 
 export default function CreateTripPage() {
@@ -26,6 +27,7 @@ export default function CreateTripPage() {
   const [recommendations, setRecommendations] = useState<any>(null);
   const [suggestedPlan, setSuggestedPlan] = useState<any>(null);
   const [planVariant, setPlanVariant] = useState(0);
+  const [cityImage, setCityImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -39,7 +41,7 @@ export default function CreateTripPage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/trips', {
+      const response = await fetch('http://localhost:5000/api/trips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -49,6 +51,7 @@ export default function CreateTripPage() {
       
       if (result.success) {
         setRecommendations(result.recommendations);
+        setCityImage(result.cityImage);
         generateSuggestedPlan(formData.location, 0);
         
         setTimeout(() => {
@@ -57,26 +60,22 @@ export default function CreateTripPage() {
       }
     } catch (error) {
       console.error('Error creating trip:', error);
-      alert('Failed to connect to backend. Please ensure the server is running on port 5000.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleConfirmPlan = () => {
-    // Navigate to my trips page
     router.push("/trips");
   };
 
   const handleChooseAnother = () => {
     setIsLoading(true);
-    // Simulate fetching a different variant
     setTimeout(() => {
       const nextVariant = planVariant + 1;
       setPlanVariant(nextVariant);
       generateSuggestedPlan(formData.location, nextVariant);
       setIsLoading(false);
-      // Stay at the recommendations section
       document.getElementById('recommendations')?.scrollIntoView({ behavior: 'smooth' });
     }, 800);
   };
@@ -206,7 +205,7 @@ export default function CreateTripPage() {
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-2xl shadow-[0_15px_30px_rgba(168,85,247,0.3)] flex items-center justify-center gap-3 transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-2xl shadow-[0_15px_30px_rgba(244,63,94,0.3)] flex items-center justify-center gap-3 transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -253,29 +252,49 @@ export default function CreateTripPage() {
             exit={{ opacity: 0, y: -20 }}
             className="mt-24 space-y-24"
           >
-            {/* Header */}
-            <div className="text-center space-y-4">
-              <h2 className="text-5xl font-black tracking-tight">The Best Plan for {formData.location}</h2>
-              <p className="text-muted-foreground text-lg italic">"{suggestedPlan?.title || 'Personalized Itinerary'}"</p>
-            </div>
+            {/* Immersive Destination Banner */}
+            <section className="relative h-[500px] w-full rounded-[48px] overflow-hidden shadow-2xl group">
+               {cityImage ? (
+                 <img src={cityImage} className="w-full h-full object-cover" alt="Destination" />
+               ) : (
+                 <div className="w-full h-full bg-white/5 animate-pulse flex items-center justify-center">
+                    <Compass size={64} className="text-white/10" />
+                 </div>
+               )}
+               <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-black/20 to-transparent" />
+               <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-8">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                       <span className="px-4 py-1 bg-primary/20 backdrop-blur-md rounded-full text-xs font-black text-primary border border-primary/30 uppercase tracking-widest">
+                          New Journey
+                       </span>
+                    </div>
+                    <h2 className="text-7xl font-black text-white tracking-tighter uppercase italic leading-none">
+                       {formData.location}
+                    </h2>
+                    <p className="text-white/60 text-xl font-medium max-w-xl italic">
+                       "{suggestedPlan?.title || 'Personalized Itinerary'}"
+                    </p>
+                  </div>
 
-            {/* Decision Buttons */}
-            <div className="flex flex-col md:flex-row justify-center gap-6 mb-20">
-              <button 
-                onClick={handleConfirmPlan}
-                className="px-12 py-5 bg-teal-500 hover:bg-teal-600 text-white font-black rounded-2xl shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95"
-              >
-                <Check size={24} />
-                OK, Create this Trip
-              </button>
-              <button 
-                onClick={handleChooseAnother}
-                className="px-12 py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl border border-white/10 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95 group"
-              >
-                <RefreshCw size={24} className="group-hover:rotate-180 transition-transform duration-700" />
-                Show Another Plan
-              </button>
-            </div>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button 
+                      onClick={handleConfirmPlan}
+                      className="px-10 py-5 bg-primary text-white font-black rounded-2xl shadow-2xl shadow-primary/40 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95"
+                    >
+                      <Check size={24} />
+                      OK, Create Trip
+                    </button>
+                    <button 
+                      onClick={handleChooseAnother}
+                      className="px-10 py-5 bg-white/10 backdrop-blur-md text-white font-black rounded-2xl border border-white/20 flex items-center justify-center gap-3 transition-all hover:bg-white/20 active:scale-95 group"
+                    >
+                      <RefreshCw size={24} className="group-hover:rotate-180 transition-transform duration-700" />
+                      Another Plan
+                    </button>
+                  </div>
+               </div>
+            </section>
 
             {/* Suggested 3-Day Plan */}
             {suggestedPlan && (
@@ -284,7 +303,7 @@ export default function CreateTripPage() {
                   <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20 text-primary">
                     <Calendar size={24} />
                   </div>
-                  <h3 className="text-3xl font-bold tracking-tight">Recommended 3-Day Itinerary</h3>
+                  <h3 className="text-3xl font-bold tracking-tight">Handpicked Itinerary</h3>
                   <div className="h-[1px] flex-1 bg-white/10" />
                 </div>
 
@@ -322,10 +341,10 @@ export default function CreateTripPage() {
             {/* Google Places Recommendations */}
             {recommendations && (
               <div className="space-y-24 pt-12 border-t border-white/5">
-                <RecommendationGroup title="Top Sightseeing & Attractions" data={recommendations.attractions} icon={<Compass className="text-blue-400" />} />
-                <RecommendationGroup title="Must-Visit Local Eateries" data={recommendations.restaurants} icon={<Utensils className="text-orange-400" />} />
-                <RecommendationGroup title="Luxury & Comfort Hotels" data={recommendations.hotels} icon={<Hotel className="text-purple-400" />} />
-                <RecommendationGroup title="Handpicked Experiences" data={recommendations.activities} icon={<Activity className="text-teal-400" />} />
+                <RecommendationGroup title="Top Sightseeing & Attractions" data={recommendations.attractions} icon={<Compass className="text-primary" />} />
+                <RecommendationGroup title="Must-Visit Local Eateries" data={recommendations.restaurants} icon={<Utensils className="text-rose-400" />} />
+                <RecommendationGroup title="Luxury & Comfort Hotels" data={recommendations.hotels} icon={<Hotel className="text-slate-400" />} />
+                <RecommendationGroup title="Handpicked Experiences" data={recommendations.activities} icon={<Activity className="text-slate-400" />} />
               </div>
             )}
           </motion.div>

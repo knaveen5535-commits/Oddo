@@ -149,10 +149,10 @@ export default function Dashboard() {
 
       {/* Quick Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <StatItem label="Total Trips" value="12" icon={<Compass className="text-blue-400" />} />
-        <StatItem label="Countries" value="08" icon={<Globe className="text-teal-400" />} />
-        <StatItem label="Planned Activities" value="24" icon={<TrendingUp className="text-purple-400" />} />
-        <StatItem label="Packing Items" value="45" icon={<Plus className="text-orange-400" />} />
+        <StatItem label="Total Trips" value="12" icon={<Compass className="text-rose-400" />} />
+        <StatItem label="Countries" value="08" icon={<Globe className="text-slate-400" />} />
+        <StatItem label="Planned Activities" value="24" icon={<TrendingUp className="text-slate-400" />} />
+        <StatItem label="Packing Items" value="45" icon={<Plus className="text-rose-400" />} />
       </section>
 
       {/* Top Regional Selections */}
@@ -198,7 +198,7 @@ export default function Dashboard() {
             <div key={groupName} className="space-y-6">
               {groupBy !== "none" && (
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
+                  <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
                   <h4 className="text-xl font-bold text-white/90">{groupName}</h4>
                 </div>
               )}
@@ -249,7 +249,7 @@ export default function Dashboard() {
         <motion.button 
           whileHover={{ scale: 1.05, y: -5 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-10 right-10 bg-primary text-white px-10 py-5 rounded-[24px] font-black text-lg shadow-[0_20px_50px_rgba(168,85,247,0.4)] flex items-center gap-3 z-50 border border-primary/20 backdrop-blur-md"
+          className="fixed bottom-10 right-10 bg-primary text-white px-10 py-5 rounded-[24px] font-black text-lg shadow-[0_20px_50px_rgba(244,63,94,0.4)] flex items-center gap-3 z-50 border border-primary/20 backdrop-blur-md"
         >
           <Plus size={28} />
           Plan a trip

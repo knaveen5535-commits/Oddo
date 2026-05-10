@@ -18,9 +18,9 @@ import {
 
 export default function AdminPage() {
   const stats = [
-    { label: "Total Users", value: "12,450", change: "+15%", icon: <Users size={20} />, color: "bg-blue-500" },
-    { label: "Active Trips", value: "3,890", change: "+12%", icon: <Map size={20} />, color: "bg-teal-500" },
-    { label: "Revenue", value: "$45,200", change: "+8%", icon: <DollarSign size={20} />, color: "bg-purple-500" },
+    { label: "Total Users", value: "12,450", change: "+15%", icon: <Users size={20} />, color: "bg-rose-500" },
+    { label: "Active Trips", value: "3,890", change: "+12%", icon: <Map size={20} />, color: "bg-slate-500" },
+    { label: "Revenue", value: "₹45,200", change: "+8%", icon: <DollarSign size={20} />, color: "bg-slate-500" },
     { label: "Reports", value: "24", change: "-5%", icon: <ShieldAlert size={20} />, color: "bg-red-500" },
   ];
 
@@ -70,7 +70,7 @@ export default function AdminPage() {
                 {stat.icon}
               </div>
               <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
-                stat.change.startsWith('+') ? 'bg-teal-500/10 text-teal-400' : 'bg-red-500/10 text-red-400'
+                stat.change.startsWith('+') ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-400'
               }`}>
                 {stat.change}
               </span>
@@ -101,7 +101,7 @@ export default function AdminPage() {
               initial={{ height: 0 }}
               animate={{ height: `${h}%` }}
               transition={{ delay: i * 0.05, duration: 1 }}
-              className={`flex-1 rounded-t-xl relative group ${i === 7 ? 'bg-primary shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'bg-white/5'}`}
+              className={`flex-1 rounded-t-xl relative group ${i === 7 ? 'bg-primary shadow-[0_0_20px_rgba(244,63,94,0.4)]' : 'bg-white/5'}`}
             >
               <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                 {h * 124}
@@ -154,9 +154,9 @@ export default function AdminPage() {
               Usage Stats
             </h3>
             <div className="space-y-6">
-              <UsageProgress label="Storage Used" value={64} color="bg-blue-500" />
-              <UsageProgress label="API Requests" value={82} color="bg-purple-500" />
-              <UsageProgress label="Active Sessions" value={45} color="bg-teal-500" />
+              <UsageProgress label="Storage Used" value={64} color="bg-rose-500" />
+              <UsageProgress label="API Requests" value={82} color="bg-slate-500" />
+              <UsageProgress label="Active Sessions" value={45} color="bg-slate-500" />
             </div>
           </div>
         </div>
