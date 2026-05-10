@@ -1,12 +1,21 @@
 const express = require('express');
-const router = express.json();
 const tripController = require('../controllers/tripController');
+const { protect } = require('../middleware/authMiddleware');
 
-const routerInstance = express.Router();
+const router = express.Router();
 
-routerInstance.post('/', tripController.createTrip);
-routerInstance.get('/', tripController.getTrips);
-routerInstance.get('/search-places', tripController.searchPlaces);
-routerInstance.get('/recommendations', tripController.getRecommendations);
+// Protected Routes
+router.post('/', protect, tripController.createTrip);
+router.get('/', protect, tripController.getTrips);
 
-module.exports = routerInstance;
+// Public/Utility Routes
+router.get('/search-places', tripController.searchPlaces);
+router.get('/recommendations', tripController.getRecommendations);
+router.get('/weather', async (req, res) => {
+  const { city } = req.query;
+  const weatherService = require('../services/weatherService');
+  const weather = await weatherService.getForecast(city);
+  res.json({ success: true, data: weather });
+});
+
+module.exports = router;

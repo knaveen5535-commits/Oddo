@@ -1,42 +1,51 @@
 const googlePlacesService = require('../services/googlePlacesService');
-
-// In-memory storage for the current session
-const trips = [
-  { id: "1", title: "Maldives Summer Escape", location: "Maldives", startDate: "2026-06-15", endDate: "2026-06-22", image: "https://images.unsplash.com/photo-1506929113614-b9486ca55229?q=80&w=800&auto=format&fit=crop", status: "Upcoming" },
-  { id: "2", title: "Paris Romance", location: "Paris, France", startDate: "2026-04-10", endDate: "2026-04-15", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop", status: "Upcoming" },
-];
+const budgetService = require('../services/budgetService');
+const { prisma } = require('../config/db');
 
 exports.createTrip = async (req, res) => {
   try {
-    const { title, location, startDate, endDate, description } = req.body;
+    const { title, destination, startDate, endDate, description } = req.body;
+    const userId = req.user.id; // From auth middleware
 
-    const mockTrip = {
-      id: Math.random().toString(36).substr(2, 9),
-      title,
-      location,
-      startDate,
-      endDate,
-      description,
-      image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop", // Default banner
-      status: "Upcoming",
-      createdAt: new Date()
-    };
-
-    // 2. Fetch recommendations AND a city image
+    // Fetch recommendations and city image in parallel
     const [recommendations, cityImage] = await Promise.all([
-      googlePlacesService.getRecommendations(location),
-      googlePlacesService.getCityImage(location)
+      googlePlacesService.getRecommendations(destination),
+      googlePlacesService.getCityImage(destination)
     ]);
 
-    if (cityImage) mockTrip.image = cityImage;
-    trips.push(mockTrip);
+    // Create Trip in PostgreSQL via Prisma
+    const trip = await prisma.trip.create({
+      data: {
+        userId,
+        title,
+        destination,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        description,
+        coverImage: cityImage || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop",
+        recommendations: {
+          create: recommendations.map(rec => ({
+            placeName: rec.name,
+            rating: rec.rating,
+            address: rec.address,
+            image: rec.image,
+            category: rec.category
+          }))
+        }
+      },
+      include: {
+        recommendations: true
+      }
+    });
+
+    // Auto-calculate and store initial budget in DB
+    const initialBudget = await budgetService.calculateAndStoreBudget(trip.id, trip);
 
     res.status(201).json({
       success: true,
       message: "Trip created successfully",
-      data: { ...mockTrip, image: cityImage || mockTrip.image },
-      recommendations: recommendations,
-      cityImage: cityImage
+      data: trip,
+      budget: initialBudget
     });
 
   } catch (error) {
@@ -48,6 +57,24 @@ exports.createTrip = async (req, res) => {
   }
 };
 
+exports.getTrips = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const trips = await prisma.trip.findMany({
+      where: { userId },
+      orderBy: { startDate: 'asc' },
+      include: { budget: true }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: trips
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.searchPlaces = async (req, res) => {
   try {
     const { query } = req.query;
@@ -56,16 +83,8 @@ exports.searchPlaces = async (req, res) => {
     const results = await googlePlacesService.searchCities(query);
     res.status(200).json({ success: true, data: results });
   } catch (error) {
-    console.error('Search Places Controller Error:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
-};
-
-exports.getTrips = async (req, res) => {
-  res.status(200).json({
-    success: true,
-    data: trips
-  });
 };
 
 exports.getRecommendations = async (req, res) => {
@@ -76,7 +95,6 @@ exports.getRecommendations = async (req, res) => {
     const results = await googlePlacesService.getRecommendations(location);
     res.status(200).json({ success: true, data: results });
   } catch (error) {
-    console.error('Recommendations Controller Error:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 };

@@ -9,7 +9,6 @@ import {
   Briefcase, 
   Search, 
   User, 
-  Settings, 
   LogOut,
   LayoutDashboard
 } from "lucide-react";
@@ -31,7 +30,7 @@ export default function Sidebar() {
     { icon: <Calendar size={20} />, label: "My Trips", href: "/trips" },
     { icon: <Search size={20} />, label: "Explore", href: "/city-search" },
     { icon: <Wallet size={20} />, label: "Budget", href: "/budget" },
-    { icon: <Briefcase size={20} />, label: "Packing List", href: "/trips/1/packing" },
+    { icon: <Briefcase size={20} />, label: "Packing List", href: "/packing-list" },
   ];
 
   return (
@@ -70,16 +69,6 @@ export default function Sidebar() {
           }`}>
             <User size={20} />
             <span className="font-medium">Profile</span>
-          </button>
-        </Link>
-        <Link href="/settings">
-          <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-            pathname === "/settings" 
-              ? "bg-primary/10 text-primary" 
-              : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-          }`}>
-            <Settings size={20} />
-            <span className="font-medium">Settings</span>
           </button>
         </Link>
         <button 

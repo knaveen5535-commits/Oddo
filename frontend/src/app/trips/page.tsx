@@ -14,20 +14,28 @@ import {
   Loader2
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/lib/api";
 
 export default function TripsPage() {
   const [activeTab, setActiveTab] = useState("Upcoming");
   const [trips, setTrips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchTrips();
-  }, []);
+    if (user?.token) {
+      fetchTrips();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchTrips = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/trips');
-      const result = await response.json();
+      const response = await api.get('/trips');
+      const result = response.data;
       if (result.success) {
         setTrips(result.data);
       }
@@ -45,10 +53,16 @@ export default function TripsPage() {
 
   const getFallbackImage = (title: string) => {
     const fallbacks = [
-      "https://images.unsplash.com/photo-1544465544-1b71aee9dfa3",
-      "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a",
-      "https://images.unsplash.com/photo-1528127269322-539801943592",
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da", // Agra
+      "https://images.unsplash.com/photo-1548013146-72479768bbaa", // Taj
+      "https://images.unsplash.com/photo-1506461883276-594a12b11cf3", // Bhutan
+      "https://images.unsplash.com/photo-1528127269322-539801943592", // Vietnam
+      "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a", // Thailand
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1", // Mountain
+      "https://images.unsplash.com/photo-1514282401047-d79a71a590e8", // Maldives
+      "https://images.unsplash.com/photo-1537996194471-e657df975ab4", // Bali
+      "https://images.unsplash.com/photo-1544644181-1484b3fdfc62", // London
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4"  // Dining
     ];
     const hash = title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return `${fallbacks[hash % fallbacks.length]}?q=80&w=1200&auto=format&fit=crop`;

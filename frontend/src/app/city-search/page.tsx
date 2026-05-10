@@ -26,9 +26,12 @@ import {
   Clock,
   Loader2
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/lib/api";
 
 export default function CitySearchPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const [isPlanning, setIsPlanning] = useState(false);
@@ -40,9 +43,8 @@ export default function CitySearchPage() {
     const fetchPopular = async () => {
       setIsSearching(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/trips/recommendations?location=world`);
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-        const result = await response.json();
+        const response = await api.get(`/trips/recommendations?location=world`);
+        const result = response.data;
         
         if (result.success && result.data) {
            const all = [
@@ -82,9 +84,8 @@ export default function CitySearchPage() {
     setIsSearching(true);
     setSearchResults([]); 
     try {
-      const response = await fetch(`http://localhost:5000/api/trips/recommendations?location=${encodeURIComponent(searchQuery)}`);
-      if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-      const result = await response.json();
+      const response = await api.get(`/trips/recommendations?location=${encodeURIComponent(searchQuery)}`);
+      const result = response.data;
       
       if (result.success && result.data) {
         const allPlaces: any[] = [];
@@ -118,18 +119,15 @@ export default function CitySearchPage() {
   const handlePlanTrip = async (dest: any) => {
     setIsPlanning(true);
     try {
-      const response = await fetch('http://localhost:5000/api/trips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: `Trip to ${dest.name}`,
-          location: dest.name,
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          description: `Exploring ${dest.name}.`
-        })
+      const response = await api.post('/trips', {
+        title: `Trip to ${dest.name}`,
+        destination: dest.name,
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        description: `Exploring ${dest.name}.`
       });
-      if (response.ok) {
+
+      if (response.status === 201 || response.status === 200) {
         setSelectedPlace(null);
         router.push('/trips');
       }
@@ -252,7 +250,28 @@ export default function CitySearchPage() {
                 onClick={() => setSelectedPlace(dest)}
               >
                 <div className="relative h-[400px] rounded-[40px] overflow-hidden shadow-2xl border border-foreground/5 bg-foreground/5 cursor-pointer transition-all active:scale-95">
-                  <img src={dest.image} alt={dest.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img 
+                    src={dest.image} 
+                    alt={dest.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      const fallbacks = [
+                        "https://images.unsplash.com/photo-1524492412937-b28074a5d7da", // Agra
+                        "https://images.unsplash.com/photo-1548013146-72479768bbaa", // Taj
+                        "https://images.unsplash.com/photo-1506461883276-594a12b11cf3", // Bhutan
+                        "https://images.unsplash.com/photo-1528127269322-539801943592", // Vietnam
+                        "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a", // Thailand
+                        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1", // Mountain
+                        "https://images.unsplash.com/photo-1514282401047-d79a71a590e8", // Maldives
+                        "https://images.unsplash.com/photo-1537996194471-e657df975ab4", // Bali
+                        "https://images.unsplash.com/photo-1544644181-1484b3fdfc62", // London
+                        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4"  // Dining
+                      ];
+                      const hash = dest.name.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+                      target.src = `${fallbacks[hash % fallbacks.length]}?q=80&w=1200&auto=format&fit=crop`;
+                    }}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
                     {dest.tag || "Verified"}

@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import AppLayout from "@/components/layout/AppLayout";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background min-h-screen text-foreground transition-colors duration-300`}
       >
-        <ThemeProvider>
-          <AppLayout>{children}</AppLayout>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <AppLayout>{children}</AppLayout>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

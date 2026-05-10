@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now())
+  trips     Trip[]
+}
+
+model Trip {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  title           String
+  destination     String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  coverImage      String?
+  createdAt       DateTime         @default(now())
+  budget          Budget?
+  packingList     PackingList[]
+  itinerary       Itinerary[]
+  recommendations Recommendation[]
+}
+
+model Budget {
+  id                String @id @default(uuid())
+  tripId            String @unique
+  trip              Trip   @relation(fields: [tripId], references: [id])
+  hotelCost         Float  @default(0)
+  foodCost          Float  @default(0)
+  transportCost     Float  @default(0)
+  activityCost      Float  @default(0)
+  miscellaneousCost Float  @default(0)
+  totalCost         Float  @default(0)
+  averagePerDay     Float  @default(0)
+}
+
+model PackingList {
+  id       String  @id @default(uuid())
+  tripId   String
+  trip     Trip    @relation(fields: [tripId], references: [id])
+  itemName String
+  quantity Int     @default(1)
+  category String?
+  isPacked Boolean @default(false)
+}
+
+model Itinerary {
+  id       String @id @default(uuid())
+  tripId   String
+  trip     Trip   @relation(fields: [tripId], references: [id])
+  day      Int
+  city     String
+  activity String
+  notes    String?
+}
+
+model Recommendation {
+  id        String  @id @default(uuid())
+  tripId    String
+  trip      Trip    @relation(fields: [tripId], references: [id])
+  placeName String
+  rating    Float?
+  address   String?
+  image     String?
+  category  String?
+}

@@ -20,9 +20,12 @@ import {
   RefreshCw,
   ArrowRight
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/lib/api";
 
 export default function CreateTripPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<any>(null);
   const [suggestedPlan, setSuggestedPlan] = useState<any>(null);
@@ -38,20 +41,26 @@ export default function CreateTripPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      alert("Authentication Required: Please login to sync your voyage data.");
+      router.push("/login");
+      return;
+    }
+
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/trips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+      const response = await api.post('/trips', {
+        ...formData,
+        destination: formData.location
       });
 
-      const result = await response.json();
+      const result = response.data;
       
       if (result.success) {
-        setRecommendations(result.recommendations);
-        setCityImage(result.cityImage);
+        setRecommendations(result.recommendations || result.data?.recommendations);
+        setCityImage(result.cityImage || result.data?.coverImage);
         generateSuggestedPlan(formData.location, 0);
         
         setTimeout(() => {
