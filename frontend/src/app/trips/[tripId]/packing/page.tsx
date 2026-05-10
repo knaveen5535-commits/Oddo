@@ -32,7 +32,7 @@ export default function PackingPage() {
   const categories = ["All", "Essentials", "Clothing", "Electronics", "Toiletries"];
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-10 w-full">
       <header className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-3xl font-bold mb-2">Packing List</h1>

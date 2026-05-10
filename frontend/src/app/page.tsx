@@ -77,7 +77,7 @@ export default function Dashboard() {
   }, [filteredTrips, groupBy]);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-12">
+    <div className="p-10 w-full space-y-12">
       {/* Hero Banner Section */}
       <section className="relative h-[400px] w-full rounded-[40px] overflow-hidden shadow-2xl group border border-white/5">
         <AnimatePresence mode="wait">

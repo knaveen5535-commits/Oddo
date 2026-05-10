@@ -21,7 +21,7 @@ export default function CitySearchPage() {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-10 w-full">
       <header className="mb-12">
         <h1 className="text-4xl font-bold mb-4">Discover Your Next Destination</h1>
         <p className="text-muted-foreground text-lg max-w-2xl">

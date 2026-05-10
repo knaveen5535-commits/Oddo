@@ -32,7 +32,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-10">
+    <div className="p-10 w-full space-y-10">
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold mb-1 tracking-tight">Admin Console</h1>
