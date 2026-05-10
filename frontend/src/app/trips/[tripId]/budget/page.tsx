@@ -24,10 +24,10 @@ export default function BudgetPage() {
   ];
 
   const categories = [
-    { name: "Accommodation", spent: 2500, total: 3000, color: "bg-blue-500" },
-    { name: "Transport", spent: 1200, total: 1500, color: "bg-purple-500" },
-    { name: "Food", spent: 300, total: 800, color: "bg-teal-500" },
-    { name: "Activities", spent: 450, total: 1000, color: "bg-orange-500" },
+    { name: "Accommodation", spent: 2500, total: 3000, color: "bg-rose-500" },
+    { name: "Transport", spent: 1200, total: 1500, color: "bg-slate-500" },
+    { name: "Food", spent: 300, total: 800, color: "bg-slate-500" },
+    { name: "Activities", spent: 450, total: 1000, color: "bg-rose-500" },
   ];
 
   return (
@@ -54,9 +54,9 @@ export default function BudgetPage() {
             <Wallet size={80} />
           </div>
           <h4 className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-2">Total Spent</h4>
-          <div className="text-4xl font-bold mb-6">$4,450.00</div>
-          <div className="flex items-center gap-2 text-teal-400 text-sm font-medium">
-            <TrendingUp size={16} /> 69% of $6,500
+          <div className="text-4xl font-bold mb-6">₹4,450.00</div>
+          <div className="flex items-center gap-2 text-slate-400 text-sm font-medium">
+            <TrendingUp size={16} /> 69% of ₹6,500
           </div>
         </motion.div>
 
@@ -65,9 +65,9 @@ export default function BudgetPage() {
           <div className="flex justify-between items-center mb-8">
             <h3 className="font-bold text-lg">Category Breakdown</h3>
             <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
-              <div className="w-3 h-3 rounded-full bg-purple-500" />
-              <div className="w-3 h-3 rounded-full bg-teal-500" />
+              <div className="w-3 h-3 rounded-full bg-rose-500" />
+              <div className="w-3 h-3 rounded-full bg-slate-500" />
+              <div className="w-3 h-3 rounded-full bg-slate-500" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -109,7 +109,7 @@ export default function BudgetPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    expense.type === 'income' ? 'bg-teal-500/10 text-teal-400' : 'bg-red-500/10 text-red-400'
+                    expense.type === 'income' ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-400'
                   }`}>
                     {expense.type === 'income' ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
                   </div>
@@ -118,7 +118,7 @@ export default function BudgetPage() {
                     <p className="text-xs text-muted-foreground">{expense.category} • {expense.date}</p>
                   </div>
                 </div>
-                <div className={`text-lg font-bold ${expense.type === 'income' ? 'text-teal-400' : 'text-white'}`}>
+                <div className={`text-lg font-bold ${expense.type === 'income' ? 'text-slate-400' : 'text-white'}`}>
                   {expense.type === 'income' ? '+' : '-'}${expense.amount.toLocaleString()}
                 </div>
               </motion.div>
@@ -137,7 +137,7 @@ export default function BudgetPage() {
               <div className="flex justify-between items-end">
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">Daily Average</div>
-                  <div className="text-2xl font-bold">$124.50</div>
+                  <div className="text-2xl font-bold">₹124.50</div>
                 </div>
                 <div className="h-10 w-24 flex items-end gap-1 pb-1">
                   <div className="bg-primary/20 w-3 h-[40%] rounded-sm" />
@@ -155,7 +155,7 @@ export default function BudgetPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Budget Remaining</span>
-                  <span className="font-bold text-teal-400">$2,050.00</span>
+                  <span className="font-bold text-slate-400">₹2,050.00</span>
                 </div>
               </div>
             </div>

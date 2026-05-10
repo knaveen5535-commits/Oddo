@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import AppLayout from "@/components/layout/AppLayout";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -25,11 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-mesh min-h-screen text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background min-h-screen text-foreground transition-colors duration-300`}
       >
-        <AppLayout>{children}</AppLayout>
+        <ThemeProvider>
+          <AppLayout>{children}</AppLayout>
+        </ThemeProvider>
       </body>
     </html>
   );

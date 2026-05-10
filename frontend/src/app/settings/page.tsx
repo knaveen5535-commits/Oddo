@@ -19,16 +19,16 @@ export default function SettingsPage() {
     {
       title: "Account",
       items: [
-        { icon: <User size={20} />, label: "Profile Information", desc: "Update your name, email and bio", color: "text-blue-400" },
-        { icon: <Lock size={20} />, label: "Security & Password", desc: "Manage your account security", color: "text-purple-400" },
+        { icon: <User size={20} />, label: "Profile Information", desc: "Update your name, email and bio", color: "text-rose-400" },
+        { icon: <Lock size={20} />, label: "Security & Password", desc: "Manage your account security", color: "text-slate-400" },
       ]
     },
     {
       title: "Preferences",
       items: [
-        { icon: <Bell size={20} />, label: "Notifications", desc: "Choose what updates you receive", color: "text-orange-400" },
-        { icon: <Moon size={20} />, label: "Appearance", desc: "Dark mode and theme settings", color: "text-teal-400" },
-        { icon: <Globe size={20} />, label: "Language & Region", desc: "Update your local settings", color: "text-indigo-400" },
+        { icon: <Bell size={20} />, label: "Notifications", desc: "Choose what updates you receive", color: "text-rose-400" },
+        { icon: <Moon size={20} />, label: "Appearance", desc: "Dark mode and theme settings", color: "text-slate-400" },
+        { icon: <Globe size={20} />, label: "Language & Region", desc: "Update your local settings", color: "text-slate-400" },
       ]
     },
     {
