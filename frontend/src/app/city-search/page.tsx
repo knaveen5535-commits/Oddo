@@ -38,10 +38,6 @@ export default function CitySearchPage() {
             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-lg"
           />
         </div>
-        <button className="px-6 py-4 glass border-white/10 rounded-2xl flex items-center gap-2 hover:bg-white/10 transition-all font-bold">
-          <Filter size={24} />
-          <span>Filters</span>
-        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

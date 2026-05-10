@@ -1,192 +1,288 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Calendar, 
-  Wallet, 
-  Plus, 
   Search, 
+  Filter, 
+  Plus, 
   ChevronRight,
+  MapPin,
+  LayoutGrid,
+  ListFilter,
+  ArrowUpDown,
   TrendingUp,
-  Clock,
-  Filter,
-  MapPin
+  Globe,
+  Compass
 } from "lucide-react";
 import Link from "next/link";
 
 export default function Dashboard() {
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [groupBy, setGroupBy] = useState<"none" | "location">("none");
+  const [sortBy, setSortBy] = useState<"none" | "name">("none");
 
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  };
+  const bannerImages = [
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1506929113614-b9486ca55229?q=80&w=2000&auto=format&fit=crop"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % bannerImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const regionalSelections = [
+    { name: "Europe", image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=400&auto=format&fit=crop" },
+    { name: "Asia", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=400&auto=format&fit=crop" },
+    { name: "America", image: "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=400&auto=format&fit=crop" },
+    { name: "Africa", image: "https://images.unsplash.com/photo-1523805009345-7448845a9e53?q=80&w=400&auto=format&fit=crop" },
+    { name: "Oceania", image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?q=80&w=400&auto=format&fit=crop" },
+  ];
+
+  const initialTrips = [
+    { id: "1", title: "Swiss Alps Adventure", location: "Switzerland", date: "Dec 2025", image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?q=80&w=600&auto=format&fit=crop" },
+    { id: "2", title: "Tokyo Nightlife", location: "Japan", date: "Oct 2025", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=600&auto=format&fit=crop" },
+    { id: "3", title: "Santorini Getaway", location: "Greece", date: "Aug 2025", image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=600&auto=format&fit=crop" },
+    { id: "4", title: "Kyoto Temple Tour", location: "Japan", date: "Nov 2025", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=600&auto=format&fit=crop" },
+  ];
+
+  const filteredTrips = useMemo(() => {
+    let result = initialTrips.filter(trip => 
+      trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      trip.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (sortBy === "name") {
+      result.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return result;
+  }, [searchQuery, sortBy]);
+
+  const groupedTrips = useMemo(() => {
+    if (groupBy === "none") return { "All Trips": filteredTrips };
+
+    return filteredTrips.reduce((acc, trip) => {
+      const key = trip.location;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(trip);
+      return acc;
+    }, {} as Record<string, typeof initialTrips>);
+  }, [filteredTrips, groupBy]);
 
   return (
-    <div className="flex-1">
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {/* Banner Section - Screen 3 Alignment */}
-        <div className="relative h-[300px] w-full overflow-hidden">
-          <img 
-            src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop" 
-            alt="Adventure Banner" 
-            className="w-full h-full object-cover"
+    <div className="p-8 max-w-7xl mx-auto space-y-12">
+      {/* Hero Banner Section */}
+      <section className="relative h-[400px] w-full rounded-[40px] overflow-hidden shadow-2xl group border border-white/5">
+        <AnimatePresence mode="wait">
+          <motion.img 
+            key={currentImageIndex}
+            src={bannerImages[currentImageIndex]} 
+            alt="Hero Banner" 
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <motion.h2 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-5xl font-black text-white tracking-tighter uppercase italic"
-            >
-              Start Your Journey
-            </motion.h2>
-          </div>
-        </div>
-
-        <div className="p-8">
-          {/* Search & Filter Bar */}
-          <div className="flex gap-4 mb-12 -mt-16 relative z-20">
-            <div className="flex-1 glass-card p-2 rounded-2xl flex items-center gap-3 shadow-2xl">
-              <div className="pl-3">
-                <Search className="text-muted-foreground" size={20} />
-              </div>
-              <input 
-                type="text" 
-                placeholder="Where to next? Search cities, activities..."
-                className="flex-1 bg-transparent border-none outline-none text-white font-medium py-3"
-              />
-              <button className="bg-primary/20 p-3 rounded-xl text-primary hover:bg-primary/30 transition-all">
-                <Filter size={20} />
-              </button>
-              <button className="bg-primary px-6 py-3 rounded-xl text-white font-bold hover:bg-primary/90 transition-all">
-                Search
-              </button>
-            </div>
-          </div>
-
-          <motion.div 
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
           >
-            {/* Upcoming Trip Card */}
-            <motion.div variants={item} className="lg:col-span-2 relative group overflow-hidden rounded-3xl glass-card border-white/10 h-[300px]">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-              <img 
-                src="https://images.unsplash.com/photo-1506929113614-b9486ca55229?q=80&w=1200&auto=format&fit=crop" 
-                alt="Maldives" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute bottom-0 left-0 p-8 z-20 w-full flex justify-between items-end">
-                <div>
-                  <span className="px-3 py-1 bg-primary/80 backdrop-blur-md rounded-full text-xs font-semibold text-white mb-3 inline-block">
-                    Upcoming Adventure
-                  </span>
-                  <h3 className="text-3xl font-bold text-white mb-1">Maldives Escape</h3>
-                  <div className="flex items-center gap-4 text-white/80 text-sm">
-                    <span className="flex items-center gap-1"><Calendar size={14} /> June 15, 2026</span>
-                    <span className="flex items-center gap-1"><MapPin size={14} /> Maldives</span>
-                  </div>
-                </div>
-                <Link href="/trips/1/itinerary">
-                  <button className="p-4 glass rounded-full text-white hover:bg-primary transition-all shadow-xl">
-                    <ChevronRight size={24} />
-                  </button>
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Stats/Budget Widget */}
-            <motion.div variants={item} className="glass-card rounded-3xl p-6 border-white/10 flex flex-col">
-              <div className="flex justify-between items-start mb-6">
-                <div className="p-3 bg-teal-500/10 rounded-2xl">
-                  <Wallet className="text-teal-400" />
-                </div>
-                <span className="text-teal-400 text-sm font-medium flex items-center gap-1">
-                  <TrendingUp size={14} /> +12%
-                </span>
-              </div>
-              <h4 className="text-muted-foreground font-medium mb-1 uppercase tracking-widest text-[10px]">Total Expenses</h4>
-              <div className="text-4xl font-bold mb-4">$3,450.00</div>
-              <div className="mt-auto space-y-4">
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-teal-400 rounded-full w-[69%]" />
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>69% of $5,000 budget</span>
-                  <Link href="/trips/1/budget" className="text-primary hover:underline">Details</Link>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Quick Destinations */}
-            <motion.div variants={item} className="glass-card rounded-3xl p-6 border-white/10 flex flex-col">
-              <h4 className="font-bold mb-6 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-primary" />
-                Recent Places
-              </h4>
-              <div className="space-y-5">
-                <RecentDestItem city="Paris, France" date="April 2026" />
-                <RecentDestItem city="Tokyo, Japan" date="Feb 2026" />
-                <RecentDestItem city="New York, USA" date="Dec 2025" />
-              </div>
-            </motion.div>
-
-            {/* Trip Checklist */}
-            <motion.div variants={item} className="lg:col-span-2 glass-card rounded-3xl p-6 border-white/10">
-              <div className="flex justify-between items-center mb-6">
-                <h4 className="font-bold">Trip Checklist</h4>
-                <button className="text-sm text-primary hover:underline">View Itinerary</button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <ChecklistItem label="Confirm flight to Male" checked={true} />
-                <ChecklistItem label="Passport renewal check" checked={false} />
-                <ChecklistItem label="Exchange local currency" checked={false} />
-                <ChecklistItem label="Pack snorkeling gear" checked={false} />
-              </div>
-            </motion.div>
+            <span className="px-6 py-2 bg-primary/20 backdrop-blur-md rounded-full text-xs font-bold text-primary border border-primary/30 uppercase tracking-[0.2em] inline-block">
+              Welcome back, Explorer
+            </span>
+            <h2 className="text-6xl md:text-7xl font-black text-white tracking-tighter uppercase italic leading-none">
+              Your World, <br />
+              <span className="text-primary">Beautifully Planned</span>
+            </h2>
+            <p className="text-white/70 text-lg font-medium max-w-xl mx-auto">
+              Discover, plan, and manage your world travels with ease and elegance.
+            </p>
           </motion.div>
         </div>
-      </main>
+      </section>
+
+      {/* Search & Action Bar */}
+      <section className="flex flex-col lg:flex-row gap-4 items-center">
+        <div className="flex-1 flex gap-2 w-full group">
+          <div className="flex-1 relative">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5 group-focus-within:text-primary transition-colors" />
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search your trips by name or location..."
+              className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4.5 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium placeholder:text-white/20"
+            />
+          </div>
+          <button className="bg-primary px-8 py-4.5 rounded-[20px] text-white font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center gap-2">
+            <Search size={20} />
+            Search
+          </button>
+        </div>
+        <div className="flex gap-3 w-full lg:w-auto">
+          <ActionButton 
+            icon={<LayoutGrid size={18} />} 
+            label={groupBy === "none" ? "Group by" : `Grouped: ${groupBy}`} 
+            active={groupBy !== "none"}
+            onClick={() => setGroupBy(prev => prev === "none" ? "location" : "none")} 
+          />
+          <ActionButton 
+            icon={<ArrowUpDown size={18} />} 
+            label={sortBy === "none" ? "Sort by..." : "Sorted: Name"} 
+            active={sortBy !== "none"}
+            onClick={() => setSortBy(prev => prev === "none" ? "name" : "none")} 
+          />
+        </div>
+      </section>
+
+      {/* Quick Stats */}
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <StatItem label="Total Trips" value="12" icon={<Compass className="text-blue-400" />} />
+        <StatItem label="Countries" value="08" icon={<Globe className="text-teal-400" />} />
+        <StatItem label="Planned Activities" value="24" icon={<TrendingUp className="text-purple-400" />} />
+        <StatItem label="Packing Items" value="45" icon={<Plus className="text-orange-400" />} />
+      </section>
+
+      {/* Top Regional Selections */}
+      <section className="space-y-8">
+        <div className="flex items-center gap-6">
+          <h3 className="text-2xl font-bold whitespace-nowrap tracking-tight">Top Regional Selections</h3>
+          <div className="h-[1px] flex-1 bg-white/5" />
+          <Link href="/city-search">
+            <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">View All</button>
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+          {regionalSelections.map((region, idx) => (
+            <motion.div 
+              key={region.name}
+              whileHover={{ scale: 1.05 }}
+              className="group cursor-pointer"
+            >
+              <div className="aspect-square rounded-[32px] overflow-hidden border border-white/5 relative shadow-xl">
+                <img src={region.image} alt={region.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                  <span className="text-white font-bold text-xl drop-shadow-lg">{region.name}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Previous Trips Section */}
+      <section className="space-y-8">
+        <div className="flex items-center gap-6">
+          <h3 className="text-2xl font-bold whitespace-nowrap tracking-tight">Previous Trips</h3>
+          <div className="h-[1px] flex-1 bg-white/5" />
+          <Link href="/trips">
+            <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">See History</button>
+          </Link>
+        </div>
+
+        <div className="space-y-12">
+          {Object.entries(groupedTrips).map(([groupName, trips]) => (
+            <div key={groupName} className="space-y-6">
+              {groupBy !== "none" && (
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
+                  <h4 className="text-xl font-bold text-white/90">{groupName}</h4>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-4">
+                {trips.length > 0 ? (
+                  trips.map((trip, idx) => (
+                    <Link key={trip.id} href={`/trips/${trip.id}/itinerary`}>
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="group cursor-pointer glass-card rounded-[40px] overflow-hidden border-white/5 flex flex-col h-[480px] hover:border-primary/30 transition-all shadow-2xl"
+                      >
+                        <div className="h-2/3 overflow-hidden">
+                          <img src={trip.image} alt={trip.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+                        </div>
+                        <div className="p-10 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-transparent to-black/20">
+                          <div>
+                            <h4 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">{trip.title}</h4>
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              <MapPin size={16} className="text-primary" />
+                              <span className="text-sm font-medium">{trip.location}</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{trip.date}</span>
+                            <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-lg">
+                              <ChevronRight size={24} />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="col-span-full py-12 text-center glass-card rounded-[40px] border-dashed border-white/10">
+                    <p className="text-muted-foreground font-medium italic">No trips found matching your search.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAB Button */}
+      <Link href="/trips/create">
+        <motion.button 
+          whileHover={{ scale: 1.05, y: -5 }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed bottom-10 right-10 bg-primary text-white px-10 py-5 rounded-[24px] font-black text-lg shadow-[0_20px_50px_rgba(168,85,247,0.4)] flex items-center gap-3 z-50 border border-primary/20 backdrop-blur-md"
+        >
+          <Plus size={28} />
+          Plan a trip
+        </motion.button>
+      </Link>
     </div>
   );
 }
 
-function RecentDestItem({ city, date }: { city: string, date: string }) {
+function ActionButton({ icon, label, onClick, active = false }: { icon: React.ReactNode, label: string, onClick?: () => void, active?: boolean }) {
   return (
-    <div className="flex items-center gap-4 group cursor-pointer">
-      <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-all border border-white/5">
-        <MapPin size={20} className="text-muted-foreground group-hover:text-primary" />
+    <button 
+      onClick={onClick}
+      className={`flex-1 md:flex-none flex items-center justify-center gap-3 px-8 py-4.5 glass border-white/5 rounded-[20px] transition-all text-sm font-bold whitespace-nowrap active:scale-95 ${
+        active ? "bg-primary/20 text-primary border-primary/30" : "text-white/80 hover:bg-white/10"
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+function StatItem({ label, value, icon }: { label: string, value: string, icon: React.ReactNode }) {
+  return (
+    <div className="glass-card p-6 rounded-[24px] border-white/5 flex items-center gap-5 hover:bg-white/[0.02] transition-all">
+      <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-xl border border-white/10 shadow-inner">
+        {icon}
       </div>
       <div>
-        <div className="font-bold text-sm group-hover:text-primary transition-colors">{city}</div>
-        <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{date}</div>
+        <div className="text-2xl font-black tracking-tight">{value}</div>
+        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</div>
       </div>
-      <ChevronRight size={16} className="ml-auto text-muted-foreground opacity-0 group-hover:opacity-100 transition-all" />
-    </div>
-  );
-}
-
-function ChecklistItem({ label, checked }: { label: string, checked: boolean }) {
-  return (
-    <div className={`flex items-center gap-3 p-4 rounded-2xl glass border border-white/5 ${checked ? "opacity-50" : ""}`}>
-      <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
-        checked ? "bg-primary border-primary shadow-lg shadow-primary/20" : "border-white/10"
-      }`}>
-        {checked && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-      </div>
-      <span className={`text-sm font-medium ${checked ? "line-through" : ""}`}>{label}</span>
     </div>
   );
 }

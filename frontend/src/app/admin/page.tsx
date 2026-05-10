@@ -10,134 +10,154 @@ import {
   ShieldAlert, 
   ArrowUpRight,
   Search,
-  MoreHorizontal
+  MoreHorizontal,
+  PieChart,
+  Activity,
+  Calendar
 } from "lucide-react";
 
 export default function AdminPage() {
   const stats = [
-    { label: "Total Users", value: "12,450", change: "+15%", icon: <Users size={24} />, color: "bg-blue-500" },
-    { label: "Active Trips", value: "3,890", change: "+12%", icon: <Map size={24} />, color: "bg-teal-500" },
-    { label: "Revenue", value: "$45,200", change: "+8%", icon: <DollarSign size={24} />, color: "bg-purple-500" },
-    { label: "Reports", value: "24", change: "-5%", icon: <ShieldAlert size={24} />, color: "bg-red-500" },
+    { label: "Total Users", value: "12,450", change: "+15%", icon: <Users size={20} />, color: "bg-blue-500" },
+    { label: "Active Trips", value: "3,890", change: "+12%", icon: <Map size={20} />, color: "bg-teal-500" },
+    { label: "Revenue", value: "$45,200", change: "+8%", icon: <DollarSign size={20} />, color: "bg-purple-500" },
+    { label: "Reports", value: "24", change: "-5%", icon: <ShieldAlert size={20} />, color: "bg-red-500" },
   ];
 
-  const recentUsers = [
-    { name: "John Smith", email: "john@example.com", status: "Active", date: "2 mins ago" },
-    { name: "Sarah Connor", email: "sarah@resistance.org", status: "Inactive", date: "15 mins ago" },
-    { name: "Bruce Wayne", email: "bruce@waynecorp.com", status: "Active", date: "1 hour ago" },
-    { name: "Clark Kent", email: "clark@dailyplanet.com", status: "Pending", date: "3 hours ago" },
+  const recentActivity = [
+    { user: "John Smith", action: "Created a new trip to Maldives", time: "2 mins ago", type: "Trip" },
+    { user: "Sarah Connor", action: "Updated budget for Paris trip", time: "15 mins ago", type: "Budget" },
+    { user: "Bruce Wayne", action: "Added a new note to Gotham trip", time: "1 hour ago", type: "Note" },
+    { user: "Clark Kent", action: "Joined Traveloop family", time: "3 hours ago", type: "Join" },
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <header className="flex justify-between items-center mb-12">
+    <div className="p-8 max-w-7xl mx-auto space-y-10">
+      <header className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage the Traveloop platform and users.</p>
+          <h1 className="text-3xl font-bold mb-1 tracking-tight">Admin Console</h1>
+          <p className="text-muted-foreground text-sm font-medium">Monitoring platform health and growth.</p>
         </div>
         <div className="flex gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
-              placeholder="Quick search..."
-              className="bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+              placeholder="Search data..."
+              className="bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-xs font-medium w-64"
             />
           </div>
-          <button className="bg-primary px-4 py-2 rounded-xl text-white text-sm font-bold shadow-lg shadow-primary/20">
-            Export Report
+          <button className="bg-primary px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">
+            <Activity size={14} />
+            Live View
           </button>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {/* Top Stats - Screen 13 Alignment */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
           <motion.div 
             key={idx}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="glass-card p-6 rounded-3xl border-white/5 relative overflow-hidden"
+            className="glass-card p-6 rounded-3xl border-white/5 relative overflow-hidden group hover:border-white/10 transition-all"
           >
-            <div className={`absolute top-0 right-0 w-24 h-24 ${stat.color} opacity-5 -translate-y-8 translate-x-8 rounded-full`} />
-            <div className="flex justify-between items-start mb-4">
+            <div className={`absolute -top-4 -right-4 w-20 h-20 ${stat.color} opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700`} />
+            <div className="flex justify-between items-start mb-6">
               <div className={`p-3 rounded-2xl bg-white/5 ${stat.color.replace('bg-', 'text-')}`}>
                 {stat.icon}
               </div>
-              <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
+              <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
                 stat.change.startsWith('+') ? 'bg-teal-500/10 text-teal-400' : 'bg-red-500/10 text-red-400'
               }`}>
                 {stat.change}
               </span>
             </div>
-            <h4 className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-1">{stat.label}</h4>
-            <div className="text-3xl font-bold">{stat.value}</div>
+            <h4 className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em] mb-1">{stat.label}</h4>
+            <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Activity Table */}
-        <div className="lg:col-span-2 glass-card rounded-3xl border-white/5 overflow-hidden">
-          <div className="p-6 border-b border-white/5 flex justify-between items-center">
-            <h3 className="font-bold">Recent User Activity</h3>
-            <button className="text-sm text-primary hover:underline">View all</button>
+      {/* Main Analytics View - Screen 13 Alignment */}
+      <section className="glass-card p-10 rounded-[40px] border-white/5 h-[450px] flex flex-col relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
+        <div className="flex justify-between items-start mb-10 relative z-10">
+          <div>
+            <h3 className="text-2xl font-bold mb-1">Growth Overview</h3>
+            <p className="text-muted-foreground text-sm font-medium">User acquisition and engagement over time.</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="text-xs text-muted-foreground border-b border-white/5 uppercase tracking-widest">
-                  <th className="p-6">User</th>
-                  <th className="p-6">Status</th>
-                  <th className="p-6">Date</th>
-                  <th className="p-6"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {recentUsers.map((user, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="p-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
-                          {user.name.charAt(0)}
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm">{user.name}</div>
-                          <div className="text-xs text-muted-foreground">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-6">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest ${
-                        user.status === 'Active' ? 'bg-teal-500/10 text-teal-400' : 
-                        user.status === 'Pending' ? 'bg-orange-500/10 text-orange-400' : 'bg-white/10 text-muted-foreground'
-                      }`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="p-6 text-xs text-muted-foreground">{user.date}</td>
-                    <td className="p-6">
-                      <button className="text-muted-foreground hover:text-white transition-colors">
-                        <MoreHorizontal size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 glass rounded-xl text-[10px] font-bold uppercase tracking-widest border-white/10 hover:bg-white/5 transition-all">Monthly</button>
+            <button className="px-4 py-2 glass rounded-xl text-[10px] font-bold uppercase tracking-widest border-white/10 bg-primary/20 text-primary transition-all">Weekly</button>
+          </div>
+        </div>
+        <div className="flex-1 flex items-end gap-3 pb-4 relative z-10">
+          {[40, 70, 45, 90, 65, 80, 55, 100, 75, 85, 60, 95].map((h, i) => (
+            <motion.div 
+              key={i}
+              initial={{ height: 0 }}
+              animate={{ height: `${h}%` }}
+              transition={{ delay: i * 0.05, duration: 1 }}
+              className={`flex-1 rounded-t-xl relative group ${i === 7 ? 'bg-primary shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'bg-white/5'}`}
+            >
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                {h * 124}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mt-4 border-t border-white/5 pt-4">
+          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+        </div>
+      </section>
+
+      {/* Bottom Activity - Screen 13 Alignment */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 glass-card rounded-[32px] border-white/5 p-8">
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Activity className="text-primary" size={20} />
+              Recent System Activity
+            </h3>
+            <button className="text-xs font-bold text-primary hover:underline">Full Audit Log</button>
+          </div>
+          <div className="space-y-6">
+            {recentActivity.map((activity, idx) => (
+              <div key={idx} className="flex items-center justify-between group cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center font-black text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                    {activity.user.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold">{activity.user}</div>
+                    <div className="text-xs text-muted-foreground">{activity.action}</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1">{activity.type}</div>
+                  <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 justify-end">
+                    <Calendar size={10} /> {activity.time}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Platform Alerts */}
-        <div className="glass-card p-6 rounded-3xl border-white/5">
-          <h3 className="font-bold mb-6 flex items-center gap-2">
-            <ShieldAlert size={20} className="text-red-400" />
-            Platform Alerts
-          </h3>
-          <div className="space-y-4">
-            <AlertItem title="API Limit Warning" desc="Gemini API reaching 85% limit." type="warning" />
-            <AlertItem title="Failed Backup" desc="Daily database backup failed at 02:00." type="error" />
-            <AlertItem title="New Feature Rollout" desc="Analytics v2 is now live for all users." type="info" />
+        <div className="space-y-8">
+          <div className="glass-card p-8 rounded-[32px] border-white/5 bg-gradient-to-br from-primary/10 to-transparent">
+            <h3 className="font-bold mb-6 flex items-center gap-2 text-sm uppercase tracking-widest text-white/60">
+              <PieChart size={18} className="text-primary" />
+              Usage Stats
+            </h3>
+            <div className="space-y-6">
+              <UsageProgress label="Storage Used" value={64} color="bg-blue-500" />
+              <UsageProgress label="API Requests" value={82} color="bg-purple-500" />
+              <UsageProgress label="Active Sessions" value={45} color="bg-teal-500" />
+            </div>
           </div>
         </div>
       </div>
@@ -145,17 +165,20 @@ export default function AdminPage() {
   );
 }
 
-function AlertItem({ title, desc, type }: { title: string, desc: string, type: 'warning' | 'error' | 'info' }) {
-  const styles = {
-    warning: "border-orange-500/20 bg-orange-500/5 text-orange-400",
-    error: "border-red-500/20 bg-red-500/5 text-red-400",
-    info: "border-blue-500/20 bg-blue-500/5 text-blue-400",
-  };
-
+function UsageProgress({ label, value, color }: { label: string, value: number, color: string }) {
   return (
-    <div className={`p-4 rounded-2xl border ${styles[type]}`}>
-      <h4 className="font-bold text-xs mb-1 uppercase tracking-widest">{title}</h4>
-      <p className="text-xs opacity-80">{desc}</p>
+    <div className="space-y-2">
+      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+        <span className="text-white/60">{label}</span>
+        <span>{value}%</span>
+      </div>
+      <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${value}%` }}
+          className={`h-full ${color}`}
+        />
+      </div>
     </div>
   );
 }
