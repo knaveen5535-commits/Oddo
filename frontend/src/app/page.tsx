@@ -13,15 +13,22 @@ import {
   ArrowUpDown,
   TrendingUp,
   Globe,
-  Compass
+  Compass,
+  Loader2,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import Link from "next/link";
+import api from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [groupBy, setGroupBy] = useState<"none" | "location">("none");
   const [sortBy, setSortBy] = useState<"none" | "name">("none");
+  const [trips, setTrips] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const bannerImages = [
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000&auto=format&fit=crop",
@@ -37,6 +44,27 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const response = await api.get('/trips');
+        if (response.data.success) {
+          setTrips(response.data.data);
+        }
+      } catch (error) {
+        console.error("Fetch Trips Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchTrips();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
   const regionalSelections = [
     { name: "Europe", image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=400&auto=format&fit=crop" },
     { name: "Asia", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=400&auto=format&fit=crop" },
@@ -45,17 +73,10 @@ export default function Dashboard() {
     { name: "Oceania", image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?q=80&w=400&auto=format&fit=crop" },
   ];
 
-  const initialTrips = [
-    { id: "1", title: "Swiss Alps Adventure", location: "Switzerland", date: "Dec 2025", image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?q=80&w=600&auto=format&fit=crop" },
-    { id: "2", title: "Tokyo Nightlife", location: "Japan", date: "Oct 2025", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=600&auto=format&fit=crop" },
-    { id: "3", title: "Santorini Getaway", location: "Greece", date: "Aug 2025", image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=600&auto=format&fit=crop" },
-    { id: "4", title: "Kyoto Temple Tour", location: "Japan", date: "Nov 2025", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=600&auto=format&fit=crop" },
-  ];
-
   const filteredTrips = useMemo(() => {
-    let result = initialTrips.filter(trip => 
+    let result = trips.filter(trip => 
       trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trip.location.toLowerCase().includes(searchQuery.toLowerCase())
+      trip.destination.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (sortBy === "name") {
@@ -63,21 +84,21 @@ export default function Dashboard() {
     }
 
     return result;
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, trips]);
 
   const groupedTrips = useMemo(() => {
     if (groupBy === "none") return { "All Trips": filteredTrips };
 
     return filteredTrips.reduce((acc, trip) => {
-      const key = trip.location;
+      const key = trip.destination;
       if (!acc[key]) acc[key] = [];
       acc[key].push(trip);
       return acc;
-    }, {} as Record<string, typeof initialTrips>);
+    }, {} as Record<string, any[]>);
   }, [filteredTrips, groupBy]);
 
   return (
-    <div className="p-10 w-full space-y-12">
+    <div className="p-10 w-full space-y-12 bg-background min-h-screen text-foreground">
       {/* Hero Banner Section */}
       <section className="relative h-[400px] w-full rounded-[40px] overflow-hidden shadow-2xl group border border-white/5">
         <AnimatePresence mode="wait">
@@ -99,8 +120,8 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <span className="px-6 py-2 bg-primary/20 backdrop-blur-md rounded-full text-xs font-bold text-primary border border-primary/30 uppercase tracking-[0.2em] inline-block">
-              Welcome back, Explorer
+            <span className="px-6 py-2 bg-primary/20 backdrop-blur-md rounded-full text-sm font-bold text-primary border border-primary/30 uppercase tracking-[0.2em] inline-block">
+              Welcome back, {user?.name || "Explorer"}
             </span>
             <h2 className="text-6xl md:text-7xl font-black text-white tracking-tighter uppercase italic leading-none">
               Your World, <br />
@@ -149,98 +170,94 @@ export default function Dashboard() {
 
       {/* Quick Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <StatItem label="Total Trips" value="12" icon={<Compass className="text-rose-400" />} />
-        <StatItem label="Countries" value="08" icon={<Globe className="text-slate-400" />} />
-        <StatItem label="Planned Activities" value="24" icon={<TrendingUp className="text-slate-400" />} />
-        <StatItem label="Packing Items" value="45" icon={<Plus className="text-rose-400" />} />
-      </section>
-
-      {/* Top Regional Selections */}
-      <section className="space-y-8">
-        <div className="flex items-center gap-6">
-          <h3 className="text-2xl font-bold whitespace-nowrap tracking-tight">Top Regional Selections</h3>
-          <div className="h-[1px] flex-1 bg-white/5" />
-          <Link href="/city-search">
-            <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">View All</button>
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
-          {regionalSelections.map((region, idx) => (
-            <motion.div 
-              key={region.name}
-              whileHover={{ scale: 1.05 }}
-              className="group cursor-pointer"
-            >
-              <div className="aspect-square rounded-[32px] overflow-hidden border border-white/5 relative shadow-xl">
-                <img src={region.image} alt={region.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                  <span className="text-white font-bold text-xl drop-shadow-lg">{region.name}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <StatItem label="Total Trips" value={trips.length.toString()} icon={<Compass className="text-primary" />} />
+        <StatItem label="Countries" value={new Set(trips.map(t => t.destination)).size.toString()} icon={<Globe className="text-primary" />} />
+        <StatItem label="Active Items" value="12" icon={<TrendingUp className="text-primary" />} />
+        <StatItem label="Profile Sync" value="Active" icon={<ShieldCheck className="text-primary" />} />
       </section>
 
       {/* Previous Trips Section */}
       <section className="space-y-8">
         <div className="flex items-center gap-6">
-          <h3 className="text-2xl font-bold whitespace-nowrap tracking-tight">Previous Trips</h3>
+          <h3 className="text-2xl font-bold whitespace-nowrap tracking-tight uppercase italic">Previous Trips</h3>
           <div className="h-[1px] flex-1 bg-white/5" />
           <Link href="/trips">
-            <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">See History</button>
+            <button className="text-sm font-bold text-primary uppercase tracking-widest hover:underline italic">See History</button>
           </Link>
         </div>
 
         <div className="space-y-12">
-          {Object.entries(groupedTrips).map(([groupName, trips]) => (
-            <div key={groupName} className="space-y-6">
-              {groupBy !== "none" && (
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
-                  <h4 className="text-xl font-bold text-white/90">{groupName}</h4>
-                </div>
-              )}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-4">
-                {trips.length > 0 ? (
-                  trips.map((trip, idx) => (
-                    <Link key={trip.id} href={`/trips/${trip.id}/itinerary`}>
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                        className="group cursor-pointer glass-card rounded-[40px] overflow-hidden border-white/5 flex flex-col h-[480px] hover:border-primary/30 transition-all shadow-2xl"
-                      >
-                        <div className="h-2/3 overflow-hidden">
-                          <img src={trip.image} alt={trip.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
-                        </div>
-                        <div className="p-10 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-transparent to-black/20">
-                          <div>
-                            <h4 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">{trip.title}</h4>
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                              <MapPin size={16} className="text-primary" />
-                              <span className="text-sm font-medium">{trip.location}</span>
-                            </div>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{trip.date}</span>
-                            <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-lg">
-                              <ChevronRight size={24} />
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="col-span-full py-12 text-center glass-card rounded-[40px] border-dashed border-white/10">
-                    <p className="text-muted-foreground font-medium italic">No trips found matching your search.</p>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+              <Loader2 size={48} className="text-primary animate-spin" />
+              <p className="text-sm font-black text-white/20 uppercase tracking-[0.4em] italic">Retrieving Voyage History...</p>
+            </div>
+          ) : (
+            Object.entries(groupedTrips).map(([groupName, trips]) => (
+              <div key={groupName} className="space-y-6">
+                {groupBy !== "none" && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
+                    <h4 className="text-xl font-bold text-white/90 italic uppercase">{groupName}</h4>
                   </div>
                 )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-4">
+                  {trips.length > 0 ? (
+                    trips.map((trip, idx) => (
+                      <Link key={trip.id} href={`/trips/${trip.id}/itinerary`}>
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                          className="group cursor-pointer glass-card rounded-[40px] overflow-hidden border-white/5 flex flex-col h-[480px] hover:border-primary/30 transition-all shadow-2xl bg-card"
+                        >
+                          <div className="h-2/3 overflow-hidden">
+                            <img 
+                              src={trip.coverImage || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop"} 
+                              alt={trip.title} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" 
+                            />
+                          </div>
+                          <div className="p-10 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-transparent to-black/40">
+                            <div>
+                              <h4 className="text-2xl font-black mb-2 group-hover:text-primary transition-colors italic uppercase tracking-tight">{trip.title}</h4>
+                              <div className="flex items-center gap-2 text-white/60">
+                                <MapPin size={16} className="text-primary" />
+                                <span className="text-base font-medium">{trip.destination}</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center border-t border-white/10 pt-6">
+                              <div className="flex items-center gap-2">
+                                <CalendarIcon size={14} className="text-primary" />
+                                <span className="text-sm font-black uppercase tracking-[0.2em] text-white/40">
+                                  {new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                                </span>
+                              </div>
+                              <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-lg">
+                                <ChevronRight size={24} />
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="col-span-full py-24 text-center glass-card rounded-[40px] border-dashed border-white/10 flex flex-col items-center gap-6">
+                      <div className="p-6 bg-white/5 rounded-full">
+                        <Compass size={48} className="text-white/10" />
+                      </div>
+                      <p className="text-white/20 font-black italic uppercase tracking-widest text-sm">No recorded voyages found in your log.</p>
+                      <Link href="/trips/create">
+                        <button className="px-8 py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest italic hover:scale-105 transition-transform">
+                          Initialize New Flight Plan
+                        </button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
@@ -263,7 +280,7 @@ function ActionButton({ icon, label, onClick, active = false }: { icon: React.Re
   return (
     <button 
       onClick={onClick}
-      className={`flex-1 md:flex-none flex items-center justify-center gap-3 px-8 py-4.5 glass border-white/5 rounded-[20px] transition-all text-sm font-bold whitespace-nowrap active:scale-95 ${
+      className={`flex-1 md:flex-none flex items-center justify-center gap-3 px-8 py-4.5 glass border-white/5 rounded-[20px] transition-all text-sm font-bold whitespace-nowrap active:scale-95 uppercase tracking-widest italic ${
         active ? "bg-primary/20 text-primary border-primary/30" : "text-white/80 hover:bg-white/10"
       }`}
     >
@@ -275,14 +292,34 @@ function ActionButton({ icon, label, onClick, active = false }: { icon: React.Re
 
 function StatItem({ label, value, icon }: { label: string, value: string, icon: React.ReactNode }) {
   return (
-    <div className="glass-card p-6 rounded-[24px] border-white/5 flex items-center gap-5 hover:bg-white/[0.02] transition-all">
-      <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-xl border border-white/10 shadow-inner">
+    <div className="glass-card p-6 rounded-[24px] border-white/5 flex items-center gap-5 hover:bg-white/[0.02] transition-all bg-card">
+      <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl border border-primary/20 shadow-inner">
         {icon}
       </div>
       <div>
-        <div className="text-2xl font-black tracking-tight">{value}</div>
-        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</div>
+        <div className="text-2xl font-black tracking-tight text-white">{value}</div>
+        <div className="text-sm font-bold text-white/30 uppercase tracking-widest italic">{label}</div>
       </div>
     </div>
+  );
+}
+
+function ShieldCheck(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
   );
 }

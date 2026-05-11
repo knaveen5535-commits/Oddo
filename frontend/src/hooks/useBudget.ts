@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
+import api from '@/lib/api';
 
 interface BudgetData {
   tripId: string;
@@ -24,15 +25,14 @@ export function useBudget(tripId: string | null) {
     if (!tripId) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/budget/${tripId}`);
-      const result = await response.json();
-      if (result.success) {
-        setBudget(result.data);
+      const response = await api.get(`/budget/${tripId}`);
+      if (response.data.success) {
+        setBudget(response.data.data);
       } else {
-        setError(result.message);
+        setError(response.data.message);
       }
-    } catch (err) {
-      setError("Failed to connect to budget server");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to connect to budget server");
     } finally {
       setLoading(false);
     }
@@ -42,14 +42,9 @@ export function useBudget(tripId: string | null) {
     if (!tripId) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/budget/${tripId}/calculate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tripData)
-      });
-      const result = await response.json();
-      if (result.success) {
-        setBudget(result.data);
+      const response = await api.post(`/budget/${tripId}/calculate`, tripData);
+      if (response.data.success) {
+        setBudget(response.data.data);
       }
     } catch (err) {
       console.error("Recalculate error:", err);
@@ -59,8 +54,10 @@ export function useBudget(tripId: string | null) {
   };
 
   useEffect(() => {
-    fetchBudget();
-  }, [fetchBudget]);
+    if (tripId) {
+      fetchBudget();
+    }
+  }, [tripId, fetchBudget]);
 
   return { budget, loading, error, refresh: fetchBudget, recalculate: recalculateBudget };
 }

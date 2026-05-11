@@ -13,6 +13,14 @@ exports.createTrip = async (req, res) => {
       googlePlacesService.getCityImage(destination)
     ]);
 
+    // Flatten recommendations from different categories into a single array
+    const flattenedRecs = [
+      ...(recommendations.attractions || []),
+      ...(recommendations.restaurants || []),
+      ...(recommendations.hotels || []),
+      ...(recommendations.activities || [])
+    ];
+
     // Create Trip in PostgreSQL via Prisma
     const trip = await prisma.trip.create({
       data: {
@@ -24,12 +32,12 @@ exports.createTrip = async (req, res) => {
         description,
         coverImage: cityImage || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop",
         recommendations: {
-          create: recommendations.map(rec => ({
+          create: flattenedRecs.map(rec => ({
             placeName: rec.name,
             rating: rec.rating,
             address: rec.address,
             image: rec.image,
-            category: rec.category
+            category: Array.isArray(rec.type) ? rec.type[0] : "Destination"
           }))
         }
       },

@@ -30,9 +30,11 @@ import {
   TrendingDown,
   Layers,
   Wind,
-  Loader2
+  Loader2,
+  AlertCircle
 } from "lucide-react";
 import { useBudget } from "@/hooks/useBudget";
+import api from "@/lib/api";
 
 export default function ItineraryPage() {
   const params = useParams();
@@ -49,15 +51,15 @@ export default function ItineraryPage() {
   useEffect(() => {
     const fetchTrip = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/trips');
-        const result = await response.json();
+        const response = await api.get('/trips');
+        const result = response.data;
         if (result.success) {
           const found = result.data.find((t: any) => t.id === tripId) || result.data[0];
           
-          if (!found.days) {
+          if (found && !found.days) {
             found.days = [
               [
-                { time: "09:00 AM", title: "Arrival & Transfer", location: found.location, type: "Transport", icon: <Plane size={14} />, cost: "₹0" },
+                { time: "09:00 AM", title: "Arrival & Transfer", location: found.destination || "Origin", type: "Transport", icon: <Plane size={14} />, cost: "₹0" },
                 { time: "01:00 PM", title: "Welcome Lunch", location: "Grand Plaza", type: "Food", icon: <Utensils size={14} />, cost: "₹2,500" },
                 { time: "04:00 PM", title: "City Orientation Walk", location: "Old Town", type: "Activity", icon: <Camera size={14} />, cost: "₹1,200" },
               ],
@@ -69,11 +71,13 @@ export default function ItineraryPage() {
           }
           
           setTrip(found);
-          setImgSrc(found.image);
-          setStops([
-            { id: "s1", city: found.location.split(',')[0], dates: "June 15 - 17", activities: 4 },
-            { id: "s2", city: "Nearby Escape", dates: "June 18 - 20", activities: 3 }
-          ]);
+          if (found) {
+            setImgSrc(found.image || found.coverImage);
+            setStops([
+              { id: "s1", city: (found.destination || "Destination").split(',')[0], dates: "June 15 - 17", activities: 4 },
+              { id: "s2", city: "Nearby Escape", dates: "June 18 - 20", activities: 3 }
+            ]);
+          }
         }
       } catch (error) {
         console.error("Fetch Trip Error:", error);
@@ -87,7 +91,7 @@ export default function ItineraryPage() {
   useEffect(() => {
     if (trip) {
       recalculate({
-        location: trip.location,
+        location: trip.destination || trip.location,
         startDate: trip.startDate,
         endDate: trip.endDate,
         activities: trip.days.flat(),
@@ -130,9 +134,9 @@ export default function ItineraryPage() {
               <div className="flex items-center gap-3">
                  <div className="px-4 py-1.5 bg-primary/20 backdrop-blur-xl rounded-full border border-primary/30 flex items-center gap-2">
                     <Wind size={12} className="text-primary animate-pulse" />
-                    <span className="text-sm font-black text-primary uppercase tracking-[0.2em]">Active Flight Plan</span>
+                    <span className="text-base font-black text-primary uppercase tracking-[0.2em]">Active Flight Plan</span>
                  </div>
-                 <div className="px-4 py-1.5 glass rounded-full border border-foreground/10 text-sm font-black text-foreground/60 uppercase tracking-[0.2em]">
+                 <div className="px-4 py-1.5 glass rounded-full border border-foreground/10 text-base font-black text-foreground/60 uppercase tracking-[0.2em]">
                     {trip.status}
                  </div>
               </div>
@@ -142,11 +146,11 @@ export default function ItineraryPage() {
               </h1>
               
               <div className="flex flex-wrap gap-4 pt-4">
-                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-white font-black text-xs uppercase tracking-widest">
+                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-white font-black text-sm uppercase tracking-widest">
                   <MapPin size={18} className="text-primary" />
                   {trip.location}
                 </span>
-                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-white font-black text-xs uppercase tracking-widest">
+                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-white font-black text-sm uppercase tracking-widest">
                   <Calendar size={18} className="text-primary" />
                   7 Days Voyage
                 </span>
@@ -156,7 +160,7 @@ export default function ItineraryPage() {
             <div className="flex gap-2 p-2 glass rounded-[32px] border-foreground/10 shadow-2xl backdrop-blur-3xl">
                <button 
                 onClick={() => setMode("view")}
-                className={`px-10 py-5 rounded-[24px] text-xs font-black transition-all flex items-center gap-3 ${
+                className={`px-10 py-5 rounded-[24px] text-sm font-black transition-all flex items-center gap-3 ${
                   mode === "view" ? "bg-primary text-white shadow-xl shadow-primary/30 scale-105" : "text-foreground/40 hover:text-foreground"
                 }`}
                >
@@ -164,7 +168,7 @@ export default function ItineraryPage() {
                </button>
                <button 
                 onClick={() => setMode("build")}
-                className={`px-10 py-5 rounded-[24px] text-xs font-black transition-all flex items-center gap-3 ${
+                className={`px-10 py-5 rounded-[24px] text-sm font-black transition-all flex items-center gap-3 ${
                   mode === "build" ? "bg-primary text-white shadow-xl shadow-primary/30 scale-105" : "text-foreground/40 hover:text-foreground"
                 }`}
                >
@@ -200,7 +204,7 @@ export default function ItineraryPage() {
                   <div className="mt-12 pt-12 border-t border-foreground/10 space-y-8">
                      <div className="flex items-center justify-between group cursor-help">
                         <div>
-                           <div className="text-xs font-black uppercase text-primary tracking-[0.2em] mb-1">Total Expedition Cost</div>
+                           <div className="text-sm font-black uppercase text-primary tracking-[0.2em] mb-1">Total Expedition Cost</div>
                            <div className="text-3xl font-black text-foreground italic group-hover:text-primary transition-colors">
                                {budget ? `₹${budget.totalCost.toLocaleString()}` : "Calculating..."}
                             </div>
@@ -209,11 +213,11 @@ export default function ItineraryPage() {
                      </div>
                      <div className="grid grid-cols-2 gap-6">
                         <div className="p-6 glass rounded-3xl border-foreground/5">
-                           <div className="text-xs font-black text-foreground/20 uppercase tracking-widest mb-1">Cities</div>
+                           <div className="text-sm font-black text-foreground/20 uppercase tracking-widest mb-1">Cities</div>
                            <div className="text-xl font-black text-foreground">{stops.length}</div>
                         </div>
                         <div className="p-6 glass rounded-3xl border-foreground/5">
-                           <div className="text-xs font-black text-foreground/20 uppercase tracking-widest mb-1">Items</div>
+                           <div className="text-sm font-black text-foreground/20 uppercase tracking-widest mb-1">Items</div>
                            <div className="text-xl font-black text-foreground">12</div>
                         </div>
                      </div>
@@ -228,7 +232,7 @@ export default function ItineraryPage() {
                       <TrendingUp size={20} className="text-primary" />
                       Optimized Path
                    </h3>
-                   <p className="text-xs text-foreground/40 font-medium leading-relaxed">
+                   <p className="text-sm text-foreground/40 font-medium leading-relaxed">
                       Your route has been intelligently sequenced to minimize travel time by 18%.
                    </p>
                 </div>
@@ -248,7 +252,7 @@ export default function ItineraryPage() {
                       <button 
                         key={idx}
                         onClick={() => setActiveDay(idx)}
-                        className={`px-8 py-3.5 rounded-[18px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                        className={`px-8 py-3.5 rounded-[18px] text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                           activeDay === idx 
                             ? "bg-primary text-white shadow-xl shadow-primary/30" 
                             : "text-foreground/40 hover:text-foreground"
@@ -277,12 +281,12 @@ export default function ItineraryPage() {
                         </div>
                         <div className="glass-card p-10 rounded-[48px] border-foreground/5 group-hover:border-primary/20 transition-all duration-500 flex flex-col sm:flex-row justify-between items-center gap-6 hover:bg-card shadow-2xl">
                           <div className="flex gap-10 items-center w-full sm:w-auto">
-                            <div className="text-xs font-black text-primary uppercase tracking-[0.3em] w-24 text-center shrink-0 p-3 bg-primary/5 rounded-2xl border border-primary/10">
+                            <div className="text-sm font-black text-primary uppercase tracking-[0.3em] w-24 text-center shrink-0 p-3 bg-primary/5 rounded-2xl border border-primary/10">
                               {activity.time}
                             </div>
                             <div className="space-y-2">
                               <h4 className="font-black text-2xl text-foreground group-hover:text-primary transition-colors tracking-tight italic uppercase">{activity.title}</h4>
-                              <div className="flex items-center gap-4 text-xs text-foreground/40 font-black uppercase tracking-widest">
+                              <div className="flex items-center gap-4 text-sm text-foreground/40 font-black uppercase tracking-widest">
                                 <span className="flex items-center gap-2"><MapPin size={14} className="text-primary" /> {activity.location}</span>
                                 <span className="px-3 py-1 glass rounded-lg text-foreground/60 border border-foreground/10">{activity.type}</span>
                               </div>
@@ -290,7 +294,7 @@ export default function ItineraryPage() {
                           </div>
                           <div className="text-right w-full sm:w-auto pt-6 sm:pt-0 border-t sm:border-t-0 border-foreground/5">
                              <div className="text-2xl font-black text-foreground italic">{activity.cost}</div>
-                             <button className="text-[10px] font-black text-primary hover:underline mt-1 uppercase tracking-widest">Details & Split</button>
+                             <button className="text-xs font-black text-primary hover:underline mt-1 uppercase tracking-widest">Details & Split</button>
                           </div>
                         </div>
                       </div>
@@ -335,9 +339,9 @@ export default function ItineraryPage() {
                                   <GripVertical size={24} />
                                </div>
                                <div>
-                                  <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">Target Destination</div>
+                                  <div className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-2">Target Destination</div>
                                   <h4 className="text-3xl font-black text-foreground italic uppercase tracking-tight">{stop.city}</h4>
-                                  <div className="flex items-center gap-6 mt-3 text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">
+                                  <div className="flex items-center gap-6 mt-3 text-sm font-black text-foreground/30 uppercase tracking-[0.2em]">
                                      <span className="flex items-center gap-2 px-3 py-1 glass rounded-lg"><Calendar size={14} className="text-primary" /> {stop.dates}</span>
                                      <span className="flex items-center gap-2 px-3 py-1 glass rounded-lg"><Check size={14} className="text-primary" /> {stop.activities} Checkpoints</span>
                                   </div>
@@ -379,7 +383,7 @@ export default function ItineraryPage() {
                                 <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:rotate-12 transition-transform">
                                    <Search size={20} />
                                 </div>
-                                <span className="font-black text-xs uppercase tracking-widest text-foreground">Explore Nearby</span>
+                                <span className="font-black text-sm uppercase tracking-widest text-foreground">Explore Nearby</span>
                              </div>
                              <ChevronRight size={18} className="text-foreground/10 group-hover:translate-x-2 transition-transform" />
                           </button>
@@ -388,7 +392,7 @@ export default function ItineraryPage() {
                                 <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:-rotate-12 transition-transform">
                                    <Plane size={20} />
                                 </div>
-                                <span className="font-black text-xs uppercase tracking-widest text-foreground">Sync Flight Data</span>
+                                <span className="font-black text-sm uppercase tracking-widest text-foreground">Sync Flight Data</span>
                              </div>
                              <ChevronRight size={18} className="text-foreground/10 group-hover:translate-x-2 transition-transform" />
                           </button>
@@ -399,7 +403,7 @@ export default function ItineraryPage() {
                         <div className="absolute -left-4 -top-4 opacity-5">
                            <Wind size={80} />
                         </div>
-                        <div className="flex items-center gap-3 text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-4">
+                        <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[0.3em] mb-4">
                            <Check size={14} className="animate-bounce" /> Co-Pilot Active
                         </div>
                         <p className="text-sm font-bold text-foreground/80 leading-relaxed italic">

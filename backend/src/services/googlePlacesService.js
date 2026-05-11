@@ -78,7 +78,7 @@ class GooglePlacesService {
       ];
 
       const searchPromises = categories.map(q => 
-        axios.get(this.textSearchUrl, {
+        axios.get(this.baseUrl, {
           params: {
             query: q,
             key: this.apiKey
