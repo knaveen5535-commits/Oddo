@@ -51,24 +51,24 @@ export default function PackingListPage() {
   const progress = Math.round((packedCount / items.length) * 100);
 
   return (
-    <div className="p-10 w-full space-y-12 bg-background text-foreground transition-colors duration-300 pb-32">
+    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-12 bg-background text-foreground transition-colors duration-300 pb-32">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-6xl font-black tracking-tight uppercase italic mb-2">Packing <span className="text-primary drop-shadow-[0_0_15px_rgba(244,63,94,0.4)]">Manifest</span></h1>
+          <h1 className="text-3xl sm:text-6xl font-black tracking-tight uppercase italic mb-2">Packing <span className="text-primary drop-shadow-[0_0_15px_rgba(244,63,94,0.4)]">Manifest</span></h1>
           <p className="text-muted-foreground font-medium italic">Ensure every essential is aboard for your next expedition.</p>
         </div>
-        <button className="flex items-center gap-3 px-10 py-5 bg-primary text-white rounded-[24px] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs">
+        <button className="flex items-center gap-3 px-6 py-4 sm:px-10 sm:py-5 bg-primary text-white rounded-2xl sm:rounded-[24px] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs">
           <Plus size={20} />
           Add Item
         </button>
       </header>
 
       {/* Progress & Stats */}
-      <section className="glass-card p-10 rounded-[48px] border-foreground/5 shadow-2xl relative overflow-hidden">
+      <section className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-foreground/5 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px]" />
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
           <div className="space-y-4 text-center md:text-left">
-            <h2 className="text-3xl font-black uppercase italic tracking-tight">Readiness Status</h2>
+            <h2 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight">Readiness Status</h2>
             <p className="text-muted-foreground font-medium italic max-w-sm">You are {progress}% ready for your departure. Check your electronics one last time.</p>
             <div className="flex gap-4 pt-2">
               <div className="px-6 py-2 glass rounded-full text-[10px] font-black uppercase tracking-widest text-primary border border-primary/20">
@@ -79,11 +79,11 @@ export default function PackingListPage() {
               </div>
             </div>
           </div>
-          <div className="relative w-48 h-48 flex items-center justify-center">
+          <div className="relative w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
              <div className="absolute inset-0 rounded-full border-[12px] border-foreground/5" />
              <div className="absolute inset-0 rounded-full border-[12px] border-primary border-t-transparent border-l-transparent rotate-[-45deg] transition-all duration-1000" style={{ transform: `rotate(${(progress * 3.6) - 90}deg)` }} />
              <div className="text-center">
-                <span className="text-5xl font-black italic">{progress}%</span>
+                <span className="text-4xl sm:text-5xl font-black italic">{progress}%</span>
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Ready</p>
              </div>
           </div>

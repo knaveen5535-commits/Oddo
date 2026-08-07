@@ -41,8 +41,8 @@ export default function NotesPage() {
   ];
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <header className="flex justify-between items-center mb-10">
+    <div className="px-4 py-8 sm:p-8 max-w-6xl mx-auto">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
         <div>
           <h1 className="text-3xl font-bold mb-2">Trip Notes</h1>
           <p className="text-muted-foreground">Keep all your important information in one place.</p>

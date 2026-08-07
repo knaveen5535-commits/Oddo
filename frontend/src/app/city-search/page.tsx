@@ -151,9 +151,9 @@ export default function CitySearchPage() {
     : searchResults.filter(d => d.category === activeCategory);
 
   return (
-    <div className="p-10 w-full space-y-12 pb-32 bg-background text-foreground transition-colors duration-300">
+    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-12 pb-32 bg-background text-foreground transition-colors duration-300">
       {/* Hero Section */}
-      <section className="relative h-[450px] w-full rounded-[48px] overflow-hidden group shadow-2xl">
+      <section className="relative h-[340px] sm:h-[450px] w-full rounded-3xl sm:rounded-[48px] overflow-hidden group shadow-2xl">
         <img 
           src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2000&auto=format&fit=crop" 
           className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
@@ -165,31 +165,32 @@ export default function CitySearchPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6 max-w-3xl"
           >
-            <h1 className="text-6xl font-black text-foreground tracking-tight leading-[1.1]">
+            <h1 className="text-3xl sm:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
               Explore the <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.5)]">Infinite</span> Beauty of the World
             </h1>
-            <p className="text-foreground/70 text-xl font-medium">
+            <p className="text-foreground/70 text-base sm:text-xl font-medium">
               Join thousands of explorers discovering hidden gems every day.
             </p>
             
-            <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto mt-10 group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-rose-500/50 rounded-[24px] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
-              <div className="relative flex items-center bg-foreground/10 backdrop-blur-3xl border border-foreground/20 rounded-[24px] p-2 pr-4 shadow-2xl">
-                <div className="p-4">
-                  {isSearching ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/60 w-6 h-6" />}
+            <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto mt-8 sm:mt-10 group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-rose-500/50 rounded-2xl sm:rounded-[24px] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
+              <div className="relative flex items-center bg-foreground/10 backdrop-blur-3xl border border-foreground/20 rounded-2xl sm:rounded-[24px] p-1.5 sm:p-2 sm:pr-4 shadow-2xl">
+                <div className="p-3 sm:p-4 shrink-0">
+                  {isSearching ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/60 w-5 h-5 sm:w-6 sm:h-6" />}
                 </div>
                 <input 
                   type="text" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Enter a city to find attractions..."
-                  className="w-full bg-transparent border-none text-foreground text-lg placeholder:text-foreground/40 focus:outline-none focus:ring-0"
+                  className="w-full bg-transparent border-none text-foreground text-sm sm:text-lg placeholder:text-foreground/40 focus:outline-none focus:ring-0"
                 />
                 <button 
                   type="submit"
-                  className="bg-primary hover:bg-primary/90 text-white font-black px-8 py-3 rounded-2xl transition-all shadow-lg shadow-primary/30 active:scale-95"
+                  className="bg-primary hover:bg-primary/90 text-white font-black px-4 sm:px-8 py-3 rounded-xl sm:rounded-2xl transition-all shadow-lg shadow-primary/30 active:scale-95"
                 >
-                  Search
+                  <span className="sm:hidden"><Search size={18} /></span>
+                  <span className="hidden sm:inline">Search</span>
                 </button>
               </div>
             </form>
@@ -219,10 +220,10 @@ export default function CitySearchPage() {
       <section className="space-y-8">
         <div className="flex justify-between items-end">
           <div>
-            <h2 className="text-3xl font-black tracking-tight uppercase italic text-foreground">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase italic text-foreground">
               {searchQuery && searchResults.length > 0 ? `Discovering ${searchQuery}` : "Global Intelligence Grid"}
             </h2>
-            <p className="text-muted-foreground text-lg italic">Explore {searchResults.length}+ world-class destinations mapped in real-time.</p>
+            <p className="text-muted-foreground text-sm sm:text-lg italic">Explore {searchResults.length}+ world-class destinations mapped in real-time.</p>
           </div>
           <div className="flex gap-2">
              {searchQuery && (
@@ -318,29 +319,29 @@ export default function CitySearchPage() {
 
       <AnimatePresence>
         {selectedPlace && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12">
+          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-12">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedPlace(null)} className="absolute inset-0 bg-black/90 backdrop-blur-3xl" />
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-5xl bg-card rounded-[48px] overflow-hidden shadow-2xl border border-foreground/10 flex flex-col md:flex-row h-full max-h-[800px]">
-              <button onClick={() => setSelectedPlace(null)} className="absolute top-8 right-8 z-20 p-4 bg-foreground/5 backdrop-blur-md rounded-full border border-foreground/10 text-foreground hover:bg-foreground/10 transition-all shadow-2xl"><X size={24} /></button>
-              <div className="w-full md:w-1/2 h-[300px] md:h-full relative overflow-hidden shrink-0">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-5xl bg-card rounded-t-[40px] sm:rounded-[48px] overflow-hidden shadow-2xl border border-foreground/10 flex flex-col md:flex-row h-[92vh] sm:h-full sm:max-h-[800px]">
+              <button onClick={() => setSelectedPlace(null)} className="absolute top-4 right-4 sm:top-8 sm:right-8 z-20 p-3 sm:p-4 bg-foreground/5 backdrop-blur-md rounded-full border border-foreground/10 text-foreground hover:bg-foreground/10 transition-all shadow-2xl"><X size={20} /></button>
+              <div className="w-full md:w-1/2 h-[220px] sm:h-[300px] md:h-full relative overflow-hidden shrink-0">
                 <img src={selectedPlace.image} alt={selectedPlace.name} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent hidden md:block" />
               </div>
-              <div className="p-10 md:p-16 flex-1 overflow-y-auto scrollbar-hide space-y-10 text-foreground">
+              <div className="p-6 sm:p-10 md:p-16 flex-1 overflow-y-auto scrollbar-hide space-y-8 sm:space-y-10 text-foreground">
                 <header className="space-y-4">
                   <div className="flex items-center gap-3">
                     <span className="px-4 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-black uppercase tracking-widest border border-primary/20">{selectedPlace.tag || "Verified"}</span>
                     <span className="text-foreground/40 text-xs font-black uppercase tracking-widest">{selectedPlace.category}</span>
                   </div>
-                  <h2 className="text-5xl font-black text-foreground tracking-tight">{selectedPlace.name}</h2>
-                  <div className="flex items-center gap-4 text-foreground/60 text-lg font-medium italic">
+                  <h2 className="text-3xl sm:text-5xl font-black text-foreground tracking-tight">{selectedPlace.name}</h2>
+                  <div className="flex flex-wrap items-center gap-4 text-foreground/60 text-sm sm:text-lg font-medium italic">
                     <span className="flex items-center gap-2"><MapPin size={20} className="text-primary" /> {selectedPlace.location}</span>
                     <span className="flex items-center gap-2 font-bold"><Star size={20} className="text-yellow-400 fill-yellow-400" /> {selectedPlace.rating}</span>
                   </div>
                 </header>
                 <div className="space-y-6">
                   <h3 className="text-xl font-bold text-foreground border-l-4 border-primary pl-4 uppercase tracking-widest">Overview</h3>
-                  <p className="text-muted-foreground text-lg leading-relaxed">{selectedPlace.desc}</p>
+                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">{selectedPlace.desc}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-4">
@@ -355,9 +356,9 @@ export default function CitySearchPage() {
                 <div className="pt-10 border-t border-foreground/10 flex flex-col sm:flex-row items-center justify-between gap-6">
                   <div>
                     <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Intelligence Pick</div>
-                    <div className="text-4xl font-black text-foreground italic">{selectedPlace.price}</div>
+                    <div className="text-3xl sm:text-4xl font-black text-foreground italic">{selectedPlace.price}</div>
                   </div>
-                  <button onClick={() => handlePlanTrip(selectedPlace)} disabled={isPlanning} className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black rounded-2xl shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95">
+                  <button onClick={() => handlePlanTrip(selectedPlace)} disabled={isPlanning} className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-primary text-white font-black rounded-2xl shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95">
                     {isPlanning ? <Loader2 className="animate-spin" /> : "Plan a Trip Here"}
                     {!isPlanning && <ArrowRight size={20} />}
                   </button>

@@ -32,22 +32,22 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="p-10 w-full space-y-10">
-      <header className="flex justify-between items-center">
+    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-10">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-1 tracking-tight">Admin Console</h1>
           <p className="text-muted-foreground text-sm font-medium">Monitoring platform health and growth.</p>
         </div>
-        <div className="flex gap-4">
-          <div className="relative group">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <div className="relative group flex-1 sm:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
               placeholder="Search data..."
-              className="bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-xs font-medium w-64"
+              className="w-full sm:w-64 bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-xs font-medium"
             />
           </div>
-          <button className="bg-primary px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">
+          <button className="bg-primary px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
             <Activity size={14} />
             Live View
           </button>
@@ -82,7 +82,7 @@ export default function AdminPage() {
       </div>
 
       {/* Main Analytics View - Screen 13 Alignment */}
-      <section className="glass-card p-10 rounded-[40px] border-white/5 h-[450px] flex flex-col relative overflow-hidden">
+      <section className="glass-card p-5 sm:p-10 rounded-[32px] sm:rounded-[40px] border-white/5 h-[450px] flex flex-col relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
         <div className="flex justify-between items-start mb-10 relative z-10">
           <div>

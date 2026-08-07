@@ -129,7 +129,7 @@ export default function CreateTripPage() {
   ];
 
   return (
-    <div className="p-10 w-full pb-32">
+    <div className="px-4 sm:px-10 w-full pb-32">
       <header className="mb-10">
         <h1 className="text-3xl font-bold mb-2 tracking-tight">Plan Your Next Trip</h1>
         <p className="text-muted-foreground">Fill in the details to start your journey.</p>
@@ -137,7 +137,7 @@ export default function CreateTripPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Trip Form */}
-        <section className={`lg:col-span-2 glass-card p-8 rounded-[32px] border-white/10 space-y-6 bg-white/[0.02] transition-all ${recommendations ? 'opacity-50 pointer-events-none scale-95' : 'opacity-100'}`}>
+        <section className={`lg:col-span-2 glass-card p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border-white/10 space-y-6 bg-white/[0.02] transition-all ${recommendations ? 'opacity-50 pointer-events-none scale-95' : 'opacity-100'}`}>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
@@ -262,7 +262,7 @@ export default function CreateTripPage() {
             className="mt-24 space-y-24"
           >
             {/* Immersive Destination Banner */}
-            <section className="relative h-[500px] w-full rounded-[48px] overflow-hidden shadow-2xl group">
+            <section className="relative h-[320px] sm:h-[500px] w-full rounded-[32px] sm:rounded-[48px] overflow-hidden shadow-2xl group">
                {cityImage ? (
                  <img src={cityImage} className="w-full h-full object-cover" alt="Destination" />
                ) : (
@@ -271,32 +271,32 @@ export default function CreateTripPage() {
                  </div>
                )}
                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-black/20 to-transparent" />
-               <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-8">
+               <div className="absolute bottom-6 left-4 right-4 sm:bottom-12 sm:left-12 sm:right-12 flex flex-col md:flex-row justify-between items-end gap-8">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                        <span className="px-4 py-1 bg-primary/20 backdrop-blur-md rounded-full text-xs font-black text-primary border border-primary/30 uppercase tracking-widest">
                           New Journey
                        </span>
                     </div>
-                    <h2 className="text-7xl font-black text-foreground tracking-tighter uppercase italic leading-none">
+                    <h2 className="text-4xl sm:text-7xl font-black text-foreground tracking-tighter uppercase italic leading-none">
                        {formData.location}
                     </h2>
-                    <p className="text-foreground/60 text-xl font-medium max-w-xl italic">
+                    <p className="text-foreground/60 text-base sm:text-xl font-medium max-w-xl italic">
                        "{suggestedPlan?.title || 'Personalized Itinerary'}"
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                     <button 
                       onClick={handleConfirmPlan}
-                      className="px-10 py-5 bg-primary text-white font-black rounded-2xl shadow-2xl shadow-primary/40 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95"
+                      className="px-6 sm:px-10 py-4 sm:py-5 bg-primary text-white font-black rounded-2xl shadow-2xl shadow-primary/40 flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95"
                     >
                       <Check size={24} />
                       OK, Create Trip
                     </button>
                     <button 
                       onClick={handleChooseAnother}
-                      className="px-10 py-5 bg-white/10 backdrop-blur-md text-foreground font-black rounded-2xl border border-white/20 flex items-center justify-center gap-3 transition-all hover:bg-white/20 active:scale-95 group"
+                      className="px-6 sm:px-10 py-4 sm:py-5 bg-white/10 backdrop-blur-md text-foreground font-black rounded-2xl border border-white/20 flex items-center justify-center gap-3 transition-all hover:bg-white/20 active:scale-95 group"
                     >
                       <RefreshCw size={24} className="group-hover:rotate-180 transition-transform duration-700" />
                       Another Plan

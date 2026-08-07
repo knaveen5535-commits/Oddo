@@ -86,7 +86,7 @@ export default function Dashboard() {
     return result;
   }, [searchQuery, sortBy, trips]);
 
-  const groupedTrips = useMemo(() => {
+  const groupedTrips: Record<string, any[]> = useMemo(() => {
     if (groupBy === "none") return { "All Trips": filteredTrips };
 
     return filteredTrips.reduce((acc, trip) => {
@@ -98,9 +98,9 @@ export default function Dashboard() {
   }, [filteredTrips, groupBy]);
 
   return (
-    <div className="p-10 w-full space-y-12 bg-background min-h-screen text-foreground">
+    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-12 bg-background min-h-screen text-foreground">
       {/* Hero Banner Section */}
-      <section className="relative h-[400px] w-full rounded-[40px] overflow-hidden shadow-2xl group border border-white/5">
+      <section className="relative h-[320px] sm:h-[400px] w-full rounded-3xl sm:rounded-[40px] overflow-hidden shadow-2xl group border border-white/5">
         <AnimatePresence mode="wait">
           <motion.img 
             key={currentImageIndex}
@@ -120,14 +120,14 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <span className="px-6 py-2 bg-primary/20 backdrop-blur-md rounded-full text-sm font-bold text-primary border border-primary/30 uppercase tracking-[0.2em] inline-block">
+            <span className="px-5 sm:px-6 py-2 bg-primary/20 backdrop-blur-md rounded-full text-xs sm:text-sm font-bold text-primary border border-primary/30 uppercase tracking-[0.2em] inline-block">
               Welcome back, {user?.name || "Explorer"}
             </span>
-            <h2 className="text-6xl md:text-7xl font-black text-foreground tracking-tighter uppercase italic leading-none">
+            <h2 className="text-4xl sm:text-6xl md:text-7xl font-black text-foreground tracking-tighter uppercase italic leading-none">
               Your World, <br />
               <span className="text-primary">Beautifully Planned</span>
             </h2>
-            <p className="text-foreground/70 text-lg font-medium max-w-xl mx-auto">
+            <p className="text-foreground/70 text-sm sm:text-lg font-medium max-w-xl mx-auto">
               Discover, plan, and manage your world travels with ease and elegance.
             </p>
           </motion.div>
@@ -144,12 +144,13 @@ export default function Dashboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search your trips by name or location..."
-              className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4.5 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium placeholder:text-foreground/20"
+              className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4 pl-14 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm sm:text-lg font-medium placeholder:text-foreground/20"
             />
           </div>
-          <button className="bg-primary px-8 py-4.5 rounded-[20px] text-white font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center gap-2">
-            <Search size={20} />
-            Search
+          <button className="bg-primary px-5 sm:px-8 py-4 rounded-[20px] text-white font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center gap-2">
+            <Search size={20} className="hidden sm:block" />
+            <span className="hidden sm:inline">Search</span>
+            <span className="sm:hidden"><Search size={18} /></span>
           </button>
         </div>
         <div className="flex gap-3 w-full lg:w-auto">
@@ -266,10 +267,12 @@ export default function Dashboard() {
         <motion.button 
           whileHover={{ scale: 1.05, y: -5 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-10 right-10 bg-primary text-white px-10 py-5 rounded-[24px] font-black text-lg shadow-[0_20px_50px_rgba(244,63,94,0.4)] flex items-center gap-3 z-50 border border-primary/20 backdrop-blur-md"
+          className="fixed bottom-6 right-4 sm:bottom-10 sm:right-10 bg-primary text-white px-6 py-4 sm:px-10 sm:py-5 rounded-2xl sm:rounded-[24px] font-black text-sm sm:text-lg shadow-[0_20px_50px_rgba(244,63,94,0.4)] flex items-center gap-3 z-50 border border-primary/20 backdrop-blur-md"
         >
-          <Plus size={28} />
-          Plan a trip
+          <Plus size={24} className="sm:hidden" />
+          <Plus size={28} className="hidden sm:block" />
+          <span className="sm:hidden">Plan</span>
+          <span className="hidden sm:inline">Plan a trip</span>
         </motion.button>
       </Link>
     </div>

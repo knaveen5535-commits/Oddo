@@ -108,34 +108,35 @@ export default function ActivitySearchPage() {
   ];
 
   return (
-    <div className="p-10 w-full pb-32">
+    <div className="px-4 sm:px-10 w-full pb-32">
       <header className="mb-12">
         <div className="flex items-center gap-3 mb-2">
            <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/30">Live Experiences</span>
         </div>
-        <h1 className="text-5xl font-black tracking-tighter uppercase italic">Discover Activities</h1>
-        <p className="text-foreground/40 text-lg font-medium">Authentic experiences fetched in real-time from across the globe.</p>
+        <h1 className="text-3xl sm:text-5xl font-black tracking-tighter uppercase italic">Discover Activities</h1>
+        <p className="text-foreground/40 text-sm sm:text-lg font-medium">Authentic experiences fetched in real-time from across the globe.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-16">
         <form onSubmit={handleSearch} className="lg:col-span-3 relative group">
           <div className="absolute -inset-1 bg-primary/20 rounded-3xl blur opacity-20 group-focus-within:opacity-100 transition-opacity" />
-          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-3xl p-2 pr-6 shadow-2xl">
-            <div className="p-4">
-              {isSearching ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/40 w-6 h-6" />}
+          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-3xl p-1.5 sm:p-2 sm:pr-6 shadow-2xl">
+            <div className="p-3 sm:p-4 shrink-0">
+              {isSearching ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/40 w-5 h-5 sm:w-6 sm:h-6" />}
             </div>
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search activities (e.g. Scuba diving in Bali, Rooftop bars in Tokyo)..."
-              className="w-full bg-transparent border-none text-foreground text-xl placeholder:text-foreground/20 focus:outline-none focus:ring-0"
+              className="w-full bg-transparent border-none text-foreground text-base sm:text-xl placeholder:text-foreground/20 focus:outline-none focus:ring-0"
             />
             <button 
               type="submit"
-              className="bg-primary hover:bg-primary/90 text-white font-black px-10 py-4 rounded-2xl transition-all shadow-xl shadow-primary/30 active:scale-95"
+              className="bg-primary hover:bg-primary/90 text-white font-black px-4 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-xl shadow-primary/30 active:scale-95"
             >
-              Fetch Activities
+              <span className="sm:hidden"><Search size={18} /></span>
+              <span className="hidden sm:inline">Fetch Activities</span>
             </button>
           </div>
         </form>
@@ -179,23 +180,23 @@ export default function ActivitySearchPage() {
                    {activity.rating} ⭐
                 </div>
               </div>
-              <div className="p-10 flex-1 flex flex-col justify-between">
+              <div className="p-6 sm:p-10 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.2em]">
                       <TrendingUp size={12} /> Live Availability
                     </div>
-                    <h3 className="text-3xl font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{activity.title}</h3>
-                    <div className="flex items-center gap-6 text-xs font-bold text-foreground/40 uppercase tracking-widest">
+                    <h3 className="text-2xl sm:text-3xl font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{activity.title}</h3>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-bold text-foreground/40 uppercase tracking-widest">
                       <span className="flex items-center gap-2"><MapPin size={16} className="text-primary" /> {activity.location}</span>
                       <span className="flex items-center gap-2"><Users size={16} className="text-primary" /> {activity.reviews} Reviews</span>
                     </div>
                   </div>
-                  <div className="text-3xl font-black text-foreground">{activity.price}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-foreground">{activity.price}</div>
                 </div>
                 
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
-                  <div className="flex items-center gap-4 text-[10px] font-black text-foreground/30 uppercase tracking-widest">
+                <div className="flex flex-wrap items-center justify-between gap-4 mt-8 pt-6 border-t border-white/5">
+                  <div className="flex flex-wrap items-center gap-4 text-[10px] font-black text-foreground/30 uppercase tracking-widest">
                     <span className="flex items-center gap-2 px-4 py-2 glass rounded-full border-white/5"><Clock size={14} className="text-primary" /> {activity.duration}</span>
                     <span className="flex items-center gap-2 px-4 py-2 glass rounded-full border-white/5"><Camera size={14} className="text-primary" /> High-Res Views</span>
                   </div>
@@ -219,7 +220,7 @@ export default function ActivitySearchPage() {
       {/* Activity Modal */}
       <AnimatePresence>
         {selectedActivity && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12">
+          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-12">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -231,25 +232,25 @@ export default function ActivitySearchPage() {
               initial={{ opacity: 0, scale: 0.9, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 50 }}
-              className="relative w-full max-w-5xl bg-card rounded-[56px] overflow-hidden shadow-2xl border border-foreground/10 flex flex-col md:flex-row h-full max-h-[700px]"
+              className="relative w-full max-w-5xl bg-card rounded-t-[40px] sm:rounded-[56px] overflow-hidden shadow-2xl border border-foreground/10 flex flex-col md:flex-row h-[92vh] sm:h-full sm:max-h-[700px]"
             >
               <button 
                 onClick={() => setSelectedActivity(null)}
-                className="absolute top-8 right-8 z-20 p-4 bg-foreground/5 backdrop-blur-md rounded-full border border-foreground/10 text-foreground hover:bg-foreground/10 transition-all shadow-2xl"
+                className="absolute top-4 right-4 sm:top-8 sm:right-8 z-20 p-3 sm:p-4 bg-foreground/5 backdrop-blur-md rounded-full border border-foreground/10 text-foreground hover:bg-foreground/10 transition-all shadow-2xl"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
-              <div className="w-full md:w-1/2 h-[300px] md:h-full relative overflow-hidden shrink-0">
+              <div className="w-full md:w-1/2 h-[200px] sm:h-[300px] md:h-full relative overflow-hidden shrink-0">
                 <img src={selectedActivity.image} alt={selectedActivity.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent hidden md:block" />
               </div>
 
-              <div className="p-12 md:p-16 flex-1 overflow-y-auto scrollbar-hide space-y-10">
+              <div className="p-6 sm:p-12 md:p-16 flex-1 overflow-y-auto scrollbar-hide space-y-10">
                 <div>
                   <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4">Confirmed Experience</div>
-                  <h2 className="text-4xl font-black text-foreground mb-4 tracking-tight leading-none">{selectedActivity.title}</h2>
-                  <div className="flex items-center gap-6 text-foreground/40 text-sm font-bold uppercase tracking-widest">
+                  <h2 className="text-2xl sm:text-4xl font-black text-foreground mb-4 tracking-tight leading-none">{selectedActivity.title}</h2>
+                  <div className="flex flex-wrap items-center gap-6 text-foreground/40 text-sm font-bold uppercase tracking-widest">
                     <span className="flex items-center gap-2"><MapPin size={18} className="text-primary" /> {selectedActivity.location}</span>
                     <span className="flex items-center gap-2"><Star size={18} className="text-yellow-400 fill-yellow-400" /> {selectedActivity.rating} / 5</span>
                   </div>
@@ -257,12 +258,12 @@ export default function ActivitySearchPage() {
 
                 <div className="space-y-6">
                   <h3 className="text-lg font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-4">Description</h3>
-                  <p className="text-foreground/60 text-lg leading-relaxed font-medium">{selectedActivity.desc}</p>
+                  <p className="text-foreground/60 text-base sm:text-lg leading-relaxed font-medium">{selectedActivity.desc}</p>
                 </div>
 
                 <div className="space-y-6">
                   <h3 className="text-lg font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-4">Highlights</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {selectedActivity.includes.map((inc: string, i: number) => (
                       <div key={i} className="flex items-center gap-3 p-4 glass rounded-2xl border-foreground/10 text-sm text-foreground/80 font-bold capitalize">
                          <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
@@ -272,12 +273,12 @@ export default function ActivitySearchPage() {
                   </div>
                 </div>
 
-                <div className="pt-10 border-t border-foreground/10 flex items-center justify-between">
+                <div className="pt-10 border-t border-foreground/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                   <div>
                     <div className="text-3xl font-black text-foreground">{selectedActivity.price}</div>
                     <div className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-1">Per Person • Instant Confirmation</div>
                   </div>
-                  <button className="px-12 py-5 bg-primary text-white font-black rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center gap-3">
+                  <button className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-primary text-white font-black rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center justify-center gap-3">
                     Reserve Now <ArrowRight size={20} />
                   </button>
                 </div>

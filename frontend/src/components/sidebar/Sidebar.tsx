@@ -1,20 +1,15 @@
 "use client";
 
 import React from "react";
-import { 
+import {
   Plane, 
-  MapPin, 
-  Calendar, 
-  Wallet, 
-  Briefcase, 
-  Search, 
   User, 
-  LogOut,
-  LayoutDashboard
+  LogOut
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "../ThemeToggle";
+import { menuItems } from "./menuItems";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -24,14 +19,6 @@ export default function Sidebar() {
     // In a real app, you would clear cookies/localstorage here
     router.push("/login");
   };
-
-  const menuItems = [
-    { icon: <LayoutDashboard size={20} />, label: "Dashboard", href: "/" },
-    { icon: <Calendar size={20} />, label: "My Trips", href: "/trips" },
-    { icon: <Search size={20} />, label: "Explore", href: "/city-search" },
-    { icon: <Wallet size={20} />, label: "Budget", href: "/budget" },
-    { icon: <Briefcase size={20} />, label: "Packing List", href: "/packing-list" },
-  ];
 
   return (
     <aside className="w-64 bg-sidebar border-r border-border flex flex-col p-6 hidden lg:flex h-screen sticky top-0 transition-colors duration-300">

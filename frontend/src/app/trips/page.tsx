@@ -69,14 +69,14 @@ export default function TripsPage() {
   };
 
   return (
-    <div className="p-10 w-full space-y-10 bg-background text-foreground min-h-screen transition-colors duration-300">
+    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-10 bg-background text-foreground min-h-screen transition-colors duration-300">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div>
-          <h1 className="text-5xl font-black tracking-tight mb-2 uppercase italic">Your Voyages</h1>
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2 uppercase italic">Your Voyages</h1>
           <p className="text-muted-foreground font-medium italic">Manage and organize your curated travel adventures.</p>
         </div>
         <Link href="/city-search">
-          <button className="flex items-center gap-3 px-10 py-5 bg-primary text-white rounded-[24px] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs">
+          <button className="flex items-center gap-3 px-6 py-4 sm:px-10 sm:py-5 bg-primary text-white rounded-2xl sm:rounded-[24px] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs">
             <Plus size={20} />
             Launch New Trip
           </button>
@@ -111,7 +111,7 @@ export default function TripsPage() {
           <input 
             type="text" 
             placeholder={`Search your ${activeTab.toLowerCase()} trips...`}
-            className="w-full bg-foreground/5 border border-foreground/10 rounded-[24px] py-5 pl-16 pr-6 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-black text-xs uppercase tracking-widest placeholder:text-muted-foreground/40"
+            className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl sm:rounded-[24px] py-4 sm:py-5 pl-14 sm:pl-16 pr-6 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-black text-xs uppercase tracking-widest placeholder:text-muted-foreground/40"
           />
         </div>
       </div>
@@ -155,9 +155,9 @@ export default function TripsPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="p-10 flex-1 flex flex-col justify-between">
+                  <div className="p-6 sm:p-10 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-3xl font-black mb-2 italic uppercase tracking-tight text-foreground group-hover:text-primary transition-colors">{trip.title}</h3>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-2 italic uppercase tracking-tight text-foreground group-hover:text-primary transition-colors">{trip.title}</h3>
                       <div className="flex items-center gap-3 text-muted-foreground text-xs font-black uppercase tracking-widest mb-6">
                         <MapPin size={16} className="text-primary" />
                         {trip.location}

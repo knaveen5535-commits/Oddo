@@ -54,43 +54,44 @@ export default function SmartSearchPage() {
   ];
 
   return (
-    <div className="min-h-screen p-10 space-y-12 pb-32 max-w-7xl mx-auto">
+    <div className="min-h-screen px-4 sm:px-10 space-y-8 sm:space-y-12 pb-32 max-w-7xl mx-auto">
       {/* Hero / Header */}
-      <header className="text-center space-y-6 pt-10">
+      <header className="text-center space-y-6 pt-4 sm:pt-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="inline-flex items-center gap-2 px-6 py-2 bg-primary/10 rounded-full border border-primary/20"
+          className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 bg-primary/10 rounded-full border border-primary/20"
         >
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-xs font-black uppercase tracking-widest text-primary">Smart Destination AI</span>
         </motion.div>
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase italic text-foreground leading-none">
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase italic text-foreground leading-none">
           Explore <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Deeply</span>
         </h1>
-        <p className="text-foreground/40 text-xl font-medium max-w-2xl mx-auto italic">
+        <p className="text-foreground/40 text-base sm:text-xl font-medium max-w-2xl mx-auto italic">
           Search for any city to instantly fetch curated attractions, world-class restaurants, and premium stays from Google.
         </p>
 
-        <form onSubmit={handleSearch} className="max-w-2xl mx-auto relative group mt-12">
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-rose-500/50 rounded-[32px] blur opacity-20 group-focus-within:opacity-100 transition-opacity" />
-          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-[32px] p-2 pr-4 shadow-2xl backdrop-blur-xl">
-            <div className="p-4">
-              {loading ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/40 w-6 h-6" />}
+        <form onSubmit={handleSearch} className="max-w-2xl mx-auto relative group mt-8 sm:mt-12">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-rose-500/50 rounded-[24px] sm:rounded-[32px] blur opacity-20 group-focus-within:opacity-100 transition-opacity" />
+          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-[24px] sm:rounded-[32px] p-1.5 sm:p-2 sm:pr-4 shadow-2xl backdrop-blur-xl">
+            <div className="p-3 sm:p-4 shrink-0">
+              {loading ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/40 w-5 h-5 sm:w-6 sm:h-6" />}
             </div>
             <input 
               type="text" 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Enter destination (e.g. Paris, Goa, Tokyo)..."
-              className="w-full bg-transparent border-none text-foreground text-xl placeholder:text-foreground/20 focus:outline-none focus:ring-0"
+              className="w-full bg-transparent border-none text-foreground text-base sm:text-xl placeholder:text-foreground/20 focus:outline-none focus:ring-0"
             />
             <button 
               type="submit"
               disabled={loading}
-              className="bg-primary hover:bg-primary/90 text-white font-black px-10 py-4 rounded-[24px] transition-all shadow-xl shadow-primary/30 active:scale-95 disabled:opacity-50"
+              className="bg-primary hover:bg-primary/90 text-white font-black px-4 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-[24px] transition-all shadow-xl shadow-primary/30 active:scale-95 disabled:opacity-50"
             >
-              Explore AI
+              <span className="sm:hidden"><Search size={18} /></span>
+              <span className="hidden sm:inline">Explore AI</span>
             </button>
           </div>
         </form>
@@ -117,12 +118,12 @@ export default function SmartSearchPage() {
             className="space-y-10"
           >
             {/* Tabs */}
-            <div className="flex justify-center gap-2 p-1.5 glass rounded-[28px] border-white/10 w-fit mx-auto shadow-2xl">
+            <div className="flex justify-center gap-2 p-1.5 glass rounded-[28px] border-white/10 w-fit mx-auto shadow-2xl max-w-full overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-3 px-8 py-4 rounded-[22px] text-xs font-black uppercase tracking-widest transition-all ${
+                  className={`flex items-center gap-3 px-5 sm:px-8 py-3 sm:py-4 rounded-[22px] text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ${
                     activeTab === tab.id 
                       ? "bg-primary text-white shadow-xl shadow-primary/30" 
                       : "text-foreground/40 hover:text-foreground hover:bg-white/5"

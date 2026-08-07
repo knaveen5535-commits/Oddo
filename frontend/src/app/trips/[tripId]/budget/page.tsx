@@ -68,18 +68,18 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
   ];
 
   return (
-    <div className="p-12 w-full max-w-7xl mx-auto space-y-12 bg-background min-h-screen text-foreground">
+    <div className="px-4 sm:p-12 w-full max-w-7xl mx-auto space-y-8 sm:space-y-12 bg-background min-h-screen text-foreground">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-4">
           <Link href={`/trips/${tripId}/itinerary`} className="flex items-center gap-2 text-sm font-black text-foreground/40 hover:text-primary transition-colors uppercase tracking-widest italic group">
             <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Itinerary
           </Link>
           <div>
-            <h1 className="text-5xl font-black mb-2 text-foreground italic uppercase tracking-tighter leading-none">Financial Manifest</h1>
+            <h1 className="text-3xl sm:text-5xl font-black mb-2 text-foreground italic uppercase tracking-tighter leading-none">Financial Manifest</h1>
             <p className="text-foreground/40 font-bold italic">Logistical cost breakdown for <span className="text-primary">{trip?.title || "your voyage"}</span>.</p>
           </div>
         </div>
-        <button className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs italic">
+        <button className="flex items-center gap-3 px-5 sm:px-8 py-4 bg-primary text-white rounded-2xl shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs italic">
           <Plus size={20} />
           Append Expense
         </button>
@@ -90,13 +90,13 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-10 rounded-[40px] border-white/5 relative overflow-hidden group bg-card shadow-2xl"
+          className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[40px] border-white/5 relative overflow-hidden group bg-card shadow-2xl"
         >
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
             <Wallet size={120} />
           </div>
           <h4 className="text-foreground/30 text-xs font-black uppercase tracking-[0.3em] mb-4">Total Estimated Cost</h4>
-          <div className="text-5xl font-black text-foreground italic tracking-tighter mb-8">
+          <div className="text-3xl sm:text-5xl font-black text-foreground italic tracking-tighter mb-8">
             ₹{budget?.totalCost?.toLocaleString() || "0.00"}
           </div>
           <div className="flex items-center gap-3 text-primary text-sm font-black uppercase tracking-widest italic">
@@ -105,7 +105,7 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
         </motion.div>
 
         {/* Expenses Summary */}
-        <div className="md:col-span-2 glass-card p-10 rounded-[40px] border-white/5 bg-card shadow-2xl">
+        <div className="md:col-span-2 glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[40px] border-white/5 bg-card shadow-2xl">
           <div className="flex justify-between items-center mb-10">
             <h3 className="font-black text-2xl text-foreground italic uppercase tracking-tight">Category Breakdown</h3>
             <div className="flex gap-2">

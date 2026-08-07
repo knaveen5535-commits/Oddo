@@ -111,7 +111,7 @@ export default function ItineraryPage() {
   return (
     <div className="min-h-screen pb-32 bg-background text-foreground transition-colors duration-300">
       {/* Cinematic Banner */}
-      <div className="relative h-[550px] w-full overflow-hidden">
+      <div className="relative h-[420px] sm:h-[550px] w-full overflow-hidden">
         <motion.img 
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -124,33 +124,33 @@ export default function ItineraryPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         <div className="absolute inset-0 bg-black/20" />
         
-        <div className="absolute bottom-0 left-0 p-12 w-full max-w-7xl mx-auto right-0">
+        <div className="absolute bottom-0 left-0 p-4 sm:p-12 w-full max-w-7xl mx-auto right-0">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col md:flex-row justify-between items-end gap-10"
           >
             <div className="space-y-6">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                  <div className="px-4 py-1.5 bg-primary/20 backdrop-blur-xl rounded-full border border-primary/30 flex items-center gap-2">
                     <Wind size={12} className="text-primary animate-pulse" />
-                    <span className="text-base font-black text-primary uppercase tracking-[0.2em]">Active Flight Plan</span>
+                    <span className="text-sm sm:text-base font-black text-primary uppercase tracking-[0.2em]">Active Flight Plan</span>
                  </div>
-                 <div className="px-4 py-1.5 glass rounded-full border border-foreground/10 text-base font-black text-foreground/60 uppercase tracking-[0.2em]">
+                 <div className="px-4 py-1.5 glass rounded-full border border-foreground/10 text-sm sm:text-base font-black text-foreground/60 uppercase tracking-[0.2em]">
                     {trip.status}
                  </div>
               </div>
               
-              <h1 className="text-6xl md:text-8xl font-black text-foreground tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] italic uppercase leading-[0.9]">
+              <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-foreground tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] italic uppercase leading-[0.9]">
                 {trip.title}
               </h1>
               
-              <div className="flex flex-wrap gap-4 pt-4">
-                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-foreground font-black text-sm uppercase tracking-widest">
+              <div className="flex flex-wrap gap-3 sm:gap-4 pt-4">
+                <span className="flex items-center gap-3 glass px-4 sm:px-8 py-3 sm:py-4 rounded-2xl sm:rounded-[24px] border-foreground/10 shadow-2xl text-foreground font-black text-xs sm:text-sm uppercase tracking-widest">
                   <MapPin size={18} className="text-primary" />
                   {trip.location}
                 </span>
-                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-foreground font-black text-sm uppercase tracking-widest">
+                <span className="flex items-center gap-3 glass px-4 sm:px-8 py-3 sm:py-4 rounded-2xl sm:rounded-[24px] border-foreground/10 shadow-2xl text-foreground font-black text-xs sm:text-sm uppercase tracking-widest">
                   <Calendar size={18} className="text-primary" />
                   7 Days Voyage
                 </span>
@@ -160,7 +160,7 @@ export default function ItineraryPage() {
             <div className="flex gap-2 p-2 glass rounded-[32px] border-foreground/10 shadow-2xl backdrop-blur-3xl">
                <button 
                 onClick={() => setMode("view")}
-                className={`px-10 py-5 rounded-[24px] text-sm font-black transition-all flex items-center gap-3 ${
+                className={`px-5 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[24px] text-xs sm:text-sm font-black transition-all flex items-center gap-3 ${
                   mode === "view" ? "bg-primary text-white shadow-xl shadow-primary/30 scale-105" : "text-foreground/40 hover:text-foreground"
                 }`}
                >
@@ -168,7 +168,7 @@ export default function ItineraryPage() {
                </button>
                <button 
                 onClick={() => setMode("build")}
-                className={`px-10 py-5 rounded-[24px] text-sm font-black transition-all flex items-center gap-3 ${
+                className={`px-5 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[24px] text-xs sm:text-sm font-black transition-all flex items-center gap-3 ${
                   mode === "build" ? "bg-primary text-white shadow-xl shadow-primary/30 scale-105" : "text-foreground/40 hover:text-foreground"
                 }`}
                >
@@ -179,7 +179,7 @@ export default function ItineraryPage() {
         </div>
       </div>
 
-      <div className="p-12 w-full max-w-7xl mx-auto -mt-10 relative z-10">
+      <div className="px-4 sm:p-12 w-full max-w-7xl mx-auto -mt-6 sm:-mt-10 relative z-10">
         <AnimatePresence mode="wait">
           {mode === "view" ? (
             <motion.div 
@@ -190,7 +190,7 @@ export default function ItineraryPage() {
               className="grid grid-cols-1 lg:grid-cols-12 gap-12"
             >
               <div className="lg:col-span-4 space-y-8">
-                <section className="glass-card p-10 rounded-[48px] border-foreground/5 shadow-2xl">
+                <section className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-foreground/5 shadow-2xl">
                   <h2 className="text-2xl font-black mb-8 flex items-center gap-4 italic uppercase tracking-tight text-foreground">
                     <div className="p-3 bg-primary/10 rounded-2xl text-primary border border-primary/20 shadow-inner">
                       <Info size={24} />
@@ -239,20 +239,20 @@ export default function ItineraryPage() {
               </div>
 
               <div className="lg:col-span-8 space-y-10">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 glass p-8 rounded-[40px] border border-foreground/10">
-                  <div className="flex items-center gap-6">
-                    <h2 className="text-4xl font-black tracking-tighter uppercase italic leading-none text-foreground">The Voyage</h2>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 glass p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-foreground/10">
+                  <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                    <h2 className="text-3xl sm:text-4xl font-black tracking-tighter uppercase italic leading-none text-foreground">The Voyage</h2>
                     <div className="flex gap-2 p-1 glass rounded-2xl border border-foreground/10">
                        <button onClick={() => setViewMode("list")} className={`p-3 rounded-xl transition-all ${viewMode === "list" ? "bg-primary text-white shadow-lg" : "text-foreground/40 hover:text-foreground"}`}><List size={18} /></button>
                        <button onClick={() => setViewMode("calendar")} className={`p-3 rounded-xl transition-all ${viewMode === "calendar" ? "bg-primary text-white shadow-lg" : "text-foreground/40 hover:text-foreground"}`}><Calendar size={18} /></button>
                     </div>
                   </div>
-                  <div className="flex gap-2 p-1.5 glass rounded-[24px] border-foreground/10 overflow-x-auto scrollbar-hide max-w-full">
+                  <div className="flex gap-2 p-1.5 glass rounded-2xl sm:rounded-[24px] border-foreground/10 overflow-x-auto scrollbar-hide max-w-full">
                     {trip.days.map((_: any, idx: number) => (
                       <button 
                         key={idx}
                         onClick={() => setActiveDay(idx)}
-                        className={`px-8 py-3.5 rounded-[18px] text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                        className={`px-5 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-[18px] text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                           activeDay === idx 
                             ? "bg-primary text-white shadow-xl shadow-primary/30" 
                             : "text-foreground/40 hover:text-foreground"
@@ -273,27 +273,27 @@ export default function ItineraryPage() {
                     className="space-y-8 relative before:absolute before:left-[35px] before:top-10 before:bottom-10 before:w-[2px] before:bg-gradient-to-b before:from-primary/60 before:via-primary/10 before:to-transparent"
                   >
                     {trip.days[activeDay].map((activity: any, idx: number) => (
-                      <div key={idx} className="relative pl-20 group">
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-16 h-16 rounded-[24px] glass border border-foreground/10 flex items-center justify-center z-10 group-hover:border-primary group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 shadow-2xl bg-card">
+                      <div key={idx} className="relative pl-14 sm:pl-20 group">
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-[24px] glass border border-foreground/10 flex items-center justify-center z-10 group-hover:border-primary group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 shadow-2xl bg-card">
                           <div className="text-primary drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]">
                             {activity.icon}
                           </div>
                         </div>
-                        <div className="glass-card p-10 rounded-[48px] border-foreground/5 group-hover:border-primary/20 transition-all duration-500 flex flex-col sm:flex-row justify-between items-center gap-6 hover:bg-card shadow-2xl">
-                          <div className="flex gap-10 items-center w-full sm:w-auto">
-                            <div className="text-sm font-black text-primary uppercase tracking-[0.3em] w-24 text-center shrink-0 p-3 bg-primary/5 rounded-2xl border border-primary/10">
+                        <div className="glass-card p-5 sm:p-10 rounded-[28px] sm:rounded-[48px] border-foreground/5 group-hover:border-primary/20 transition-all duration-500 flex flex-col sm:flex-row justify-between items-center gap-6 hover:bg-card shadow-2xl">
+                          <div className="flex gap-4 sm:gap-10 items-center w-full sm:w-auto">
+                            <div className="text-xs sm:text-sm font-black text-primary uppercase tracking-[0.3em] w-20 sm:w-24 text-center shrink-0 p-2 sm:p-3 bg-primary/5 rounded-xl sm:rounded-2xl border border-primary/10">
                               {activity.time}
                             </div>
                             <div className="space-y-2">
-                              <h4 className="font-black text-2xl text-foreground group-hover:text-primary transition-colors tracking-tight italic uppercase">{activity.title}</h4>
-                              <div className="flex items-center gap-4 text-sm text-foreground/40 font-black uppercase tracking-widest">
+                              <h4 className="font-black text-lg sm:text-2xl text-foreground group-hover:text-primary transition-colors tracking-tight italic uppercase">{activity.title}</h4>
+                              <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-foreground/40 font-black uppercase tracking-widest">
                                 <span className="flex items-center gap-2"><MapPin size={14} className="text-primary" /> {activity.location}</span>
                                 <span className="px-3 py-1 glass rounded-lg text-foreground/60 border border-foreground/10">{activity.type}</span>
                               </div>
                             </div>
                           </div>
                           <div className="text-right w-full sm:w-auto pt-6 sm:pt-0 border-t sm:border-t-0 border-foreground/5">
-                             <div className="text-2xl font-black text-foreground italic">{activity.cost}</div>
+                             <div className="text-xl sm:text-2xl font-black text-foreground italic">{activity.cost}</div>
                              <button className="text-xs font-black text-primary hover:underline mt-1 uppercase tracking-widest">Details & Split</button>
                           </div>
                         </div>
@@ -311,16 +311,16 @@ export default function ItineraryPage() {
               exit={{ opacity: 0, scale: 0.98 }}
               className="space-y-12"
             >
-              <div className="flex flex-col md:flex-row justify-between items-end gap-6 glass p-10 rounded-[48px] border border-foreground/10 shadow-2xl">
+              <div className="flex flex-col md:flex-row justify-between items-end gap-6 glass p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border border-foreground/10 shadow-2xl">
                  <div>
-                    <h2 className="text-5xl font-black tracking-tighter uppercase italic leading-none mb-4 text-foreground">Itinerary Engine</h2>
-                    <p className="text-foreground/30 font-medium italic text-lg">Reorder stops and sequence your voyage with real-time intelligence.</p>
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter uppercase italic leading-none mb-4 text-foreground">Itinerary Engine</h2>
+                    <p className="text-foreground/30 font-medium italic text-sm sm:text-lg">Reorder stops and sequence your voyage with real-time intelligence.</p>
                  </div>
                  <button 
                   onClick={() => setStops([...stops, { id: `s${Date.now()}`, city: "New Destination", dates: "TBD", activities: 0 }])}
-                  className="px-12 py-6 bg-primary text-white font-black rounded-[32px] shadow-[0_20px_50px_rgba(244,63,94,0.3)] flex items-center gap-4 hover:scale-105 hover:rotate-2 active:scale-95 transition-all text-sm uppercase tracking-widest group"
+                  className="px-6 sm:px-12 py-4 sm:py-6 bg-primary text-white font-black rounded-[24px] sm:rounded-[32px] shadow-[0_20px_50px_rgba(244,63,94,0.3)] flex items-center gap-4 hover:scale-105 hover:rotate-2 active:scale-95 transition-all text-xs sm:text-sm uppercase tracking-widest group"
                  >
-                   <Plus size={24} className="group-hover:rotate-90 transition-transform" /> Add Landing Stop
+                    <Plus size={24} className="group-hover:rotate-90 transition-transform" /> Add Landing Stop
                  </button>
               </div>
 
@@ -331,30 +331,30 @@ export default function ItineraryPage() {
                          <Reorder.Item 
                           key={stop.id} 
                           value={stop}
-                          className="glass-card p-10 rounded-[48px] border-foreground/5 flex items-center justify-between group hover:border-primary/20 transition-all cursor-default shadow-2xl relative overflow-hidden"
+                          className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-foreground/5 flex items-center justify-between group hover:border-primary/20 transition-all cursor-default shadow-2xl relative overflow-hidden"
                          >
                             <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="flex items-center gap-10">
-                               <div className="cursor-grab active:cursor-grabbing p-4 glass rounded-2xl text-foreground/20 hover:text-primary transition-all border border-foreground/5">
+                            <div className="flex items-center gap-4 sm:gap-10 min-w-0">
+                               <div className="cursor-grab active:cursor-grabbing p-3 sm:p-4 glass rounded-2xl text-foreground/20 hover:text-primary transition-all border border-foreground/5 shrink-0">
                                   <GripVertical size={24} />
                                </div>
-                               <div>
+                               <div className="min-w-0">
                                   <div className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-2">Target Destination</div>
-                                  <h4 className="text-3xl font-black text-foreground italic uppercase tracking-tight">{stop.city}</h4>
-                                  <div className="flex items-center gap-6 mt-3 text-sm font-black text-foreground/30 uppercase tracking-[0.2em]">
+                                  <h4 className="text-xl sm:text-3xl font-black text-foreground italic uppercase tracking-tight truncate">{stop.city}</h4>
+                                  <div className="flex flex-wrap items-center gap-6 mt-3 text-sm font-black text-foreground/30 uppercase tracking-[0.2em]">
                                      <span className="flex items-center gap-2 px-3 py-1 glass rounded-lg"><Calendar size={14} className="text-primary" /> {stop.dates}</span>
                                      <span className="flex items-center gap-2 px-3 py-1 glass rounded-lg"><Check size={14} className="text-primary" /> {stop.activities} Checkpoints</span>
                                   </div>
                                </div>
                             </div>
-                            <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-all">
+                            <div className="flex gap-2 sm:gap-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shrink-0">
                                <button 
                                 onClick={() => setStops(stops.filter(s => s.id !== stop.id))}
-                                className="p-5 glass rounded-[24px] border-foreground/5 hover:bg-red-500/10 hover:border-red-500/20 transition-all group/del"
+                                className="p-3 sm:p-5 glass rounded-2xl sm:rounded-[24px] border-foreground/5 hover:bg-red-500/10 hover:border-red-500/20 transition-all group/del"
                                >
                                   <X size={20} className="text-foreground/20 group-hover/del:text-red-500 transition-colors" />
                                </button>
-                               <button className="p-5 glass rounded-[24px] border-foreground/5 hover:bg-primary/10 hover:border-primary/20 transition-all">
+                               <button className="p-3 sm:p-5 glass rounded-2xl sm:rounded-[24px] border-foreground/5 hover:bg-primary/10 hover:border-primary/20 transition-all">
                                   <ArrowRight size={20} className="text-foreground/20 group-hover:text-primary transition-colors" />
                                </button>
                             </div>
@@ -364,7 +364,7 @@ export default function ItineraryPage() {
 
                     <button 
                       onClick={() => setMode("view")}
-                      className="w-full py-10 border-2 border-dashed border-foreground/5 rounded-[56px] text-foreground/10 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all font-black text-2xl italic uppercase tracking-tighter flex items-center justify-center gap-6 group"
+                      className="w-full py-6 sm:py-10 border-2 border-dashed border-foreground/5 rounded-[40px] sm:rounded-[56px] text-foreground/10 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all font-black text-lg sm:text-2xl italic uppercase tracking-tighter flex items-center justify-center gap-6 group"
                     >
                        <Save size={32} className="group-hover:scale-125 group-hover:-rotate-12 transition-transform" />
                        Commit Flight Plan
@@ -372,7 +372,7 @@ export default function ItineraryPage() {
                  </div>
 
                  <div className="lg:col-span-4 space-y-8">
-                    <section className="glass-card p-10 rounded-[56px] border-foreground/5 shadow-2xl">
+                    <section className="glass-card p-6 sm:p-10 rounded-[40px] sm:rounded-[56px] border-foreground/5 shadow-2xl">
                        <h3 className="font-black text-lg mb-8 flex items-center gap-4 italic uppercase tracking-widest text-foreground">
                           <MapIcon className="text-primary" size={24} />
                           Intelligence Tools
@@ -399,7 +399,7 @@ export default function ItineraryPage() {
                        </div>
                     </section>
 
-                    <div className="glass-card p-10 rounded-[56px] border-primary/20 bg-gradient-to-br from-primary/10 to-transparent shadow-2xl relative overflow-hidden">
+                    <div className="glass-card p-6 sm:p-10 rounded-[40px] sm:rounded-[56px] border-primary/20 bg-gradient-to-br from-primary/10 to-transparent shadow-2xl relative overflow-hidden">
                         <div className="absolute -left-4 -top-4 opacity-5">
                            <Wind size={80} />
                         </div>

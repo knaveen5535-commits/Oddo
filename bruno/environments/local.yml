@@ -1,0 +1,12 @@
+info:
+  name: local
+  type: environment
+  description: Local development environment
+
+variables:
+  - name: baseUrl
+    value: http://localhost:5001
+  - name: token
+    value: ""
+  - name: tripId
+    value: ""

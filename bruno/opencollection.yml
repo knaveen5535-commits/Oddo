@@ -1,0 +1,31 @@
+info:
+  name: Oddo Travel Planner API
+  version: "1.0.0"
+  type: collection
+  description: >
+    Bruno collection for testing the Oddo backend (Express + Prisma).
+    Base server runs on http://localhost:5001.
+
+    Flow: Register/Login -> copy token (auto-stored after Login) -> use
+    protected Trips and Budget requests. Set the `tripId` variable to a
+    real trip id returned by "Create Trip" or "Get Trips".
+
+folders:
+  - name: Auth
+    description: Registration and authentication
+  - name: Trips
+    description: Trip creation and public utility endpoints
+  - name: Budget
+    description: Trip budget management
+
+environments:
+  - name: local
+    file: environments/local.yml
+
+variables:
+  - name: baseUrl
+    value: http://localhost:5001
+  - name: token
+    value: ""
+  - name: tripId
+    value: ""

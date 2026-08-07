@@ -53,8 +53,8 @@ export default function NotificationsPage() {
   ];
 
   return (
-    <div className="p-10 w-full space-y-10">
-      <header className="flex justify-between items-center">
+    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-10">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2">Notifications</h1>
           <p className="text-muted-foreground text-lg">Stay updated on your plans and latest travel deals.</p>
@@ -71,7 +71,7 @@ export default function NotificationsPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="glass-card p-6 rounded-3xl border-white/5 flex items-start gap-6 hover:bg-white/5 transition-all group"
+            className="glass-card p-5 sm:p-6 rounded-3xl border-white/5 flex items-start gap-4 sm:gap-6 hover:bg-white/5 transition-all group"
           >
             <div className={`p-4 rounded-2xl shrink-0 ${note.color}`}>
               {note.icon}

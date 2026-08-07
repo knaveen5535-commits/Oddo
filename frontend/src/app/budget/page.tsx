@@ -83,17 +83,17 @@ export default function GlobalBudgetPage() {
   }
 
   return (
-    <div className="p-12 w-full space-y-12 bg-background text-foreground min-h-screen pb-32">
+    <div className="px-4 sm:px-12 w-full space-y-8 sm:space-y-12 bg-background text-foreground min-h-screen pb-32">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-6xl font-black tracking-tighter uppercase italic mb-2 text-foreground">Finance <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Control</span></h1>
+          <h1 className="text-3xl sm:text-6xl font-black tracking-tighter uppercase italic mb-2 text-foreground">Finance <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Control</span></h1>
           <p className="text-foreground/40 font-bold italic">Dynamic budget intelligence for your global expeditions.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 w-full md:w-auto">
           <select 
             value={selectedTripId}
             onChange={(e) => setSelectedTripId(e.target.value)}
-            className="px-8 py-5 glass rounded-2xl border-white/10 bg-transparent text-foreground font-black uppercase tracking-widest text-xs focus:outline-none focus:ring-2 ring-primary/20 appearance-none cursor-pointer pr-12"
+            className="flex-1 px-4 sm:px-8 py-4 sm:py-5 glass rounded-2xl border-white/10 bg-transparent text-foreground font-black uppercase tracking-widest text-xs focus:outline-none focus:ring-2 ring-primary/20 appearance-none cursor-pointer pr-8 sm:pr-12 max-w-full"
           >
             {trips.length > 0 ? (
               trips.map(t => (
@@ -103,7 +103,7 @@ export default function GlobalBudgetPage() {
               <option value="" className="bg-background text-foreground">No Voyages Found</option>
             )}
           </select>
-          <button onClick={refresh} className="p-5 glass rounded-2xl border-white/10 hover:bg-white/5 transition-all text-foreground group shadow-xl">
+          <button onClick={refresh} className="p-4 sm:p-5 glass rounded-2xl border-white/10 hover:bg-white/5 transition-all text-foreground group shadow-xl">
             <Download size={20} className="group-hover:translate-y-0.5 transition-transform" />
           </button>
         </div>
@@ -117,7 +117,7 @@ export default function GlobalBudgetPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="glass-card p-10 rounded-[48px] border-white/5 shadow-2xl relative overflow-hidden group bg-card"
+            className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-white/5 shadow-2xl relative overflow-hidden group bg-card"
           >
             <div className={`absolute top-0 right-0 w-32 h-32 ${stat.color} opacity-5 blur-[80px] group-hover:opacity-10 transition-opacity`} />
             <div className="flex justify-between items-start mb-8">
@@ -130,7 +130,7 @@ export default function GlobalBudgetPage() {
             </div>
             <div className="space-y-2">
               <p className="text-foreground/30 text-xs font-black uppercase tracking-[0.3em] italic">{stat.label}</p>
-              <h2 className="text-5xl font-black italic text-foreground tracking-tighter">{stat.value}</h2>
+              <h2 className="text-3xl sm:text-5xl font-black italic text-foreground tracking-tighter">{stat.value}</h2>
             </div>
           </motion.div>
         ))}
@@ -153,7 +153,7 @@ export default function GlobalBudgetPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="group p-8 glass-card rounded-[40px] border-white/5 hover:border-primary/20 transition-all bg-card/50"
+                className="group p-6 sm:p-8 glass-card rounded-[32px] sm:rounded-[40px] border-white/5 hover:border-primary/20 transition-all bg-card/50"
               >
                 <div className="flex items-center gap-6 mb-8">
                   <div className={`w-14 h-14 rounded-2xl ${item.color}/10 flex items-center justify-center ${item.color.replace('bg-', 'text-')} border border-white/10 shadow-inner`}>
@@ -192,13 +192,13 @@ export default function GlobalBudgetPage() {
         {/* Intelligence Summary */}
         <div className="space-y-10">
           <h2 className="text-3xl font-black tracking-tighter uppercase italic text-foreground leading-none">Intelligence Summary</h2>
-          <div className="glass-card p-12 rounded-[56px] border-white/5 shadow-2xl space-y-12 relative overflow-hidden bg-card">
+          <div className="glass-card p-6 sm:p-12 rounded-[40px] sm:rounded-[56px] border-white/5 shadow-2xl space-y-12 relative overflow-hidden bg-card">
              <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/5 blur-[120px]" />
              
-             <div className="relative aspect-square rounded-full border-[24px] border-white/5 flex flex-col items-center justify-center shadow-inner">
+             <div className="relative aspect-square max-w-xs mx-auto w-full rounded-full border-[24px] border-white/5 flex flex-col items-center justify-center shadow-inner">
                 <div className="text-center">
                   <p className="text-xs font-black text-foreground/20 uppercase tracking-[0.3em] mb-2 italic">Total Payload</p>
-                  <h3 className="text-5xl font-black italic text-foreground tracking-tighter">₹{budget?.totalCost?.toLocaleString() || "0"}</h3>
+                  <h3 className="text-3xl sm:text-5xl font-black italic text-foreground tracking-tighter">₹{budget?.totalCost?.toLocaleString() || "0"}</h3>
                 </div>
                 <div className="absolute inset-0 rounded-full border-[14px] border-primary border-t-transparent border-l-transparent rotate-45 shadow-[0_0_40px_rgba(244,63,94,0.3)]" />
              </div>
