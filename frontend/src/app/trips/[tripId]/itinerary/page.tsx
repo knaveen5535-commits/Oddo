@@ -141,16 +141,16 @@ export default function ItineraryPage() {
                  </div>
               </div>
               
-              <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] italic uppercase leading-[0.9]">
+              <h1 className="text-6xl md:text-8xl font-black text-foreground tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] italic uppercase leading-[0.9]">
                 {trip.title}
               </h1>
               
               <div className="flex flex-wrap gap-4 pt-4">
-                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-white font-black text-sm uppercase tracking-widest">
+                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-foreground font-black text-sm uppercase tracking-widest">
                   <MapPin size={18} className="text-primary" />
                   {trip.location}
                 </span>
-                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-white font-black text-sm uppercase tracking-widest">
+                <span className="flex items-center gap-3 glass px-8 py-4 rounded-[24px] border-foreground/10 shadow-2xl text-foreground font-black text-sm uppercase tracking-widest">
                   <Calendar size={18} className="text-primary" />
                   7 Days Voyage
                 </span>

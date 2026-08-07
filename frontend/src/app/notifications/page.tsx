@@ -83,7 +83,7 @@ export default function NotificationsPage() {
               </div>
               <p className="text-muted-foreground leading-relaxed">{note.desc}</p>
             </div>
-            <button className="p-2 text-muted-foreground hover:text-white transition-colors">
+            <button className="p-2 text-muted-foreground hover:text-foreground transition-colors">
               <Check size={20} />
             </button>
           </motion.div>

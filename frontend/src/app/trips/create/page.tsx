@@ -180,7 +180,7 @@ export default function CreateTripPage() {
                       value={formData.startDate}
                       onChange={(e) => setFormData({...formData, startDate: e.target.value})}
                       type="date" 
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium text-white/50"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium text-foreground/50"
                     />
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default function CreateTripPage() {
                       value={formData.endDate}
                       onChange={(e) => setFormData({...formData, endDate: e.target.value})}
                       type="date" 
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium text-white/50"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium text-foreground/50"
                     />
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export default function CreateTripPage() {
               >
                 <img src={region.image} alt={region.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-primary/40 transition-colors">
-                  <span className="text-white font-bold text-xs uppercase tracking-widest">{region.name}</span>
+                  <span className="text-foreground font-bold text-xs uppercase tracking-widest">{region.name}</span>
                 </div>
               </motion.div>
             ))}
@@ -267,7 +267,7 @@ export default function CreateTripPage() {
                  <img src={cityImage} className="w-full h-full object-cover" alt="Destination" />
                ) : (
                  <div className="w-full h-full bg-white/5 animate-pulse flex items-center justify-center">
-                    <Compass size={64} className="text-white/10" />
+                    <Compass size={64} className="text-foreground/10" />
                  </div>
                )}
                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-black/20 to-transparent" />
@@ -278,10 +278,10 @@ export default function CreateTripPage() {
                           New Journey
                        </span>
                     </div>
-                    <h2 className="text-7xl font-black text-white tracking-tighter uppercase italic leading-none">
+                    <h2 className="text-7xl font-black text-foreground tracking-tighter uppercase italic leading-none">
                        {formData.location}
                     </h2>
-                    <p className="text-white/60 text-xl font-medium max-w-xl italic">
+                    <p className="text-foreground/60 text-xl font-medium max-w-xl italic">
                        "{suggestedPlan?.title || 'Personalized Itinerary'}"
                     </p>
                   </div>
@@ -296,7 +296,7 @@ export default function CreateTripPage() {
                     </button>
                     <button 
                       onClick={handleChooseAnother}
-                      className="px-10 py-5 bg-white/10 backdrop-blur-md text-white font-black rounded-2xl border border-white/20 flex items-center justify-center gap-3 transition-all hover:bg-white/20 active:scale-95 group"
+                      className="px-10 py-5 bg-white/10 backdrop-blur-md text-foreground font-black rounded-2xl border border-white/20 flex items-center justify-center gap-3 transition-all hover:bg-white/20 active:scale-95 group"
                     >
                       <RefreshCw size={24} className="group-hover:rotate-180 transition-transform duration-700" />
                       Another Plan
@@ -336,7 +336,7 @@ export default function CreateTripPage() {
                           <div key={aIdx} className="relative pl-6">
                             <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-primary bg-background z-10" />
                             <div className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">{act.time}</div>
-                            <div className="text-sm font-bold text-white/90">{act.title}</div>
+                            <div className="text-sm font-bold text-foreground/90">{act.title}</div>
                             <div className="text-[9px] text-muted-foreground uppercase font-bold mt-1 tracking-tighter">{act.type}</div>
                           </div>
                         ))}
@@ -399,7 +399,7 @@ function RecommendationGroup({ title, data, icon }: { title: string, data: any[]
                 <span className="text-sm line-clamp-2">{place.address}</span>
               </div>
               <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">{place.type[0]?.replace(/_/g, ' ')}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/40">{place.type[0]?.replace(/_/g, ' ')}</span>
                 <button className="text-primary font-bold text-xs flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   View on Map <ChevronRight size={14} />
                 </button>

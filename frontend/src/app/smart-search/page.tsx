@@ -65,10 +65,10 @@ export default function SmartSearchPage() {
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-xs font-black uppercase tracking-widest text-primary">Smart Destination AI</span>
         </motion.div>
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase italic text-white leading-none">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase italic text-foreground leading-none">
           Explore <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Deeply</span>
         </h1>
-        <p className="text-white/40 text-xl font-medium max-w-2xl mx-auto italic">
+        <p className="text-foreground/40 text-xl font-medium max-w-2xl mx-auto italic">
           Search for any city to instantly fetch curated attractions, world-class restaurants, and premium stays from Google.
         </p>
 
@@ -76,14 +76,14 @@ export default function SmartSearchPage() {
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-rose-500/50 rounded-[32px] blur opacity-20 group-focus-within:opacity-100 transition-opacity" />
           <div className="relative flex items-center bg-white/5 border border-white/10 rounded-[32px] p-2 pr-4 shadow-2xl backdrop-blur-xl">
             <div className="p-4">
-              {loading ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-white/40 w-6 h-6" />}
+              {loading ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/40 w-6 h-6" />}
             </div>
             <input 
               type="text" 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Enter destination (e.g. Paris, Goa, Tokyo)..."
-              className="w-full bg-transparent border-none text-white text-xl placeholder:text-white/20 focus:outline-none focus:ring-0"
+              className="w-full bg-transparent border-none text-foreground text-xl placeholder:text-foreground/20 focus:outline-none focus:ring-0"
             />
             <button 
               type="submit"
@@ -125,7 +125,7 @@ export default function SmartSearchPage() {
                   className={`flex items-center gap-3 px-8 py-4 rounded-[22px] text-xs font-black uppercase tracking-widest transition-all ${
                     activeTab === tab.id 
                       ? "bg-primary text-white shadow-xl shadow-primary/30" 
-                      : "text-white/40 hover:text-white hover:bg-white/5"
+                      : "text-foreground/40 hover:text-foreground hover:bg-white/5"
                   }`}
                 >
                   {tab.icon}
@@ -160,17 +160,17 @@ export default function SmartSearchPage() {
                           <Star size={12} className="fill-primary" />
                           {item.rating}
                         </div>
-                        <span className="text-white/40 text-[10px] uppercase font-black tracking-widest">({activeTab})</span>
+                        <span className="text-foreground/40 text-[10px] uppercase font-black tracking-widest">({activeTab})</span>
                       </div>
                       <div>
-                        <h3 className="text-3xl font-black text-white mb-2 group-hover:text-primary transition-colors line-clamp-1">{item.name}</h3>
-                        <div className="flex items-center gap-2 text-white/60 text-sm font-medium line-clamp-1 italic">
+                        <h3 className="text-3xl font-black text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-1">{item.name}</h3>
+                        <div className="flex items-center gap-2 text-foreground/60 text-sm font-medium line-clamp-1 italic">
                           <MapPin size={14} className="text-primary" />
                           {item.address}
                         </div>
                       </div>
                       <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-                         <div className="text-xl font-black text-white italic underline">Details</div>
+                         <div className="text-xl font-black text-foreground italic underline">Details</div>
                          <div className="p-3 bg-primary text-white rounded-2xl shadow-xl shadow-primary/30">
                             <ArrowRight size={20} />
                          </div>
@@ -188,12 +188,12 @@ export default function SmartSearchPage() {
             animate={{ opacity: 1 }}
             className="py-32 flex flex-col items-center justify-center space-y-6 text-center"
           >
-             <div className="p-8 bg-white/5 rounded-full border border-white/10 text-white/10">
+             <div className="p-8 bg-white/5 rounded-full border border-white/10 text-foreground/10">
                 <Compass size={64} />
              </div>
              <div className="space-y-2">
-                <h3 className="text-2xl font-black uppercase tracking-widest text-white/40">Ready for Launch</h3>
-                <p className="text-white/20 font-medium italic">Enter a destination to start the AI discovery engine.</p>
+                <h3 className="text-2xl font-black uppercase tracking-widest text-foreground/40">Ready for Launch</h3>
+                <p className="text-foreground/20 font-medium italic">Enter a destination to start the AI discovery engine.</p>
              </div>
           </motion.div>
         )}
@@ -210,8 +210,8 @@ export default function SmartSearchPage() {
                  <div className="absolute inset-0 blur-2xl bg-primary/20 rounded-full" />
               </div>
               <div className="text-center space-y-2">
-                 <h3 className="text-2xl font-black uppercase tracking-widest text-white">Fetching Intelligence</h3>
-                 <p className="text-white/40 font-medium italic">Querying Google Places for the best spots in {query}...</p>
+                 <h3 className="text-2xl font-black uppercase tracking-widest text-foreground">Fetching Intelligence</h3>
+                 <p className="text-foreground/40 font-medium italic">Querying Google Places for the best spots in {query}...</p>
               </div>
            </motion.div>
         )}

@@ -123,11 +123,11 @@ export default function Dashboard() {
             <span className="px-6 py-2 bg-primary/20 backdrop-blur-md rounded-full text-sm font-bold text-primary border border-primary/30 uppercase tracking-[0.2em] inline-block">
               Welcome back, {user?.name || "Explorer"}
             </span>
-            <h2 className="text-6xl md:text-7xl font-black text-white tracking-tighter uppercase italic leading-none">
+            <h2 className="text-6xl md:text-7xl font-black text-foreground tracking-tighter uppercase italic leading-none">
               Your World, <br />
               <span className="text-primary">Beautifully Planned</span>
             </h2>
-            <p className="text-white/70 text-lg font-medium max-w-xl mx-auto">
+            <p className="text-foreground/70 text-lg font-medium max-w-xl mx-auto">
               Discover, plan, and manage your world travels with ease and elegance.
             </p>
           </motion.div>
@@ -144,7 +144,7 @@ export default function Dashboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search your trips by name or location..."
-              className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4.5 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium placeholder:text-white/20"
+              className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4.5 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-lg font-medium placeholder:text-foreground/20"
             />
           </div>
           <button className="bg-primary px-8 py-4.5 rounded-[20px] text-white font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/30 active:scale-95 flex items-center gap-2">
@@ -190,7 +190,7 @@ export default function Dashboard() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <Loader2 size={48} className="text-primary animate-spin" />
-              <p className="text-sm font-black text-white/20 uppercase tracking-[0.4em] italic">Retrieving Voyage History...</p>
+              <p className="text-sm font-black text-foreground/20 uppercase tracking-[0.4em] italic">Retrieving Voyage History...</p>
             </div>
           ) : (
             Object.entries(groupedTrips).map(([groupName, trips]) => (
@@ -198,7 +198,7 @@ export default function Dashboard() {
                 {groupBy !== "none" && (
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
-                    <h4 className="text-xl font-bold text-white/90 italic uppercase">{groupName}</h4>
+                    <h4 className="text-xl font-bold text-foreground/90 italic uppercase">{groupName}</h4>
                   </div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-4">
@@ -221,7 +221,7 @@ export default function Dashboard() {
                           <div className="p-10 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-transparent to-black/40">
                             <div>
                               <h4 className="text-2xl font-black mb-2 group-hover:text-primary transition-colors italic uppercase tracking-tight">{trip.title}</h4>
-                              <div className="flex items-center gap-2 text-white/60">
+                              <div className="flex items-center gap-2 text-foreground/60">
                                 <MapPin size={16} className="text-primary" />
                                 <span className="text-base font-medium">{trip.destination}</span>
                               </div>
@@ -229,7 +229,7 @@ export default function Dashboard() {
                             <div className="flex justify-between items-center border-t border-white/10 pt-6">
                               <div className="flex items-center gap-2">
                                 <CalendarIcon size={14} className="text-primary" />
-                                <span className="text-sm font-black uppercase tracking-[0.2em] text-white/40">
+                                <span className="text-sm font-black uppercase tracking-[0.2em] text-foreground/40">
                                   {new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                                 </span>
                               </div>
@@ -244,9 +244,9 @@ export default function Dashboard() {
                   ) : (
                     <div className="col-span-full py-24 text-center glass-card rounded-[40px] border-dashed border-white/10 flex flex-col items-center gap-6">
                       <div className="p-6 bg-white/5 rounded-full">
-                        <Compass size={48} className="text-white/10" />
+                        <Compass size={48} className="text-foreground/10" />
                       </div>
-                      <p className="text-white/20 font-black italic uppercase tracking-widest text-sm">No recorded voyages found in your log.</p>
+                      <p className="text-foreground/20 font-black italic uppercase tracking-widest text-sm">No recorded voyages found in your log.</p>
                       <Link href="/trips/create">
                         <button className="px-8 py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest italic hover:scale-105 transition-transform">
                           Initialize New Flight Plan
@@ -281,7 +281,7 @@ function ActionButton({ icon, label, onClick, active = false }: { icon: React.Re
     <button 
       onClick={onClick}
       className={`flex-1 md:flex-none flex items-center justify-center gap-3 px-8 py-4.5 glass border-white/5 rounded-[20px] transition-all text-sm font-bold whitespace-nowrap active:scale-95 uppercase tracking-widest italic ${
-        active ? "bg-primary/20 text-primary border-primary/30" : "text-white/80 hover:bg-white/10"
+        active ? "bg-primary/20 text-primary border-primary/30" : "text-foreground/80 hover:bg-white/10"
       }`}
     >
       {icon}
@@ -297,8 +297,8 @@ function StatItem({ label, value, icon }: { label: string, value: string, icon: 
         {icon}
       </div>
       <div>
-        <div className="text-2xl font-black tracking-tight text-white">{value}</div>
-        <div className="text-sm font-bold text-white/30 uppercase tracking-widest italic">{label}</div>
+        <div className="text-2xl font-black tracking-tight text-foreground">{value}</div>
+        <div className="text-sm font-bold text-foreground/30 uppercase tracking-widest italic">{label}</div>
       </div>
     </div>
   );

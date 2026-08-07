@@ -149,7 +149,7 @@ export default function TripsPage() {
                       <span className={`px-6 py-2 rounded-full text-[10px] font-black tracking-widest uppercase border backdrop-blur-xl ${
                         trip.status === "Active" || trip.status === "Upcoming" ? "bg-primary/20 text-primary border-primary/30" : 
                         trip.status === "Draft" ? "bg-amber-500/20 text-amber-500 border-amber-500/30" : 
-                        "bg-white/10 text-white/80 border-white/10"
+                        "bg-white/10 text-foreground/80 border-white/10"
                       }`}>
                         {trip.status}
                       </span>

@@ -52,9 +52,9 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050811] gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
         <Loader2 size={48} className="text-primary animate-spin" />
-        <p className="text-sm font-black text-white/20 uppercase tracking-[0.4em] italic">Accessing Ledger...</p>
+        <p className="text-sm font-black text-foreground/20 uppercase tracking-[0.4em] italic">Accessing Ledger...</p>
       </div>
     );
   }
@@ -68,15 +68,15 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
   ];
 
   return (
-    <div className="p-12 w-full max-w-7xl mx-auto space-y-12 bg-[#050811] min-h-screen text-foreground">
+    <div className="p-12 w-full max-w-7xl mx-auto space-y-12 bg-background min-h-screen text-foreground">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-4">
-          <Link href={`/trips/${tripId}/itinerary`} className="flex items-center gap-2 text-sm font-black text-white/40 hover:text-primary transition-colors uppercase tracking-widest italic group">
+          <Link href={`/trips/${tripId}/itinerary`} className="flex items-center gap-2 text-sm font-black text-foreground/40 hover:text-primary transition-colors uppercase tracking-widest italic group">
             <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Itinerary
           </Link>
           <div>
-            <h1 className="text-5xl font-black mb-2 text-white italic uppercase tracking-tighter leading-none">Financial Manifest</h1>
-            <p className="text-white/40 font-bold italic">Logistical cost breakdown for <span className="text-primary">{trip?.title || "your voyage"}</span>.</p>
+            <h1 className="text-5xl font-black mb-2 text-foreground italic uppercase tracking-tighter leading-none">Financial Manifest</h1>
+            <p className="text-foreground/40 font-bold italic">Logistical cost breakdown for <span className="text-primary">{trip?.title || "your voyage"}</span>.</p>
           </div>
         </div>
         <button className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs italic">
@@ -95,8 +95,8 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
             <Wallet size={120} />
           </div>
-          <h4 className="text-white/30 text-xs font-black uppercase tracking-[0.3em] mb-4">Total Estimated Cost</h4>
-          <div className="text-5xl font-black text-white italic tracking-tighter mb-8">
+          <h4 className="text-foreground/30 text-xs font-black uppercase tracking-[0.3em] mb-4">Total Estimated Cost</h4>
+          <div className="text-5xl font-black text-foreground italic tracking-tighter mb-8">
             ₹{budget?.totalCost?.toLocaleString() || "0.00"}
           </div>
           <div className="flex items-center gap-3 text-primary text-sm font-black uppercase tracking-widest italic">
@@ -107,7 +107,7 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
         {/* Expenses Summary */}
         <div className="md:col-span-2 glass-card p-10 rounded-[40px] border-white/5 bg-card shadow-2xl">
           <div className="flex justify-between items-center mb-10">
-            <h3 className="font-black text-2xl text-white italic uppercase tracking-tight">Category Breakdown</h3>
+            <h3 className="font-black text-2xl text-foreground italic uppercase tracking-tight">Category Breakdown</h3>
             <div className="flex gap-2">
               <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
               <div className="w-2 h-2 rounded-full bg-blue-500" />
@@ -118,8 +118,8 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
             {categories.map((cat, idx) => (
               <div key={idx} className="space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="font-black text-white/60 uppercase tracking-widest italic">{cat.name}</span>
-                  <span className="text-white font-black">₹{cat.spent.toLocaleString()}</span>
+                  <span className="font-black text-foreground/60 uppercase tracking-widest italic">{cat.name}</span>
+                  <span className="text-foreground font-black">₹{cat.spent.toLocaleString()}</span>
                 </div>
                 <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
                   <motion.div 
@@ -138,7 +138,7 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-4">
         {/* Recent Transactions placeholder */}
         <div className="lg:col-span-2">
-          <h3 className="text-2xl font-black mb-8 flex items-center gap-4 text-white italic uppercase tracking-tight">
+          <h3 className="text-2xl font-black mb-8 flex items-center gap-4 text-foreground italic uppercase tracking-tight">
             <div className="p-3 bg-primary/10 rounded-2xl text-primary border border-primary/20">
               <CreditCard size={24} />
             </div>
@@ -162,11 +162,11 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
                     <ArrowUpRight size={28} />
                   </div>
                   <div>
-                    <h4 className="font-black text-lg text-white italic uppercase tracking-tight">{expense.title}</h4>
-                    <p className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">{expense.category} • {expense.date}</p>
+                    <h4 className="font-black text-lg text-foreground italic uppercase tracking-tight">{expense.title}</h4>
+                    <p className="text-xs font-black text-foreground/20 uppercase tracking-[0.2em]">{expense.category} • {expense.date}</p>
                   </div>
                 </div>
-                <div className={`text-xl font-black text-white italic`}>
+                <div className={`text-xl font-black text-foreground italic`}>
                   ₹{expense.amount.toLocaleString()}
                 </div>
               </motion.div>
@@ -177,15 +177,15 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
         {/* Analytics Mini Widget */}
         <div className="space-y-8">
           <section className="glass-card p-8 rounded-[40px] border-white/5 bg-card shadow-2xl">
-            <h3 className="font-black mb-8 flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/30 italic">
+            <h3 className="font-black mb-8 flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-foreground/30 italic">
               <PieChart size={18} className="text-primary" />
               Efficiency Stats
             </h3>
             <div className="space-y-8">
               <div className="flex justify-between items-end">
                 <div>
-                  <div className="text-xs font-black text-white/20 uppercase tracking-widest mb-1">Logistics Rating</div>
-                  <div className="text-3xl font-black text-white italic tracking-tighter">OPTIMAL</div>
+                  <div className="text-xs font-black text-foreground/20 uppercase tracking-widest mb-1">Logistics Rating</div>
+                  <div className="text-3xl font-black text-foreground italic tracking-tighter">OPTIMAL</div>
                 </div>
                 <div className="h-12 w-28 flex items-end gap-1.5 pb-1">
                   <div className="bg-primary/20 w-4 h-[40%] rounded-md" />
@@ -198,20 +198,20 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
               
               <div className="pt-8 border-t border-white/5 space-y-6">
                 <div className="flex justify-between text-sm items-center">
-                  <span className="text-white/20 font-black uppercase tracking-widest italic">Sync Status</span>
+                  <span className="text-foreground/20 font-black uppercase tracking-widest italic">Sync Status</span>
                   <span className="font-black text-green-500 text-xs uppercase tracking-widest flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> CLOUD ACTIVE
                   </span>
                 </div>
                 <div className="flex justify-between text-sm items-center">
-                  <span className="text-white/20 font-black uppercase tracking-widest italic">Budget Limit</span>
-                  <span className="font-black text-white italic">₹{((budget?.totalCost || 0) * 1.5).toLocaleString()}</span>
+                  <span className="text-foreground/20 font-black uppercase tracking-widest italic">Budget Limit</span>
+                  <span className="font-black text-foreground italic">₹{((budget?.totalCost || 0) * 1.5).toLocaleString()}</span>
                 </div>
               </div>
             </div>
           </section>
 
-          <button className="w-full py-6 glass border-white/5 rounded-3xl font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all italic text-white/40">
+          <button className="w-full py-6 glass border-white/5 rounded-3xl font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all italic text-foreground/40">
             <BarChart3 size={20} />
             Operational Analytics
           </button>

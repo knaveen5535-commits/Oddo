@@ -165,10 +165,10 @@ export default function CitySearchPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6 max-w-3xl"
           >
-            <h1 className="text-6xl font-black text-white tracking-tight leading-[1.1]">
+            <h1 className="text-6xl font-black text-foreground tracking-tight leading-[1.1]">
               Explore the <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.5)]">Infinite</span> Beauty of the World
             </h1>
-            <p className="text-white/70 text-xl font-medium">
+            <p className="text-foreground/70 text-xl font-medium">
               Join thousands of explorers discovering hidden gems every day.
             </p>
             
@@ -285,17 +285,17 @@ export default function CitySearchPage() {
                         <Star size={12} className="fill-primary" />
                         {dest.rating}
                       </div>
-                      <span className="text-white/40 text-[10px] uppercase font-black tracking-widest">({dest.category})</span>
+                      <span className="text-foreground/40 text-[10px] uppercase font-black tracking-widest">({dest.category})</span>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-black text-white mb-1 group-hover:text-primary transition-colors line-clamp-1">{dest.name}</h3>
-                      <div className="flex items-center gap-2 text-white/60 text-sm line-clamp-1 italic">
+                      <h3 className="text-2xl font-black text-foreground mb-1 group-hover:text-primary transition-colors line-clamp-1">{dest.name}</h3>
+                      <div className="flex items-center gap-2 text-foreground/60 text-sm line-clamp-1 italic">
                         <MapPin size={14} className="text-primary" />
                         {dest.location}
                       </div>
                     </div>
                     <div className="pt-4 flex items-center justify-between border-t border-white/10">
-                      <button onClick={(e) => { e.stopPropagation(); window.open(dest.mapUrl, '_blank'); }} className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all border border-white/5 flex items-center gap-2">
+                      <button onClick={(e) => { e.stopPropagation(); window.open(dest.mapUrl, '_blank'); }} className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-foreground/60 hover:text-foreground transition-all border border-white/5 flex items-center gap-2">
                          <MapPin size={12} className="text-primary" /> Map
                       </button>
                       <button className="p-3 bg-primary text-white rounded-xl hover:rotate-12 transition-all shadow-lg shadow-primary/30">

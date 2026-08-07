@@ -75,35 +75,35 @@ export default function GlobalBudgetPage() {
 
   if (fetchingTrips || (loading && !budget)) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center space-y-6 bg-[#050811]">
+      <div className="h-screen w-full flex flex-col items-center justify-center space-y-6 bg-background">
         <Loader2 size={48} className="text-primary animate-spin" />
-        <p className="text-white/20 font-black uppercase tracking-[0.4em] italic animate-pulse text-sm">Calculating Intelligence...</p>
+        <p className="text-foreground/20 font-black uppercase tracking-[0.4em] italic animate-pulse text-sm">Calculating Intelligence...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-12 w-full space-y-12 bg-[#050811] text-foreground min-h-screen pb-32">
+    <div className="p-12 w-full space-y-12 bg-background text-foreground min-h-screen pb-32">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-6xl font-black tracking-tighter uppercase italic mb-2 text-white">Finance <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Control</span></h1>
-          <p className="text-white/40 font-bold italic">Dynamic budget intelligence for your global expeditions.</p>
+          <h1 className="text-6xl font-black tracking-tighter uppercase italic mb-2 text-foreground">Finance <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Control</span></h1>
+          <p className="text-foreground/40 font-bold italic">Dynamic budget intelligence for your global expeditions.</p>
         </div>
         <div className="flex gap-4">
           <select 
             value={selectedTripId}
             onChange={(e) => setSelectedTripId(e.target.value)}
-            className="px-8 py-5 glass rounded-2xl border-white/10 bg-transparent text-white font-black uppercase tracking-widest text-xs focus:outline-none focus:ring-2 ring-primary/20 appearance-none cursor-pointer pr-12"
+            className="px-8 py-5 glass rounded-2xl border-white/10 bg-transparent text-foreground font-black uppercase tracking-widest text-xs focus:outline-none focus:ring-2 ring-primary/20 appearance-none cursor-pointer pr-12"
           >
             {trips.length > 0 ? (
               trips.map(t => (
-                <option key={t.id} value={t.id} className="bg-[#050811] text-white">{t.title}</option>
+                <option key={t.id} value={t.id} className="bg-background text-foreground">{t.title}</option>
               ))
             ) : (
-              <option value="" className="bg-[#050811] text-white">No Voyages Found</option>
+              <option value="" className="bg-background text-foreground">No Voyages Found</option>
             )}
           </select>
-          <button onClick={refresh} className="p-5 glass rounded-2xl border-white/10 hover:bg-white/5 transition-all text-white group shadow-xl">
+          <button onClick={refresh} className="p-5 glass rounded-2xl border-white/10 hover:bg-white/5 transition-all text-foreground group shadow-xl">
             <Download size={20} className="group-hover:translate-y-0.5 transition-transform" />
           </button>
         </div>
@@ -121,7 +121,7 @@ export default function GlobalBudgetPage() {
           >
             <div className={`absolute top-0 right-0 w-32 h-32 ${stat.color} opacity-5 blur-[80px] group-hover:opacity-10 transition-opacity`} />
             <div className="flex justify-between items-start mb-8">
-              <div className={`p-4 rounded-2xl ${stat.color}/10 text-white border border-white/10 shadow-inner`}>
+              <div className={`p-4 rounded-2xl ${stat.color}/10 text-foreground border border-white/10 shadow-inner`}>
                 {stat.icon}
               </div>
               <span className={`text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${stat.color}/10 ${stat.color.replace('bg-', 'text-')} border border-white/5`}>
@@ -129,8 +129,8 @@ export default function GlobalBudgetPage() {
               </span>
             </div>
             <div className="space-y-2">
-              <p className="text-white/30 text-xs font-black uppercase tracking-[0.3em] italic">{stat.label}</p>
-              <h2 className="text-5xl font-black italic text-white tracking-tighter">{stat.value}</h2>
+              <p className="text-foreground/30 text-xs font-black uppercase tracking-[0.3em] italic">{stat.label}</p>
+              <h2 className="text-5xl font-black italic text-foreground tracking-tighter">{stat.value}</h2>
             </div>
           </motion.div>
         ))}
@@ -141,8 +141,8 @@ export default function GlobalBudgetPage() {
         <div className="lg:col-span-2 space-y-10">
           <div className="flex justify-between items-end">
             <div>
-              <h2 className="text-3xl font-black tracking-tighter uppercase italic text-white leading-none">Expenditure Breakdown</h2>
-              <p className="text-white/40 text-sm font-bold italic mt-2">Scientific distribution of costs across categories.</p>
+              <h2 className="text-3xl font-black tracking-tighter uppercase italic text-foreground leading-none">Expenditure Breakdown</h2>
+              <p className="text-foreground/40 text-sm font-bold italic mt-2">Scientific distribution of costs across categories.</p>
             </div>
           </div>
 
@@ -160,8 +160,8 @@ export default function GlobalBudgetPage() {
                     {item.icon}
                   </div>
                   <div>
-                    <h3 className="font-black uppercase tracking-[0.3em] text-xs text-white/30 italic">{item.label}</h3>
-                    <p className="text-2xl font-black italic text-white tracking-tight">₹{item.value.toLocaleString()}</p>
+                    <h3 className="font-black uppercase tracking-[0.3em] text-xs text-foreground/30 italic">{item.label}</h3>
+                    <p className="text-2xl font-black italic text-foreground tracking-tight">₹{item.value.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -183,7 +183,7 @@ export default function GlobalBudgetPage() {
               </div>
               <div>
                 <h3 className="text-xl font-black uppercase italic text-primary tracking-tight">Budget Alert: High Intensity</h3>
-                <p className="text-sm text-white/40 font-bold italic mt-1">Your current plan is exceeding standard moderate limits. Consider optimizing activities to maintain financial equilibrium.</p>
+                <p className="text-sm text-foreground/40 font-bold italic mt-1">Your current plan is exceeding standard moderate limits. Consider optimizing activities to maintain financial equilibrium.</p>
               </div>
             </div>
           )}
@@ -191,14 +191,14 @@ export default function GlobalBudgetPage() {
 
         {/* Intelligence Summary */}
         <div className="space-y-10">
-          <h2 className="text-3xl font-black tracking-tighter uppercase italic text-white leading-none">Intelligence Summary</h2>
+          <h2 className="text-3xl font-black tracking-tighter uppercase italic text-foreground leading-none">Intelligence Summary</h2>
           <div className="glass-card p-12 rounded-[56px] border-white/5 shadow-2xl space-y-12 relative overflow-hidden bg-card">
              <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/5 blur-[120px]" />
              
              <div className="relative aspect-square rounded-full border-[24px] border-white/5 flex flex-col items-center justify-center shadow-inner">
                 <div className="text-center">
-                  <p className="text-xs font-black text-white/20 uppercase tracking-[0.3em] mb-2 italic">Total Payload</p>
-                  <h3 className="text-5xl font-black italic text-white tracking-tighter">₹{budget?.totalCost?.toLocaleString() || "0"}</h3>
+                  <p className="text-xs font-black text-foreground/20 uppercase tracking-[0.3em] mb-2 italic">Total Payload</p>
+                  <h3 className="text-5xl font-black italic text-foreground tracking-tighter">₹{budget?.totalCost?.toLocaleString() || "0"}</h3>
                 </div>
                 <div className="absolute inset-0 rounded-full border-[14px] border-primary border-t-transparent border-l-transparent rotate-45 shadow-[0_0_40px_rgba(244,63,94,0.3)]" />
              </div>
@@ -207,14 +207,14 @@ export default function GlobalBudgetPage() {
                 <div className="flex justify-between items-center p-6 glass rounded-3xl border-white/5 bg-white/5">
                   <div className="flex items-center gap-4">
                     <Calendar size={20} className="text-primary" />
-                    <span className="text-xs font-black uppercase tracking-widest text-white/60 italic">Last Updated</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-foreground/60 italic">Last Updated</span>
                   </div>
-                  <span className="text-xs font-black italic text-white">{budget ? new Date(budget.updatedAt).toLocaleTimeString() : 'Never'}</span>
+                  <span className="text-xs font-black italic text-foreground">{budget ? new Date(budget.updatedAt).toLocaleTimeString() : 'Never'}</span>
                 </div>
                 <div className="flex justify-between items-center p-6 glass rounded-3xl border-white/5 bg-white/5">
                   <div className="flex items-center gap-4">
                     <TrendingUp size={20} className="text-emerald-500" />
-                    <span className="text-xs font-black uppercase tracking-widest text-white/60 italic">Cost Tier</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-foreground/60 italic">Cost Tier</span>
                   </div>
                   <span className={`text-xs font-black uppercase tracking-widest ${budget?.status === 'Expensive' ? 'text-primary' : 'text-emerald-500'}`}>{budget?.status}</span>
                 </div>

@@ -128,7 +128,7 @@ export default function AdminPage() {
             {recentActivity.map((activity, idx) => (
               <div key={idx} className="flex items-center justify-between group cursor-pointer">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center font-black text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center font-black text-foreground/40 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                     {activity.user.charAt(0)}
                   </div>
                   <div>
@@ -149,7 +149,7 @@ export default function AdminPage() {
 
         <div className="space-y-8">
           <div className="glass-card p-8 rounded-[32px] border-white/5 bg-gradient-to-br from-primary/10 to-transparent">
-            <h3 className="font-bold mb-6 flex items-center gap-2 text-sm uppercase tracking-widest text-white/60">
+            <h3 className="font-bold mb-6 flex items-center gap-2 text-sm uppercase tracking-widest text-foreground/60">
               <PieChart size={18} className="text-primary" />
               Usage Stats
             </h3>
@@ -169,7 +169,7 @@ function UsageProgress({ label, value, color }: { label: string, value: number, 
   return (
     <div className="space-y-2">
       <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-        <span className="text-white/60">{label}</span>
+        <span className="text-foreground/60">{label}</span>
         <span>{value}%</span>
       </div>
       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">

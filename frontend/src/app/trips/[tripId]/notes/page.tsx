@@ -79,7 +79,7 @@ export default function NotesPage() {
               </div>
               <div className="flex items-center gap-2">
                 {note.pinned && <Pin size={16} className="text-primary fill-primary" />}
-                <button className="p-1 text-muted-foreground hover:text-white">
+                <button className="p-1 text-muted-foreground hover:text-foreground">
                   <MoreVertical size={18} />
                 </button>
               </div>
@@ -93,7 +93,7 @@ export default function NotesPage() {
             <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center">
               <div className="flex gap-2">
                 {note.tags.map(tag => (
-                  <span key={tag} className="text-[10px] font-bold px-2 py-0.5 bg-white/5 rounded text-white/60">
+                  <span key={tag} className="text-[10px] font-bold px-2 py-0.5 bg-white/5 rounded text-foreground/60">
                     #{tag}
                   </span>
                 ))}

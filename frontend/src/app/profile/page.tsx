@@ -69,20 +69,20 @@ export default function ProfilePage() {
             </div>
             <div className="mb-4">
               <div className="flex items-center gap-4 mb-2">
-                 <h1 className="text-5xl font-black italic uppercase tracking-tighter text-white drop-shadow-2xl">{traveler.name}</h1>
-                 <div className="px-4 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-xs font-black uppercase tracking-widest text-white">PRO</div>
+                 <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground drop-shadow-2xl">{traveler.name}</h1>
+                 <div className="px-4 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-xs font-black uppercase tracking-widest text-foreground">PRO</div>
               </div>
-              <div className="flex items-center gap-6 text-white/60 font-black uppercase tracking-widest text-xs">
+              <div className="flex items-center gap-6 text-foreground/60 font-black uppercase tracking-widest text-xs">
                 <span className="flex items-center gap-2"><MapPin size={14} className="text-primary" /> {traveler.location}</span>
                 <span className="flex items-center gap-2"><Calendar size={14} className="text-primary" /> Joined {traveler.joined}</span>
               </div>
             </div>
           </div>
           <div className="flex gap-4 mb-4">
-             <button className="px-8 py-4 glass rounded-2xl border-white/10 text-white font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all flex items-center gap-3">
+             <button className="px-8 py-4 glass rounded-2xl border-white/10 text-foreground font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all flex items-center gap-3">
                <Edit3 size={18} /> Edit Profile
              </button>
-             <button className="p-4 glass rounded-2xl border-white/10 text-white hover:bg-white/10 transition-all">
+             <button className="p-4 glass rounded-2xl border-white/10 text-foreground hover:bg-white/10 transition-all">
                <Share2 size={20} />
              </button>
           </div>
@@ -117,7 +117,7 @@ export default function ProfilePage() {
                 <Heart size={80} />
              </div>
              <h4 className="text-2xl font-black italic uppercase tracking-tight mb-2">Adventure Ready</h4>
-             <p className="text-white/70 text-xs font-medium uppercase tracking-widest mb-6 italic">Loyalty Member Since 2024</p>
+             <p className="text-foreground/70 text-xs font-medium uppercase tracking-widest mb-6 italic">Loyalty Member Since 2024</p>
              <button className="w-full py-4 bg-white text-primary rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl">
                 Claim Weekly Rewards
              </button>

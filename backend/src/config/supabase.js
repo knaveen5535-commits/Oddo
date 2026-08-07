@@ -1,15 +1,49 @@
 const { createClient } = require('@supabase/supabase-js');
+const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://ncsejvzgencnobkkwaph.supabase.co';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jc2VqdnpnZW5jbm9ia2t3YXBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMjA3NjEsImV4cCI6MjA5MTg5Njc2MX0.zqqoHGqlre9WeZ4LxlzPFpsJi0ARRUHCpFCxqccPEC0';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn('Supabase credentials missing from .env. Using fallback cloud identifiers.');
+const isMock = !supabaseUrl || !supabaseServiceKey;
+
+// DEV MOCK: verifies the unsigned dev tokens produced by the frontend mock.
+// Only used when Supabase credentials are missing from backend/.env.
+function mockGetUser(token) {
+  try {
+    const payload = jwt.decode(token);
+    if (!payload || !payload.sub || !payload.email) {
+      return { data: { user: null }, error: new Error('Invalid token payload') };
+    }
+    return {
+      data: {
+        user: {
+          id: payload.sub,
+          email: payload.email,
+          email_confirmed_at: null,
+          user_metadata: payload.user_metadata || {},
+          app_metadata: payload.app_metadata || { provider: 'email' },
+        },
+      },
+      error: null,
+    };
+  } catch (err) {
+    return { data: { user: null }, error: err };
+  }
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const mockSupabase = {
+  auth: { getUser: mockGetUser },
+};
+
+const supabase = isMock ? mockSupabase : createClient(supabaseUrl, supabaseServiceKey);
+
+if (isMock) {
+  console.warn(
+    '[AUTH] Supabase credentials missing from backend/.env - running with DEV MOCK token verification.'
+  );
+}
 
 module.exports = supabase;

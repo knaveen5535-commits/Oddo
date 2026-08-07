@@ -36,7 +36,7 @@ export default function ActivitySearchPage() {
       setIsSearching(true);
       try {
         console.log("Fetching popular activities...");
-        const response = await fetch(`http://localhost:5000/api/trips/search-places?query=popular%20tourist%20activities%20worldwide`);
+        const response = await fetch(`http://localhost:5001/api/trips/search-places?query=popular%20tourist%20activities%20worldwide`);
         
         if (!response.ok) {
            throw new Error(`HTTP Error: ${response.status}`);
@@ -75,7 +75,7 @@ export default function ActivitySearchPage() {
 
     setIsSearching(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/trips/search-places?query=${encodeURIComponent(searchQuery + " things to do")}`);
+      const response = await fetch(`http://localhost:5001/api/trips/search-places?query=${encodeURIComponent(searchQuery + " things to do")}`);
       const result = await response.json();
       if (result.success) {
         const mapped = result.data.map((item: any) => ({
@@ -114,7 +114,7 @@ export default function ActivitySearchPage() {
            <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/30">Live Experiences</span>
         </div>
         <h1 className="text-5xl font-black tracking-tighter uppercase italic">Discover Activities</h1>
-        <p className="text-white/40 text-lg font-medium">Authentic experiences fetched in real-time from across the globe.</p>
+        <p className="text-foreground/40 text-lg font-medium">Authentic experiences fetched in real-time from across the globe.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-16">
@@ -122,14 +122,14 @@ export default function ActivitySearchPage() {
           <div className="absolute -inset-1 bg-primary/20 rounded-3xl blur opacity-20 group-focus-within:opacity-100 transition-opacity" />
           <div className="relative flex items-center bg-white/5 border border-white/10 rounded-3xl p-2 pr-6 shadow-2xl">
             <div className="p-4">
-              {isSearching ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-white/40 w-6 h-6" />}
+              {isSearching ? <Loader2 size={24} className="text-primary animate-spin" /> : <Search className="text-foreground/40 w-6 h-6" />}
             </div>
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search activities (e.g. Scuba diving in Bali, Rooftop bars in Tokyo)..."
-              className="w-full bg-transparent border-none text-white text-xl placeholder:text-white/20 focus:outline-none focus:ring-0"
+              className="w-full bg-transparent border-none text-foreground text-xl placeholder:text-foreground/20 focus:outline-none focus:ring-0"
             />
             <button 
               type="submit"
@@ -152,7 +152,7 @@ export default function ActivitySearchPage() {
          {categories.map((cat) => (
            <button 
             key={cat.name}
-            className="flex items-center gap-2 px-6 py-3 glass border-white/10 rounded-2xl text-xs font-bold text-white/60 hover:text-white hover:border-primary/40 transition-all whitespace-nowrap"
+            className="flex items-center gap-2 px-6 py-3 glass border-white/10 rounded-2xl text-xs font-bold text-foreground/60 hover:text-foreground hover:border-primary/40 transition-all whitespace-nowrap"
            >
              {cat.icon}
              {cat.name}
@@ -185,17 +185,17 @@ export default function ActivitySearchPage() {
                     <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.2em]">
                       <TrendingUp size={12} /> Live Availability
                     </div>
-                    <h3 className="text-3xl font-black text-white group-hover:text-primary transition-colors line-clamp-1">{activity.title}</h3>
-                    <div className="flex items-center gap-6 text-xs font-bold text-white/40 uppercase tracking-widest">
+                    <h3 className="text-3xl font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{activity.title}</h3>
+                    <div className="flex items-center gap-6 text-xs font-bold text-foreground/40 uppercase tracking-widest">
                       <span className="flex items-center gap-2"><MapPin size={16} className="text-primary" /> {activity.location}</span>
                       <span className="flex items-center gap-2"><Users size={16} className="text-primary" /> {activity.reviews} Reviews</span>
                     </div>
                   </div>
-                  <div className="text-3xl font-black text-white">{activity.price}</div>
+                  <div className="text-3xl font-black text-foreground">{activity.price}</div>
                 </div>
                 
                 <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
-                  <div className="flex items-center gap-4 text-[10px] font-black text-white/30 uppercase tracking-widest">
+                  <div className="flex items-center gap-4 text-[10px] font-black text-foreground/30 uppercase tracking-widest">
                     <span className="flex items-center gap-2 px-4 py-2 glass rounded-full border-white/5"><Clock size={14} className="text-primary" /> {activity.duration}</span>
                     <span className="flex items-center gap-2 px-4 py-2 glass rounded-full border-white/5"><Camera size={14} className="text-primary" /> High-Res Views</span>
                   </div>
@@ -211,7 +211,7 @@ export default function ActivitySearchPage() {
         {isSearching && activities.length === 0 && (
           <div className="py-32 flex flex-col items-center justify-center space-y-6">
              <Loader2 size={64} className="text-primary animate-spin" />
-             <h3 className="text-xl font-black uppercase tracking-widest text-white/20">Scouring the Globe...</h3>
+             <h3 className="text-xl font-black uppercase tracking-widest text-foreground/20">Scouring the Globe...</h3>
           </div>
         )}
       </div>
@@ -231,11 +231,11 @@ export default function ActivitySearchPage() {
               initial={{ opacity: 0, scale: 0.9, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 50 }}
-              className="relative w-full max-w-5xl bg-[#080808] rounded-[56px] overflow-hidden shadow-[0_0_150px_rgba(0,0,0,0.8)] border border-white/10 flex flex-col md:flex-row h-full max-h-[700px]"
+              className="relative w-full max-w-5xl bg-card rounded-[56px] overflow-hidden shadow-2xl border border-foreground/10 flex flex-col md:flex-row h-full max-h-[700px]"
             >
               <button 
                 onClick={() => setSelectedActivity(null)}
-                className="absolute top-8 right-8 z-20 p-4 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-white/10 transition-all shadow-2xl"
+                className="absolute top-8 right-8 z-20 p-4 bg-foreground/5 backdrop-blur-md rounded-full border border-foreground/10 text-foreground hover:bg-foreground/10 transition-all shadow-2xl"
               >
                 <X size={24} />
               </button>
@@ -248,23 +248,23 @@ export default function ActivitySearchPage() {
               <div className="p-12 md:p-16 flex-1 overflow-y-auto scrollbar-hide space-y-10">
                 <div>
                   <div className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4">Confirmed Experience</div>
-                  <h2 className="text-4xl font-black text-white mb-4 tracking-tight leading-none">{selectedActivity.title}</h2>
-                  <div className="flex items-center gap-6 text-white/40 text-sm font-bold uppercase tracking-widest">
+                  <h2 className="text-4xl font-black text-foreground mb-4 tracking-tight leading-none">{selectedActivity.title}</h2>
+                  <div className="flex items-center gap-6 text-foreground/40 text-sm font-bold uppercase tracking-widest">
                     <span className="flex items-center gap-2"><MapPin size={18} className="text-primary" /> {selectedActivity.location}</span>
                     <span className="flex items-center gap-2"><Star size={18} className="text-yellow-400 fill-yellow-400" /> {selectedActivity.rating} / 5</span>
                   </div>
                 </div>
 
                 <div className="space-y-6">
-                  <h3 className="text-lg font-black text-white uppercase tracking-widest border-l-4 border-primary pl-4">Description</h3>
-                  <p className="text-white/60 text-lg leading-relaxed font-medium">{selectedActivity.desc}</p>
+                  <h3 className="text-lg font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-4">Description</h3>
+                  <p className="text-foreground/60 text-lg leading-relaxed font-medium">{selectedActivity.desc}</p>
                 </div>
 
                 <div className="space-y-6">
-                  <h3 className="text-lg font-black text-white uppercase tracking-widest border-l-4 border-primary pl-4">Highlights</h3>
+                  <h3 className="text-lg font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-4">Highlights</h3>
                   <div className="grid grid-cols-2 gap-4">
                     {selectedActivity.includes.map((inc: string, i: number) => (
-                      <div key={i} className="flex items-center gap-3 p-4 glass rounded-2xl border-white/5 text-sm text-white/80 font-bold capitalize">
+                      <div key={i} className="flex items-center gap-3 p-4 glass rounded-2xl border-foreground/10 text-sm text-foreground/80 font-bold capitalize">
                          <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
                          {inc.replace(/_/g, ' ')}
                       </div>
@@ -272,10 +272,10 @@ export default function ActivitySearchPage() {
                   </div>
                 </div>
 
-                <div className="pt-10 border-t border-white/10 flex items-center justify-between">
+                <div className="pt-10 border-t border-foreground/10 flex items-center justify-between">
                   <div>
-                    <div className="text-3xl font-black text-white">{selectedActivity.price}</div>
-                    <div className="text-[10px] font-black text-white/40 uppercase tracking-widest mt-1">Per Person • Instant Confirmation</div>
+                    <div className="text-3xl font-black text-foreground">{selectedActivity.price}</div>
+                    <div className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-1">Per Person • Instant Confirmation</div>
                   </div>
                   <button className="px-12 py-5 bg-primary text-white font-black rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center gap-3">
                     Reserve Now <ArrowRight size={20} />
