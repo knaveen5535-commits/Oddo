@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/supabase-js";
+import { travelService } from "@/services/api";
 
 interface AuthUser {
   id: string;
@@ -22,6 +23,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const syncedGoogleUsers = new Set<string>();
+
+const syncGoogleUserToSignUpTable = async (user: User) => {
+  if (!user?.email) return;
+  const provider = user.app_metadata?.provider || user.app_metadata?.providers?.[0] || "";
+  if (provider !== "google") return;
+  if (syncedGoogleUsers.has(user.id)) return;
+
+  try {
+    const meta = user.user_metadata || {};
+    const firstName = meta.given_name || meta.first_name || (meta.full_name || "").split(" ")[0] || user.email.split("@")[0];
+    const lastName = meta.family_name || meta.last_name || (meta.full_name || "").split(" ").slice(1).join(" ") || "";
+
+    await travelService.supabaseGoogleUpsert({
+      email: user.email,
+      firstName: firstName || "",
+      lastName: lastName || "",
+    });
+    syncedGoogleUsers.add(user.id);
+  } catch (err) {
+    console.error("[AUTH] Google user sync to sign up table failed:", err);
+  }
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -36,6 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (session) {
         console.log("[AUTH] Session recovered for:", session.user.email);
+        syncGoogleUserToSignUpTable(session.user);
       } else {
         console.log("[AUTH] No existing session found.");
       }
@@ -48,6 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // 2. Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log(`[AUTH] Auth State Changed: ${event}`);
+      if (session?.user) {
+        syncGoogleUserToSignUpTable(session.user);
+      }
       setSession(session);
       setSupabaseUser(session?.user ?? null);
       setIsLoading(false);

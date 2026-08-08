@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const { prisma } = require('../config/db');
+const supabase = require('../config/supabase');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -129,4 +130,122 @@ const googleLogin = async (req, res) => {
   }
 };
 
-module.exports = { register, login, googleLogin };
+// @desc    Signup via Supabase admin API (bypasses client signup rate limit)
+// @route   POST /api/auth/supabase-signup
+// @access  Public
+const supabaseSignup = async (req, res) => {
+  const { firstName, lastName, email, phone, dob, region, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ success: false, message: 'Email and password are required' });
+  }
+
+  try {
+    const { data, error } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: `${firstName} ${lastName}`.trim(),
+        first_name: firstName,
+        last_name: lastName,
+        phone: phone || null,
+        region: region || null,
+        birth_date: dob || null,
+      },
+    });
+
+    let userId = data?.user?.id ?? null;
+    let userEmail = data?.user?.email ?? email;
+
+    if (error) {
+      if (!error.message.toLowerCase().includes('already')) {
+        console.error('[SIGNUP] createUser error for', email, ':', error.message);
+        return res.status(400).json({ success: false, message: error.message });
+      }
+    }
+
+    const phoneNumber = phone ? parseInt(String(phone).replace(/\D/g, ''), 10) || 0 : 0;
+    const dobNumber = dob ? Math.floor(Date.parse(dob) / 1000) : 0;
+
+    const rowData = {
+      'first name': firstName,
+      'last name': lastName,
+      email: userEmail,
+      phone: phoneNumber,
+      dob: dobNumber,
+      region: region || '',
+      password,
+    };
+
+    const { data: existingRow } = await supabase
+      .from('sign up')
+      .select('email')
+      .eq('email', userEmail);
+
+    let insertError = null;
+    if (existingRow && existingRow.length > 0) {
+      const result = await supabase.from('sign up').update(rowData).eq('email', userEmail);
+      insertError = result.error;
+    } else {
+      const result = await supabase.from('sign up').insert(rowData);
+      insertError = result.error;
+    }
+
+    if (insertError) {
+      console.error('[SIGNUP] sign up table upsert failed:', insertError.message);
+      return res.status(500).json({ success: false, message: insertError.message });
+    }
+
+    res.status(201).json({
+      success: true,
+      user: { id: userId, email: userEmail },
+    });
+  } catch (err) {
+    console.error('[SIGNUP] Supabase signup error:', err.message);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// @desc    Upsert a Supabase Google OAuth user into the sign up table
+// @route   POST /api/auth/supabase-google-upsert
+// @access  Public
+const supabaseGoogleUpsert = async (req, res) => {
+  const { email, firstName, lastName } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required' });
+  }
+
+  try {
+    const { data: existingRow } = await supabase
+      .from('sign up')
+      .select('email')
+      .eq('email', email);
+
+    if (existingRow && existingRow.length > 0) {
+      return res.status(200).json({ success: true, row: 'exists' });
+    }
+
+    const { error: insertError } = await supabase.from('sign up').insert({
+      'first name': firstName || '',
+      'last name': lastName || '',
+      email,
+      phone: 0,
+      dob: 0,
+      region: '',
+      password: 'google-oauth',
+    });
+
+    if (insertError) {
+      return res.status(500).json({ success: false, message: insertError.message });
+    }
+
+    res.status(201).json({ success: true, row: 'created' });
+  } catch (err) {
+    console.error('[SIGNUP] Google upsert error:', err.message);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = { register, login, googleLogin, supabaseSignup, supabaseGoogleUpsert };

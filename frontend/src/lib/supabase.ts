@@ -52,33 +52,39 @@ function writeSession(session: Session | null) {
   else localStorage.removeItem(SESSION_KEY);
 }
 
-const PROFILES_KEY = 'traveloop_mock_profiles';
+const MOCK_TABLES_KEY = 'traveloop_mock_tables';
 
-function readProfiles(): Record<string, unknown>[] {
+function readRows(table: string): Record<string, unknown>[] {
   if (!canStore()) return [];
   try {
-    return JSON.parse(localStorage.getItem(PROFILES_KEY) || '[]');
+    const all = JSON.parse(localStorage.getItem(MOCK_TABLES_KEY) || '{}');
+    return all[table] ?? [];
   } catch {
     return [];
   }
 }
 
-function writeProfiles(profiles: Record<string, unknown>[]) {
-  if (canStore()) localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+function writeRows(table: string, rows: Record<string, unknown>[]) {
+  if (!canStore()) return;
+  try {
+    const all = JSON.parse(localStorage.getItem(MOCK_TABLES_KEY) || '{}');
+    all[table] = rows;
+    localStorage.setItem(MOCK_TABLES_KEY, JSON.stringify(all));
+  } catch {
+    // ignore storage failures
+  }
 }
 
 const mockFrom = (table: string) => ({
   insert: async (rows: Record<string, unknown> | Record<string, unknown>[]) => {
     const arr = Array.isArray(rows) ? rows : [rows];
-    if (table === 'profiles') {
-      const profiles = readProfiles();
-      profiles.push(...arr);
-      writeProfiles(profiles);
-    }
+    const existing = readRows(table);
+    existing.push(...arr);
+    writeRows(table, existing);
     return { data: arr, error: null };
   },
   select: async () => ({
-    data: table === 'profiles' ? readProfiles() : [],
+    data: readRows(table),
     error: null,
   }),
 });

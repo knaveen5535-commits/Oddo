@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { travelService } from "@/services/api";
 
 type Mode = "login" | "signup";
 
@@ -112,44 +113,35 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
     setError(null);
 
     try {
-      const { data, error: signupError } = await supabase.auth.signUp({
+      await travelService.supabaseSignup({
+        firstName: signupData.firstName,
+        lastName: signupData.lastName,
         email: signupData.email,
+        phone: signupData.phone,
+        dob: signupData.birthDate,
+        region: signupData.region,
         password: signupData.password,
-        options: {
-          data: {
-            full_name: `${signupData.firstName} ${signupData.lastName}`.trim(),
-            first_name: signupData.firstName,
-            last_name: signupData.lastName,
-            phone: signupData.phone,
-            region: signupData.region,
-            birth_date: signupData.birthDate,
-          },
-        },
       });
 
-      if (signupError) throw signupError;
+      const { data, error: loginError } = await supabase.auth.signInWithPassword({
+        email: signupData.email,
+        password: signupData.password,
+      });
+
+      if (loginError) throw loginError;
 
       if (data.user) {
-        const { error: profileError } = await supabase.from("profiles").insert({
-          id: data.user.id,
-          full_name: `${signupData.firstName} ${signupData.lastName}`.trim(),
-          phone: signupData.phone || null,
-          birth_date: signupData.birthDate || null,
-          region: signupData.region || null,
-        });
-
-        if (profileError) {
-          console.error("[AUTH] Signup succeeded but profile insert failed:", profileError.message);
-        }
-
         console.log("[AUTH] User registered successfully:", data.user.email);
         router.push("/");
       }
     } catch (err) {
       console.error("Signup error:", err);
-      const message = err instanceof Error ? err.message : String(err);
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      const message =
+        axiosErr.response?.data?.message ||
+        (err instanceof Error ? err.message : String(err));
       if (
-        message.toLowerCase().includes("already registered") ||
+        message.toLowerCase().includes("already") ||
         message.toLowerCase().includes("already exists")
       ) {
         setError("This traveler is already in our system. Please login to continue.");

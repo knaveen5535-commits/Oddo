@@ -11,6 +11,30 @@ const api = axios.create({
 
 export const travelService = {
   /**
+   * Signup via backend Supabase admin API (bypasses client signup rate limit)
+   */
+  supabaseSignup: async (payload: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    dob: string;
+    region: string;
+    password: string;
+  }) => {
+    const response = await api.post(`/auth/supabase-signup`, payload);
+    return response.data;
+  },
+
+  /**
+   * Upsert a Google OAuth user into the sign up table
+   */
+  supabaseGoogleUpsert: async (payload: { email: string; firstName: string; lastName: string }) => {
+    const response = await api.post(`/auth/supabase-google-upsert`, payload);
+    return response.data;
+  },
+
+  /**
    * Search for a destination and fetch grouped recommendations (Attractions, Hotels, etc.)
    */
   searchDestination: async (query: string) => {
