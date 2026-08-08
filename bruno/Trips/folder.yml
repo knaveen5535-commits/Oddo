@@ -1,0 +1,4 @@
+info:
+  name: Trips
+  type: folder
+  description: Trip creation and public utility endpoints

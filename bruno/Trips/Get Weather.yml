@@ -1,0 +1,51 @@
+info:
+  name: Get Weather
+  type: http
+  seq: 5
+  description: Get the weather forecast for a city
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/trips/weather"
+
+  params:
+    - name: city
+      value: "Tokyo"
+      type: query
+      description: City name
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response has success flag", function() {
+          expect(res.body.success).to.equal(true);
+        });
+
+docs: |-
+  ## Get Weather
+
+  Returns the weather forecast for the given city.
+
+  ### Query Parameters
+  | Param | Required | Description |
+  |-------|----------|-------------|
+  | city | Yes | City name, e.g. "Tokyo" |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "success": true,
+    "data": {
+      "current": { "temp": 29, "condition": "Sunny" }
+    }
+  }
+  ```
+
+  ### Errors
+  - `400` - City is required
+  - `500` - Weather data unavailable

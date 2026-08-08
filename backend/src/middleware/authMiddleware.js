@@ -28,10 +28,25 @@ const protect = async (req, res, next) => {
     return res.status(401).json({ success: false, message: 'Invalid Authentication Token' });
   }
 
+  // 2. Verify app-signed JWT (issued by /api/auth/register, /api/auth/login and /api/auth/google)
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded && decoded.id) {
+      const traveler = await prisma.user.findUnique({ where: { id: decoded.id } });
+      if (traveler) {
+        console.log(`[AUTH] Explorer Identified: ${traveler.email}`);
+        req.user = traveler;
+        return next();
+      }
+    }
+  } catch (err) {
+    // Not an app-signed token - fall through to Supabase verification below
+  }
+
   try {
     console.log(`[AUTH] Verifying token for: ${req.method} ${req.originalUrl}`);
 
-    // 2. Verify with Supabase Cloud
+    // 3. Verify with Supabase Cloud
     // We use the authenticated user's own token to fetch their profile
     const { data: { user }, error } = await supabase.auth.getUser(token);
 

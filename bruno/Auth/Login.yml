@@ -1,0 +1,71 @@
+info:
+  name: Login
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "email": "jane@example.com",
+        "password": "secret123"
+      }
+
+runtime:
+  variables:
+    - name: baseUrl
+      value: http://localhost:5001/api/v1
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200 && res.body.token) {
+          bru.setVar("token", res.body.token);
+        }
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response returns a token", function() {
+          expect(res.body).to.have.property("token");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  ## Login
+
+  Authenticates a user with email and password. Returns the user profile
+  and a JWT token. The token is automatically saved to the `token` variable
+  so protected requests can use it.
+
+  ### Request Body
+  | Field | Type | Description |
+  |-------|------|-------------|
+  | email | string | User's email address |
+  | password | string | User's password |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "id": "60f7b1a2c9e7a4b6d8f3a123",
+    "name": "Jane Explorer",
+    "email": "jane@example.com",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+  ```
+
+  ### Errors
+  - `401` - Invalid credentials
+  - `500` - Server error

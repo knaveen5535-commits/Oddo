@@ -1,0 +1,61 @@
+info:
+  name: Google Login
+  type: http
+  seq: 3
+  description: Verify a Google ID token and log in or create the user
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/google"
+
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "tokenId": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ii4uLiJ9..."
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200 && res.body.token) {
+          bru.setVar("token", res.body.token);
+        }
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response returns a token", function() {
+          expect(res.body).to.have.property("token");
+        });
+
+docs: |-
+  ## Google Login
+
+  Verifies a Google ID token (obtained from Google Sign-In in the browser)
+  and logs the user in, creating the account if it does not exist yet.
+
+  ### Request Body
+  | Field | Type | Description |
+  |-------|------|-------------|
+  | tokenId | string | Google ID token |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "id": "60f7b1a2c9e7a4b6d8f3a123",
+    "name": "Jane Explorer",
+    "email": "jane@gmail.com",
+    "avatar": "https://...",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+  ```
+
+  ### Errors
+  - `401` - Google authentication failed

@@ -1,0 +1,51 @@
+info:
+  name: Get Trips
+  type: http
+  seq: 2
+  description: Get all trips belonging to the authenticated user
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/trips"
+
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response has trips array", function() {
+          expect(res.body).to.have.property("data");
+          expect(res.body.data).to.be.an("array");
+        });
+
+docs: |-
+  ## Get Trips
+
+  Returns all trips belonging to the authenticated user, ordered by start
+  date, each including its stored budget.
+
+  ### Response (200 OK)
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+        "id": "60f7b1a2c9e7a4b6d8f3a123",
+        "title": "Summer in Paris",
+        "destination": "Paris",
+        "budget": { "tripId": "60f7b1a2c9e7a4b6d8f3a123", "total": 2450 }
+      }
+    ]
+  }
+  ```
+
+  ### Errors
+  - `401` - Authentication required
+  - `500` - Server error

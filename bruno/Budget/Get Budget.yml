@@ -1,0 +1,57 @@
+info:
+  name: Get Budget
+  type: http
+  seq: 1
+  description: Get the stored budget for a trip
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/budget/{{tripId}}"
+
+  auth:
+    type: bearer
+    token: "{{token}}"
+  params:
+    - name: tripId
+      value: "{{tripId}}"
+      type: path
+      description: ID of the trip
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response has budget data", function() {
+          expect(res.body).to.have.property("data");
+        });
+
+docs: |-
+  ## Get Budget
+
+  Returns the stored budget for the given trip. Uses the `tripId` variable
+  (set automatically by "Create Trip").
+
+  ### Path Parameters
+  | Param | Description |
+  |-------|-------------|
+  | tripId | ID of the trip |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "success": true,
+    "data": {
+      "id": "60f7b1a2c9e7a4b6d8f3a789",
+      "tripId": "60f7b1a2c9e7a4b6d8f3a123",
+      "total": 2450
+    }
+  }
+  ```
+
+  ### Errors
+  - `401` - Authentication required
+  - `404` - Budget not found for this trip

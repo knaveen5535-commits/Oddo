@@ -1,0 +1,78 @@
+info:
+  name: Calculate Budget
+  type: http
+  seq: 2
+  description: Calculate and store the budget for a trip
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/budget/{{tripId}}/calculate"
+
+  auth:
+    type: bearer
+    token: "{{token}}"
+  params:
+    - name: tripId
+      value: "{{tripId}}"
+      type: path
+      description: ID of the trip
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "travelers": 2,
+        "budgetLevel": "mid",
+        "preferences": {
+          "accommodation": "hotel",
+          "food": "restaurants"
+        }
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response has budget data", function() {
+          expect(res.body).to.have.property("data");
+        });
+
+docs: |-
+  ## Calculate Budget
+
+  Recalculates and stores the budget for a trip using the provided traveler
+  and spending preferences.
+
+  ### Path Parameters
+  | Param | Description |
+  |-------|-------------|
+  | tripId | ID of the trip |
+
+  ### Request Body (optional overrides)
+  | Field | Type | Description |
+  |-------|------|-------------|
+  | travelers | number | Number of travelers |
+  | budgetLevel | string | e.g. "low", "mid", "high" |
+  | preferences | object | e.g. accommodation / food preferences |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "success": true,
+    "data": {
+      "tripId": "60f7b1a2c9e7a4b6d8f3a123",
+      "total": 2450
+    }
+  }
+  ```
+
+  ### Errors
+  - `401` - Authentication required
+  - `403` - Unauthorized to update this trip's budget
+  - `500` - Server error

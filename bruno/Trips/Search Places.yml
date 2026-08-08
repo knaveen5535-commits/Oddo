@@ -1,0 +1,51 @@
+info:
+  name: Search Places
+  type: http
+  seq: 3
+  description: Search for cities or places via Google Places
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/trips/search-places"
+
+  params:
+    - name: query
+      value: "London"
+      type: query
+      description: Place name to search
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response has data array", function() {
+          expect(res.body).to.have.property("data");
+        });
+
+docs: |-
+  ## Search Places
+
+  Searches for cities or places using the Google Places API.
+
+  ### Query Parameters
+  | Param | Required | Description |
+  |-------|----------|-------------|
+  | query | Yes | Place name to search, e.g. "London" |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "success": true,
+    "data": [
+      { "name": "London", "address": "London, UK", "rating": 4.8 }
+    ]
+  }
+  ```
+
+  ### Errors
+  - `400` - Query is required
+  - `500` - Server error

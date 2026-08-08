@@ -1,0 +1,71 @@
+info:
+  name: Register
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/register"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Kavin",
+        "email": "demo@gmail.com",
+        "password": "demo@123"
+      }
+
+runtime:
+  variables:
+    - name: baseUrl
+      value: http://localhost:5001
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 201 && res.body.token) {
+          bru.setVar("token", res.body.token);
+        }
+    - type: tests
+      code: |-
+        test("Status code is 201", function() {
+          expect(res.status).to.equal(201);
+        });
+
+        test("Response returns a token", function() {
+          expect(res.body).to.have.property("token");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  ## Register
+
+  Creates a new user account. Returns the user profile and a JWT token.
+
+  ### Request Body
+  | Field | Type | Description |
+  |-------|------|-------------|
+  | name | string | User's full name |
+  | email | string | User's email address |
+  | password | string | Password (hashed with bcrypt server-side) |
+
+  ### Response (201 Created)
+  ```json
+  {
+    "id": "60f7b1a2c9e7a4b6d8f3a123",
+    "name": "Jane Explorer",
+    "email": "jane@example.com",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+  ```
+
+  ### Errors
+  - `400` - User already exists
+  - `500` - Server error

@@ -130,6 +130,18 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
       if (signupError) throw signupError;
 
       if (data.user) {
+        const { error: profileError } = await supabase.from("profiles").insert({
+          id: data.user.id,
+          full_name: `${signupData.firstName} ${signupData.lastName}`.trim(),
+          phone: signupData.phone || null,
+          birth_date: signupData.birthDate || null,
+          region: signupData.region || null,
+        });
+
+        if (profileError) {
+          console.error("[AUTH] Signup succeeded but profile insert failed:", profileError.message);
+        }
+
         console.log("[AUTH] User registered successfully:", data.user.email);
         router.push("/");
       }

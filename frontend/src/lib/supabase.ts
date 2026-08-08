@@ -52,6 +52,37 @@ function writeSession(session: Session | null) {
   else localStorage.removeItem(SESSION_KEY);
 }
 
+const PROFILES_KEY = 'traveloop_mock_profiles';
+
+function readProfiles(): Record<string, unknown>[] {
+  if (!canStore()) return [];
+  try {
+    return JSON.parse(localStorage.getItem(PROFILES_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function writeProfiles(profiles: Record<string, unknown>[]) {
+  if (canStore()) localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+}
+
+const mockFrom = (table: string) => ({
+  insert: async (rows: Record<string, unknown> | Record<string, unknown>[]) => {
+    const arr = Array.isArray(rows) ? rows : [rows];
+    if (table === 'profiles') {
+      const profiles = readProfiles();
+      profiles.push(...arr);
+      writeProfiles(profiles);
+    }
+    return { data: arr, error: null };
+  },
+  select: async () => ({
+    data: table === 'profiles' ? readProfiles() : [],
+    error: null,
+  }),
+});
+
 function base64Url(input: string) {
   return btoa(unescape(encodeURIComponent(input))).replace(/=+$/, '');
 }
@@ -203,7 +234,7 @@ const mockAuth = {
   },
 };
 
-const mockSupabase = { auth: mockAuth };
+const mockSupabase = { auth: mockAuth, from: mockFrom };
 
 export const supabase: SupabaseClient = isMock
   ? (mockSupabase as unknown as SupabaseClient)

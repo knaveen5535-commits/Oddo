@@ -1,0 +1,78 @@
+info:
+  name: Create Trip
+  type: http
+  seq: 1
+  description: Create a new trip for the authenticated user
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/trips"
+
+  auth:
+    type: bearer
+    token: "{{token}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Summer in Paris",
+        "destination": "Paris",
+        "startDate": "2026-08-15",
+        "endDate": "2026-08-22",
+        "description": "A week of culture and food"
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 201 && res.body.data && res.body.data.id) {
+          bru.setVar("tripId", res.body.data.id);
+        }
+    - type: tests
+      code: |-
+        test("Status code is 201", function() {
+          expect(res.status).to.equal(201);
+        });
+
+        test("Response has success flag", function() {
+          expect(res.body.success).to.equal(true);
+        });
+
+docs: |-
+  ## Create Trip
+
+  Creates a trip for the authenticated user. The backend fetches place
+  recommendations and a cover image automatically, then calculates an
+  initial budget. The returned trip id is saved to the `tripId` variable.
+
+  ### Request Body
+  | Field | Type | Description |
+  |-------|------|-------------|
+  | title | string | Trip title |
+  | destination | string | Destination city |
+  | startDate | string | Start date (YYYY-MM-DD) |
+  | endDate | string | End date (YYYY-MM-DD) |
+  | description | string | Optional description |
+
+  ### Response (201 Created)
+  ```json
+  {
+    "success": true,
+    "message": "Trip created successfully",
+    "data": {
+      "id": "60f7b1a2c9e7a4b6d8f3a123",
+      "title": "Summer in Paris",
+      "destination": "Paris",
+      "recommendations": []
+    },
+    "budget": { "tripId": "60f7b1a2c9e7a4b6d8f3a123", "total": 2450 }
+  }
+  ```
+
+  ### Errors
+  - `401` - Authentication required
+  - `500` - Server error

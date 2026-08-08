@@ -1,0 +1,55 @@
+info:
+  name: Get Recommendations
+  type: http
+  seq: 4
+  description: Get attraction, restaurant, hotel, and activity recommendations
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/trips/recommendations"
+
+  params:
+    - name: location
+      value: "Rome"
+      type: query
+      description: Location to get recommendations for
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Response has data object", function() {
+          expect(res.body).to.have.property("data");
+        });
+
+docs: |-
+  ## Get Recommendations
+
+  Returns recommendations grouped by category (attractions, restaurants,
+  hotels, activities) for a given location.
+
+  ### Query Parameters
+  | Param | Required | Description |
+  |-------|----------|-------------|
+  | location | Yes | Location name, e.g. "Rome" |
+
+  ### Response (200 OK)
+  ```json
+  {
+    "success": true,
+    "data": {
+      "attractions": [{ "name": "Colosseum", "rating": 4.8 }],
+      "restaurants": [],
+      "hotels": [],
+      "activities": []
+    }
+  }
+  ```
+
+  ### Errors
+  - `400` - Location is required
+  - `500` - Server error
