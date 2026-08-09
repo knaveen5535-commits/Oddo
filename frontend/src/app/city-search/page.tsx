@@ -47,19 +47,29 @@ export default function CitySearchPage() {
             ...(result.data.hotels || []),
           ];
 
-          const mapped = all.map((p) => ({
-            id: p.place_id || Math.random().toString(),
-            name: p.name,
-            location: p.address,
-            image: p.image,
-            rating: p.rating,
-            price: "₹" + (Math.floor(Math.random() * 2000) + 500),
-            category: "Top Pick",
-            tag: "Verified",
-            desc: `Explore the beauty of ${p.name}.`,
-            highlights: p.type ? p.type.slice(0, 3) : ["Must Visit"],
-            mapUrl: p.mapUrl,
-          }));
+          const seen = new Set<string>();
+          const mapped = all
+            .map((p) => {
+              const id = p.place_id || `${p.name}-${Math.random().toString(36).slice(2)}`;
+              return {
+                id,
+                name: p.name,
+                location: p.address,
+                image: p.image,
+                rating: p.rating,
+                price: "₹" + (Math.floor(Math.random() * 2000) + 500),
+                category: "Top Pick",
+                tag: "Verified",
+                desc: `Explore the beauty of ${p.name}.`,
+                highlights: p.type ? p.type.slice(0, 3) : ["Must Visit"],
+                mapUrl: p.mapUrl,
+              };
+            })
+            .filter((mappedItem: any) => {
+              if (seen.has(mappedItem.id)) return false;
+              seen.add(mappedItem.id);
+              return true;
+            });
           setSearchResults(mapped);
         }
       } catch (error) {
@@ -94,19 +104,31 @@ export default function CitySearchPage() {
         if (Array.isArray(result.data.hotels))
           result.data.hotels.forEach((p: any) => allPlaces.push({ ...p, catLabel: "Stay", tag: "Luxury" }));
 
-        const mappedResults = allPlaces.map((p) => ({
-          id: p.place_id || Math.random().toString(),
-          name: p.name,
-          location: p.address || p.formatted_address || "Location not found",
-          image: p.image,
-          rating: p.rating || 0,
-          price: "₹" + (Math.floor(Math.random() * 2000) + 500),
-          category: p.catLabel,
-          tag: p.tag,
-          mapUrl: p.mapUrl,
-          desc: `Discover the magic of ${p.name}.`,
-          highlights: p.type ? p.type.slice(0, 3) : ["Iconic", "Top Rated"],
-        }));
+        const mappedResults = (() => {
+          const seen = new Set<string>();
+          return allPlaces
+            .map((p) => {
+              const id = p.place_id || `${p.name}-${Math.random().toString(36).slice(2)}`;
+              return {
+                id,
+                name: p.name,
+                location: p.address || p.formatted_address || "Location not found",
+                image: p.image,
+                rating: p.rating || 0,
+                price: "₹" + (Math.floor(Math.random() * 2000) + 500),
+                category: p.catLabel,
+                tag: p.tag,
+                mapUrl: p.mapUrl,
+                desc: `Discover the magic of ${p.name}.`,
+                highlights: p.type ? p.type.slice(0, 3) : ["Iconic", "Top Rated"],
+              };
+            })
+            .filter((mappedItem: any) => {
+              if (seen.has(mappedItem.id)) return false;
+              seen.add(mappedItem.id);
+              return true;
+            });
+        })();
         setSearchResults(mappedResults);
       }
     } catch (error) {

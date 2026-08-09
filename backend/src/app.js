@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const tripRoutes = require('./routes/tripRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const authRoutes = require('./routes/authRoutes');
+const placePhotoRoutes = require('./routes/placePhotoRoutes');
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/budget', budgetRoutes);
+app.use('/api/places', placePhotoRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
