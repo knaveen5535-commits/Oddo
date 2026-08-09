@@ -1,29 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Wallet, 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  PieChart, 
-  Plus, 
-  ArrowUpRight, 
-  ArrowDownLeft,
-  CreditCard,
+import { motion } from "framer-motion";
+import {
+  Wallet,
+  TrendingUp,
+  CheckCircle2,
+  Home,
+  Utensils,
   ShoppingBag,
   Car,
-  Utensils,
-  Home,
   MoreHorizontal,
-  Search,
-  Filter,
   Download,
   Calendar,
   AlertTriangle,
   Loader2,
-  CheckCircle2
+  RefreshCw,
 } from "lucide-react";
 import { useBudget } from "@/hooks/useBudget";
 import api from "@/lib/api";
@@ -37,7 +29,7 @@ export default function GlobalBudgetPage() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await api.get('/trips');
+        const response = await api.get("/trips");
         if (response.data.success) {
           setTrips(response.data.data);
           if (response.data.data.length > 0) {
@@ -54,175 +46,207 @@ export default function GlobalBudgetPage() {
   }, []);
 
   const stats = [
-    { 
-      label: "Estimated Total", 
-      value: budget ? `₹${budget.totalCost.toLocaleString()}` : "₹0", 
-      change: budget?.status === 'Expensive' ? "High" : budget?.status === 'Low' ? "Value" : "Moderate", 
-      icon: <Wallet size={24} />, 
-      color: budget?.status === 'Expensive' ? "bg-primary" : budget?.status === 'Low' ? "bg-emerald-500" : "bg-blue-500" 
+    {
+      label: "Estimated total",
+      value: budget ? `₹${budget.totalCost.toLocaleString()}` : "₹0",
+      change: budget?.status === "Expensive" ? "High" : budget?.status === "Low" ? "Value" : "Moderate",
+      icon: <Wallet size={20} />,
+      tone: budget?.status === "Expensive" ? "text-danger bg-danger/10" : budget?.status === "Low" ? "text-success bg-success/10" : "text-primary bg-primary/10",
     },
-    { label: "Daily Average", value: budget ? `₹${budget.averagePerDay.toLocaleString()}` : "₹0", change: "-8%", icon: <TrendingUp size={24} />, color: "bg-amber-500" },
-    { label: "Stability", value: "Verified", change: "+5%", icon: <CheckCircle2 size={24} />, color: "bg-emerald-500" },
+    {
+      label: "Daily average",
+      value: budget ? `₹${budget.averagePerDay.toLocaleString()}` : "₹0",
+      change: "Per day",
+      icon: <TrendingUp size={20} />,
+      tone: "text-warning bg-warning/10",
+    },
+    {
+      label: "Stability",
+      value: "Verified",
+      change: "Sync active",
+      icon: <CheckCircle2 size={20} />,
+      tone: "text-success bg-success/10",
+    },
   ];
 
   const breakdownItems = [
-    { label: "Accommodation", value: budget?.hotelCost || 0, icon: <Home />, color: "bg-blue-500" },
-    { label: "Dining & Food", value: budget?.foodCost || 0, icon: <Utensils />, color: "bg-emerald-500" },
-    { label: "Activities", value: budget?.activityCost || 0, icon: <ShoppingBag />, color: "bg-primary" },
-    { label: "Transport", value: budget?.transportCost || 0, icon: <Car />, color: "bg-amber-500" },
-    { label: "Miscellaneous", value: budget?.miscellaneousCost || 0, icon: <MoreHorizontal />, color: "bg-slate-500" },
+    { label: "Accommodation", value: budget?.hotelCost || 0, icon: <Home size={18} />, bar: "bg-blue-500", dot: "bg-blue-500" },
+    { label: "Dining & food", value: budget?.foodCost || 0, icon: <Utensils size={18} />, bar: "bg-emerald-500", dot: "bg-emerald-500" },
+    { label: "Activities", value: budget?.activityCost || 0, icon: <ShoppingBag size={18} />, bar: "bg-primary", dot: "bg-primary" },
+    { label: "Transport", value: budget?.transportCost || 0, icon: <Car size={18} />, bar: "bg-amber-500", dot: "bg-amber-500" },
+    { label: "Miscellaneous", value: budget?.miscellaneousCost || 0, icon: <MoreHorizontal size={18} />, bar: "bg-slate-500", dot: "bg-slate-500" },
   ];
 
   if (fetchingTrips || (loading && !budget)) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center space-y-6 bg-background">
-        <Loader2 size={48} className="text-primary animate-spin" />
-        <p className="text-foreground/20 font-black uppercase tracking-[0.4em] italic animate-pulse text-sm">Calculating Intelligence...</p>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 size={40} className="text-primary animate-spin" />
+        <p className="text-sm text-muted-foreground">Calculating budget...</p>
       </div>
     );
   }
 
+  const total = budget?.totalCost || 1;
+
   return (
-    <div className="px-4 sm:px-12 w-full space-y-8 sm:space-y-12 bg-background text-foreground min-h-screen pb-32">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="space-y-8">
+      <div className="page-header">
         <div>
-          <h1 className="text-3xl sm:text-6xl font-black tracking-tighter uppercase italic mb-2 text-foreground">Finance <span className="text-primary drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">Control</span></h1>
-          <p className="text-foreground/40 font-bold italic">Dynamic budget intelligence for your global expeditions.</p>
+          <h1 className="page-title">Budget</h1>
+          <p className="page-subtitle">Dynamic budget intelligence for your trips.</p>
         </div>
-        <div className="flex gap-4 w-full md:w-auto">
-          <select 
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <select
             value={selectedTripId}
             onChange={(e) => setSelectedTripId(e.target.value)}
-            className="flex-1 px-4 sm:px-8 py-4 sm:py-5 glass rounded-2xl border-white/10 bg-transparent text-foreground font-black uppercase tracking-widest text-xs focus:outline-none focus:ring-2 ring-primary/20 appearance-none cursor-pointer pr-8 sm:pr-12 max-w-full"
+            className="select bg-card flex-1 sm:flex-none"
           >
             {trips.length > 0 ? (
-              trips.map(t => (
-                <option key={t.id} value={t.id} className="bg-background text-foreground">{t.title}</option>
+              trips.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.title}
+                </option>
               ))
             ) : (
-              <option value="" className="bg-background text-foreground">No Voyages Found</option>
+              <option value="">No trips found</option>
             )}
           </select>
-          <button onClick={refresh} className="p-4 sm:p-5 glass rounded-2xl border-white/10 hover:bg-white/5 transition-all text-foreground group shadow-xl">
-            <Download size={20} className="group-hover:translate-y-0.5 transition-transform" />
+          <button onClick={refresh} className="btn btn-outline" aria-label="Refresh">
+            <RefreshCw size={16} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
-      </header>
+      </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      {error && (
+        <div className="flex items-center justify-center gap-3 p-4 card border-danger/30 text-danger rounded-xl">
+          <AlertTriangle size={18} />
+          <span className="text-sm font-medium">{error}</span>
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {stats.map((stat, idx) => (
-          <motion.div 
+          <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-white/5 shadow-2xl relative overflow-hidden group bg-card"
+            transition={{ delay: idx * 0.06 }}
+            className="card card-pad card-hover"
           >
-            <div className={`absolute top-0 right-0 w-32 h-32 ${stat.color} opacity-5 blur-[80px] group-hover:opacity-10 transition-opacity`} />
-            <div className="flex justify-between items-start mb-8">
-              <div className={`p-4 rounded-2xl ${stat.color}/10 text-foreground border border-white/10 shadow-inner`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${stat.tone}`}>
                 {stat.icon}
               </div>
-              <span className={`text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full ${stat.color}/10 ${stat.color.replace('bg-', 'text-')} border border-white/5`}>
-                {stat.change}
-              </span>
+              <span className="badge badge-neutral">{stat.change}</span>
             </div>
-            <div className="space-y-2">
-              <p className="text-foreground/30 text-xs font-black uppercase tracking-[0.3em] italic">{stat.label}</p>
-              <h2 className="text-3xl sm:text-5xl font-black italic text-foreground tracking-tighter">{stat.value}</h2>
-            </div>
+            <div className="stat-label mb-1">{stat.label}</div>
+            <div className="stat-value">{stat.value}</div>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Expenditure Breakdown */}
-        <div className="lg:col-span-2 space-y-10">
-          <div className="flex justify-between items-end">
-            <div>
-              <h2 className="text-3xl font-black tracking-tighter uppercase italic text-foreground leading-none">Expenditure Breakdown</h2>
-              <p className="text-foreground/40 text-sm font-bold italic mt-2">Scientific distribution of costs across categories.</p>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Breakdown */}
+        <div className="lg:col-span-2 space-y-6">
+          <div>
+            <h2 className="section-title text-lg sm:text-xl">Expenditure breakdown</h2>
+            <p className="text-sm text-muted-foreground">Distribution of costs across categories.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {breakdownItems.map((item, idx) => (
-              <motion.div 
-                key={item.label}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className="group p-6 sm:p-8 glass-card rounded-[32px] sm:rounded-[40px] border-white/5 hover:border-primary/20 transition-all bg-card/50"
-              >
-                <div className="flex items-center gap-6 mb-8">
-                  <div className={`w-14 h-14 rounded-2xl ${item.color}/10 flex items-center justify-center ${item.color.replace('bg-', 'text-')} border border-white/10 shadow-inner`}>
-                    {item.icon}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {breakdownItems.map((item, idx) => {
+              const pct = Math.round(((item.value || 0) / total) * 100);
+              return (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="card card-pad card-hover"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-foreground">
+                        {item.icon}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{item.label}</div>
+                        <div className="text-xs text-muted-foreground">{pct}% of budget</div>
+                      </div>
+                    </div>
+                    <div className="font-semibold text-foreground">₹{item.value.toLocaleString()}</div>
                   </div>
-                  <div>
-                    <h3 className="font-black uppercase tracking-[0.3em] text-xs text-foreground/30 italic">{item.label}</h3>
-                    <p className="text-2xl font-black italic text-foreground tracking-tight">₹{item.value.toLocaleString()}</p>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{ duration: 1, delay: idx * 0.08 }}
+                      className={`h-full ${item.bar} rounded-full`}
+                    />
                   </div>
-                </div>
-                <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(item.value / (budget?.totalCost || 1)) * 100}%` }}
-                    transition={{ duration: 1.5, delay: idx * 0.1 }}
-                    className={`h-full ${item.color} shadow-[0_0_15px_rgba(255,255,255,0.05)]`}
-                  />
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
 
-          {budget?.status === 'Expensive' && (
-            <div className="p-10 bg-primary/5 border border-primary/20 rounded-[48px] flex items-center gap-8 shadow-2xl">
-              <div className="p-5 bg-primary text-white rounded-2xl animate-pulse shadow-lg shadow-primary/30">
-                <AlertTriangle size={32} />
+          {budget?.status === "Expensive" && (
+            <div className="card card-pad border-danger/30 bg-danger/5 flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-danger text-white flex items-center justify-center shrink-0 animate-pulse-soft">
+                <AlertTriangle size={20} />
               </div>
               <div>
-                <h3 className="text-xl font-black uppercase italic text-primary tracking-tight">Budget Alert: High Intensity</h3>
-                <p className="text-sm text-foreground/40 font-bold italic mt-1">Your current plan is exceeding standard moderate limits. Consider optimizing activities to maintain financial equilibrium.</p>
+                <h3 className="font-semibold text-foreground">Budget alert</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Your current plan is above moderate limits. Consider optimizing activities.
+                </p>
               </div>
             </div>
           )}
         </div>
 
-        {/* Intelligence Summary */}
-        <div className="space-y-10">
-          <h2 className="text-3xl font-black tracking-tighter uppercase italic text-foreground leading-none">Intelligence Summary</h2>
-          <div className="glass-card p-6 sm:p-12 rounded-[40px] sm:rounded-[56px] border-white/5 shadow-2xl space-y-12 relative overflow-hidden bg-card">
-             <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/5 blur-[120px]" />
-             
-             <div className="relative aspect-square max-w-xs mx-auto w-full rounded-full border-[24px] border-white/5 flex flex-col items-center justify-center shadow-inner">
-                <div className="text-center">
-                  <p className="text-xs font-black text-foreground/20 uppercase tracking-[0.3em] mb-2 italic">Total Payload</p>
-                  <h3 className="text-3xl sm:text-5xl font-black italic text-foreground tracking-tighter">₹{budget?.totalCost?.toLocaleString() || "0"}</h3>
-                </div>
-                <div className="absolute inset-0 rounded-full border-[14px] border-primary border-t-transparent border-l-transparent rotate-45 shadow-[0_0_40px_rgba(244,63,94,0.3)]" />
-             </div>
-
-             <div className="space-y-5">
-                <div className="flex justify-between items-center p-6 glass rounded-3xl border-white/5 bg-white/5">
-                  <div className="flex items-center gap-4">
-                    <Calendar size={20} className="text-primary" />
-                    <span className="text-xs font-black uppercase tracking-widest text-foreground/60 italic">Last Updated</span>
-                  </div>
-                  <span className="text-xs font-black italic text-foreground">{budget ? new Date(budget.updatedAt).toLocaleTimeString() : 'Never'}</span>
-                </div>
-                <div className="flex justify-between items-center p-6 glass rounded-3xl border-white/5 bg-white/5">
-                  <div className="flex items-center gap-4">
-                    <TrendingUp size={20} className="text-emerald-500" />
-                    <span className="text-xs font-black uppercase tracking-widest text-foreground/60 italic">Cost Tier</span>
-                  </div>
-                  <span className={`text-xs font-black uppercase tracking-widest ${budget?.status === 'Expensive' ? 'text-primary' : 'text-emerald-500'}`}>{budget?.status}</span>
-                </div>
-             </div>
-
-             <button className="w-full py-6 bg-primary text-white rounded-3xl transition-all font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 shadow-2xl shadow-primary/30 italic">
-                Export Financial Report
-             </button>
+        {/* Summary */}
+        <div className="space-y-5">
+          <h2 className="section-title text-lg sm:text-xl">Summary</h2>
+          <div className="card card-pad relative overflow-hidden">
+            <div className="absolute -top-16 -right-16 w-52 h-52 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative flex items-center justify-center mb-8">
+              <div className="w-44 h-44 rounded-full border-[14px] border-muted flex flex-col items-center justify-center">
+                <p className="text-xs text-muted-foreground mb-1">Total budget</p>
+                <h3 className="text-2xl font-bold text-foreground tracking-tight">
+                  ₹{budget?.totalCost?.toLocaleString() || "0"}
+                </h3>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3.5 rounded-xl bg-muted">
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar size={15} className="text-primary" />
+                  Last updated
+                </span>
+                <span className="text-sm font-medium text-foreground">
+                  {budget ? new Date(budget.updatedAt).toLocaleTimeString() : "Never"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3.5 rounded-xl bg-muted">
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <TrendingUp size={15} className="text-success" />
+                  Cost tier
+                </span>
+                <span
+                  className={`text-sm font-medium ${
+                    budget?.status === "Expensive" ? "text-danger" : "text-success"
+                  }`}
+                >
+                  {budget?.status || "—"}
+                </span>
+              </div>
+            </div>
+            <button className="btn btn-outline w-full mt-5">
+              <Download size={16} />
+              Export report
+            </button>
           </div>
         </div>
       </div>

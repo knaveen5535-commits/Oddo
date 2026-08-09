@@ -1,69 +1,91 @@
 "use client";
 
 import React from "react";
-import {
-  Plane, 
-  User, 
-  LogOut
-} from "lucide-react";
+import { Plane, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ThemeToggle } from "../ThemeToggle";
-import { menuItems } from "./menuItems";
+import { menuGroups } from "./menuItems";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { user } = useAuth();
 
   const handleLogout = () => {
-    // In a real app, you would clear cookies/localstorage here
     router.push("/login");
   };
 
+  const initials = (user?.name || "U")
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
-    <aside className="w-64 bg-sidebar border-r border-border flex flex-col p-6 hidden lg:flex h-screen sticky top-0 transition-colors duration-300">
-      <div className="flex items-center gap-3 mb-12">
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
-          <Plane className="text-foreground w-6 h-6" />
+    <aside className="w-64 bg-sidebar border-r border-border flex flex-col hidden lg:flex h-screen sticky top-0">
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-6 h-16 border-b border-border shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm shrink-0">
+          <Plane className="text-white w-5 h-5" />
         </div>
-        <h1 className="text-xl font-bold text-gradient tracking-tight">Traveloop</h1>
+        <div>
+          <h1 className="text-base font-bold tracking-tight text-foreground leading-none">Traveloop</h1>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Trip planning suite</p>
+        </div>
       </div>
 
-      <nav className="flex-1 space-y-2">
-        {menuItems.map((item) => (
-          <Link key={item.href} href={item.href}>
-            <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-              pathname === item.href 
-                ? "bg-primary/10 text-primary border border-primary/20" 
-                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-            }`}>
-              {item.icon}
-              <span className="font-medium">{item.label}</span>
-            </button>
-          </Link>
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+        {menuGroups.map((group) => (
+          <div key={group.label}>
+            <p className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+              {group.label}
+            </p>
+            <div className="space-y-1">
+              {group.items.map((item) => {
+                const active = item.match(pathname);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-sidebar-foreground hover:bg-accent hover:text-foreground"
+                    }`}
+                  >
+                    <span className={active ? "text-primary" : "text-muted-foreground"}>{item.icon}</span>
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </nav>
 
-      <div className="mt-auto space-y-4 pt-6 border-t border-border">
-        <div className="flex justify-center pb-2">
-           <ThemeToggle />
-        </div>
-        <Link href="/profile">
-          <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-            pathname === "/profile" 
-              ? "bg-primary/10 text-primary" 
-              : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-          }`}>
-            <User size={20} />
-            <span className="font-medium">Profile</span>
-          </button>
-        </Link>
-        <button 
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-all"
+      {/* User */}
+      <div className="p-3 border-t border-border shrink-0">
+        <Link
+          href="/profile"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent transition-colors"
         >
-          <LogOut size={20} />
-          <span className="font-medium">Logout</span>
+          <div className="avatar w-9 h-9 text-sm">
+            {user?.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-foreground truncate">{user?.name || "Guest"}</p>
+            <p className="text-xs text-muted-foreground truncate">{user?.email || "Not signed in"}</p>
+          </div>
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-danger/10 hover:text-danger transition-colors cursor-pointer"
+        >
+          <LogOut size={19} />
+          Sign out
         </button>
       </div>
     </aside>

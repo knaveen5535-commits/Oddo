@@ -2,18 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Wallet, 
-  TrendingDown, 
-  TrendingUp, 
-  Plus, 
-  ArrowUpRight, 
-  ArrowDownLeft,
+import {
+  Wallet,
+  TrendingUp,
+  Plus,
+  ArrowUpRight,
   PieChart,
   BarChart3,
   CreditCard,
   Loader2,
-  ChevronLeft
+  ChevronLeft,
+  Home,
+  Utensils,
+  ShoppingBag,
+  Car,
+  MoreHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
@@ -29,7 +32,7 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
       try {
         const [tripRes, budgetRes] = await Promise.all([
           api.get(`/trips`),
-          api.get(`/budget/${tripId}`)
+          api.get(`/budget/${tripId}`),
         ]);
 
         if (tripRes.data.success) {
@@ -52,168 +55,197 @@ export default function BudgetPage({ params }: { params: { tripId: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
-        <Loader2 size={48} className="text-primary animate-spin" />
-        <p className="text-sm font-black text-foreground/20 uppercase tracking-[0.4em] italic">Accessing Ledger...</p>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 size={40} className="text-primary animate-spin" />
+        <p className="text-sm text-muted-foreground">Accessing ledger...</p>
       </div>
     );
   }
 
   const categories = [
-    { name: "Accommodation", spent: budget?.hotelCost || 0, total: (budget?.hotelCost || 0) * 1.2, color: "bg-rose-500" },
-    { name: "Transport", spent: budget?.transportCost || 0, total: (budget?.transportCost || 0) * 1.5, color: "bg-blue-500" },
-    { name: "Food", spent: budget?.foodCost || 0, total: (budget?.foodCost || 0) * 1.3, color: "bg-orange-500" },
-    { name: "Activities", spent: budget?.activityCost || 0, total: (budget?.activityCost || 0) * 1.1, color: "bg-green-500" },
-    { name: "Misc", spent: budget?.miscellaneousCost || 0, total: (budget?.miscellaneousCost || 0) * 2, color: "bg-slate-500" },
+    { name: "Accommodation", spent: budget?.hotelCost || 0, total: (budget?.hotelCost || 0) * 1.2, color: "bg-rose-500", icon: <Home size={18} /> },
+    { name: "Transport", spent: budget?.transportCost || 0, total: (budget?.transportCost || 0) * 1.5, color: "bg-blue-500", icon: <Car size={18} /> },
+    { name: "Food", spent: budget?.foodCost || 0, total: (budget?.foodCost || 0) * 1.3, color: "bg-amber-500", icon: <Utensils size={18} /> },
+    { name: "Activities", spent: budget?.activityCost || 0, total: (budget?.activityCost || 0) * 1.1, color: "bg-emerald-500", icon: <ShoppingBag size={18} /> },
+    { name: "Misc", spent: budget?.miscellaneousCost || 0, total: (budget?.miscellaneousCost || 0) * 2, color: "bg-slate-500", icon: <MoreHorizontal size={18} /> },
+  ];
+
+  const expenseRows = [
+    { title: "Accommodation", category: "Stay", amount: budget?.hotelCost || 0, icon: <Home size={18} /> },
+    { title: "Transport", category: "Travel", amount: budget?.transportCost || 0, icon: <Car size={18} /> },
+    { title: "Food & dining", category: "Food", amount: budget?.foodCost || 0, icon: <Utensils size={18} /> },
+    { title: "Activities", category: "Experience", amount: budget?.activityCost || 0, icon: <ShoppingBag size={18} /> },
   ];
 
   return (
-    <div className="px-4 sm:p-12 w-full max-w-7xl mx-auto space-y-8 sm:space-y-12 bg-background min-h-screen text-foreground">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-4">
-          <Link href={`/trips/${tripId}/itinerary`} className="flex items-center gap-2 text-sm font-black text-foreground/40 hover:text-primary transition-colors uppercase tracking-widest italic group">
-            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Itinerary
+    <div className="space-y-8">
+      <div className="page-header">
+        <div>
+          <Link
+            href={`/trips/${tripId}/itinerary`}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-3"
+          >
+            <ChevronLeft size={16} />
+            Back to itinerary
           </Link>
-          <div>
-            <h1 className="text-3xl sm:text-5xl font-black mb-2 text-foreground italic uppercase tracking-tighter leading-none">Financial Manifest</h1>
-            <p className="text-foreground/40 font-bold italic">Logistical cost breakdown for <span className="text-primary">{trip?.title || "your voyage"}</span>.</p>
-          </div>
+          <h1 className="page-title">Trip Budget</h1>
+          <p className="page-subtitle">
+            Cost breakdown for <span className="text-foreground font-medium">{trip?.title || "your trip"}</span>.
+          </p>
         </div>
-        <button className="flex items-center gap-3 px-5 sm:px-8 py-4 bg-primary text-white rounded-2xl shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs italic">
-          <Plus size={20} />
-          Append Expense
+        <button className="btn btn-primary">
+          <Plus size={16} />
+          Add expense
         </button>
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {/* Total Budget Card */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[40px] border-white/5 relative overflow-hidden group bg-card shadow-2xl"
+          className="card card-pad card-hover relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-            <Wallet size={120} />
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+            <Wallet size={20} />
           </div>
-          <h4 className="text-foreground/30 text-xs font-black uppercase tracking-[0.3em] mb-4">Total Estimated Cost</h4>
-          <div className="text-3xl sm:text-5xl font-black text-foreground italic tracking-tighter mb-8">
-            ₹{budget?.totalCost?.toLocaleString() || "0.00"}
+          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">
+            Total estimated cost
           </div>
-          <div className="flex items-center gap-3 text-primary text-sm font-black uppercase tracking-widest italic">
-            <TrendingUp size={18} /> Daily Avg: ₹{budget?.averagePerDay?.toLocaleString() || "0.00"}
+          <div className="stat-value mb-3">₹{budget?.totalCost?.toLocaleString() || "0"}</div>
+          <div className="inline-flex items-center gap-1.5 text-sm font-medium text-success">
+            <TrendingUp size={15} />
+            Daily avg: ₹{budget?.averagePerDay?.toLocaleString() || "0"}
           </div>
         </motion.div>
 
-        {/* Expenses Summary */}
-        <div className="md:col-span-2 glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[40px] border-white/5 bg-card shadow-2xl">
-          <div className="flex justify-between items-center mb-10">
-            <h3 className="font-black text-2xl text-foreground italic uppercase tracking-tight">Category Breakdown</h3>
-            <div className="flex gap-2">
-              <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
-              <div className="w-2 h-2 rounded-full bg-green-500" />
+        <div className="md:col-span-2 card card-pad">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="section-title">Category breakdown</h3>
+            <div className="flex gap-1.5">
+              {categories.map((c, i) => (
+                <span key={i} className={`w-2 h-2 rounded-full ${c.color}`} />
+              ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
-            {categories.map((cat, idx) => (
-              <div key={idx} className="space-y-4">
-                <div className="flex justify-between text-sm">
-                  <span className="font-black text-foreground/60 uppercase tracking-widest italic">{cat.name}</span>
-                  <span className="text-foreground font-black">₹{cat.spent.toLocaleString()}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+            {categories.map((cat, idx) => {
+              const pct = Math.min((cat.spent / (cat.total || 1)) * 100, 100);
+              return (
+                <div key={idx}>
+                  <div className="flex justify-between items-center text-sm mb-2">
+                    <span className="flex items-center gap-2 text-muted-foreground font-medium">
+                      <span className={`w-2 h-2 rounded-full ${cat.color}`} />
+                      {cat.name}
+                    </span>
+                    <span className="font-semibold text-foreground">₹{cat.spent.toLocaleString()}</span>
+                  </div>
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{ duration: 1, delay: idx * 0.08 }}
+                      className={`h-full ${cat.color} rounded-full`}
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((cat.spent / (cat.total || 1)) * 100, 100)}%` }}
-                    transition={{ duration: 1.5, delay: idx * 0.1 }}
-                    className={`h-full ${cat.color} shadow-[0_0_15px_rgba(255,255,255,0.1)]`} 
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-4">
-        {/* Recent Transactions placeholder */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Expenses */}
         <div className="lg:col-span-2">
-          <h3 className="text-2xl font-black mb-8 flex items-center gap-4 text-foreground italic uppercase tracking-tight">
-            <div className="p-3 bg-primary/10 rounded-2xl text-primary border border-primary/20">
-              <CreditCard size={24} />
+          <div className="section-heading">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <CreditCard size={19} />
             </div>
-            Operational Log
-          </h3>
-          <div className="space-y-6">
-            {[
-              { title: "Base Accommodation", category: "Stay", amount: budget?.hotelCost || 0, date: "System Entry", type: "expense" },
-              { title: "Transit Allocation", category: "Transport", amount: budget?.transportCost || 0, date: "System Entry", type: "expense" },
-              { title: "Culinary Provision", category: "Food", amount: budget?.foodCost || 0, date: "System Entry", type: "expense" },
-            ].map((expense, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="glass-card p-6 rounded-3xl border-white/5 flex items-center justify-between group hover:border-primary/20 transition-all bg-card/50 shadow-xl"
-              >
-                <div className="flex items-center gap-6">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center bg-primary/5 text-primary border border-primary/10`}>
-                    <ArrowUpRight size={28} />
-                  </div>
-                  <div>
-                    <h4 className="font-black text-lg text-foreground italic uppercase tracking-tight">{expense.title}</h4>
-                    <p className="text-xs font-black text-foreground/20 uppercase tracking-[0.2em]">{expense.category} • {expense.date}</p>
-                  </div>
-                </div>
-                <div className={`text-xl font-black text-foreground italic`}>
-                  ₹{expense.amount.toLocaleString()}
-                </div>
-              </motion.div>
-            ))}
+            <h3 className="section-title">Expense log</h3>
+          </div>
+          <div className="card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="table">
+                <thead className="bg-muted/60">
+                  <tr>
+                    <th>Category</th>
+                    <th>Details</th>
+                    <th className="text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenseRows.map((expense, idx) => (
+                    <motion.tr
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <span className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            {expense.icon}
+                          </span>
+                          <span className="font-medium text-foreground">{expense.title}</span>
+                        </div>
+                      </td>
+                      <td className="text-muted-foreground">{expense.category}</td>
+                      <td className="text-right">
+                        <span className="font-semibold text-foreground">₹{expense.amount.toLocaleString()}</span>
+                        <ArrowUpRight size={14} className="inline ml-1 text-success" />
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        {/* Analytics Mini Widget */}
-        <div className="space-y-8">
-          <section className="glass-card p-8 rounded-[40px] border-white/5 bg-card shadow-2xl">
-            <h3 className="font-black mb-8 flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-foreground/30 italic">
+        {/* Side */}
+        <div className="space-y-5">
+          <section className="card card-pad">
+            <h3 className="section-title mb-6 flex items-center gap-3">
               <PieChart size={18} className="text-primary" />
-              Efficiency Stats
+              Efficiency
             </h3>
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div className="flex justify-between items-end">
                 <div>
-                  <div className="text-xs font-black text-foreground/20 uppercase tracking-widest mb-1">Logistics Rating</div>
-                  <div className="text-3xl font-black text-foreground italic tracking-tighter">OPTIMAL</div>
+                  <div className="text-xs text-muted-foreground mb-1">Logistics rating</div>
+                  <div className="text-lg font-semibold text-foreground">Optimal</div>
                 </div>
-                <div className="h-12 w-28 flex items-end gap-1.5 pb-1">
+                <div className="flex items-end gap-1.5 h-12">
                   <div className="bg-primary/20 w-4 h-[40%] rounded-md" />
                   <div className="bg-primary/20 w-4 h-[60%] rounded-md" />
                   <div className="bg-primary/20 w-4 h-[50%] rounded-md" />
                   <div className="bg-primary/20 w-4 h-[80%] rounded-md" />
-                  <div className="bg-primary w-4 h-[90%] rounded-md shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+                  <div className="bg-primary w-4 h-[90%] rounded-md" />
                 </div>
               </div>
-              
-              <div className="pt-8 border-t border-white/5 space-y-6">
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-foreground/20 font-black uppercase tracking-widest italic">Sync Status</span>
-                  <span className="font-black text-green-500 text-xs uppercase tracking-widest flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> CLOUD ACTIVE
+              <div className="pt-5 border-t border-border space-y-4 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Sync status</span>
+                  <span className="inline-flex items-center gap-1.5 font-medium text-success">
+                    <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                    Cloud active
                   </span>
                 </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-foreground/20 font-black uppercase tracking-widest italic">Budget Limit</span>
-                  <span className="font-black text-foreground italic">₹{((budget?.totalCost || 0) * 1.5).toLocaleString()}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Budget limit</span>
+                  <span className="font-semibold text-foreground">
+                    ₹{((budget?.totalCost || 0) * 1.5).toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
           </section>
 
-          <button className="w-full py-6 glass border-white/5 rounded-3xl font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all italic text-foreground/40">
-            <BarChart3 size={20} />
-            Operational Analytics
+          <button className="btn btn-outline w-full">
+            <BarChart3 size={16} />
+            View analytics
           </button>
         </div>
       </div>

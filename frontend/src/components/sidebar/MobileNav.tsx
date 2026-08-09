@@ -1,122 +1,115 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plane, Menu, X, User, LogOut } from "lucide-react";
+import React from "react";
+import { Plane, LogOut, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ThemeToggle } from "../ThemeToggle";
-import { menuItems } from "./menuItems";
+import { menuGroups } from "./menuItems";
+import { useAuth } from "@/context/AuthContext";
 
-export default function MobileNav() {
+export default function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   const handleLogout = () => {
-    setOpen(false);
+    onClose();
     router.push("/login");
   };
 
+  const initials = (user?.name || "U")
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
-    <>
-      {/* Top bar */}
-      <header className="lg:hidden sticky top-0 z-40 flex items-center justify-between gap-3 px-4 py-3 bg-sidebar/80 backdrop-blur-xl border-b border-border">
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Open menu"
-          className="p-2 -ml-1 rounded-xl text-foreground hover:bg-accent/50 transition-colors"
-        >
-          <Menu size={24} />
-        </button>
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30">
-            <Plane className="text-foreground w-4 h-4" />
-          </div>
-          <span className="text-lg font-bold text-gradient tracking-tight">Traveloop</span>
-        </Link>
-        <ThemeToggle />
-      </header>
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          />
+          <motion.aside
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
+            className="fixed left-0 top-0 bottom-0 z-50 w-72 max-w-[85vw] flex flex-col bg-sidebar border-r border-border"
+          >
+            <div className="flex items-center justify-between px-6 h-16 border-b border-border shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
+                  <Plane className="text-white w-5 h-5" />
+                </div>
+                <span className="text-base font-bold tracking-tight text-foreground">Traveloop</span>
+              </div>
+              <button onClick={onClose} aria-label="Close menu" className="icon-btn">
+                <X size={18} />
+              </button>
+            </div>
 
-      {/* Drawer */}
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
-            />
-            <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-              className="fixed left-0 top-0 bottom-0 z-50 w-72 max-w-[85vw] flex flex-col bg-sidebar border-r border-border p-6"
-            >
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
-                    <Plane className="text-foreground w-6 h-6" />
+            <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+              {menuGroups.map((group) => (
+                <div key={group.label}>
+                  <p className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    {group.label}
+                  </p>
+                  <div className="space-y-1">
+                    {group.items.map((item) => {
+                      const active = item.match(pathname);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={onClose}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                            active
+                              ? "bg-primary/10 text-primary"
+                              : "text-sidebar-foreground hover:bg-accent hover:text-foreground"
+                          }`}
+                        >
+                          <span className={active ? "text-primary" : "text-muted-foreground"}>{item.icon}</span>
+                          {item.label}
+                        </Link>
+                      );
+                    })}
                   </div>
-                  <h1 className="text-xl font-bold text-gradient tracking-tight">Traveloop</h1>
                 </div>
-                <button
-                  onClick={() => setOpen(false)}
-                  aria-label="Close menu"
-                  className="p-2 rounded-xl text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              ))}
+            </nav>
 
-              <nav className="flex-1 space-y-2">
-                {menuItems.map((item) => (
-                  <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-                    <button
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                        pathname === item.href
-                          ? "bg-primary/10 text-primary border border-primary/20"
-                          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-                      }`}
-                    >
-                      {item.icon}
-                      <span className="font-medium">{item.label}</span>
-                    </button>
-                  </Link>
-                ))}
-              </nav>
-
-              <div className="mt-auto space-y-4 pt-6 border-t border-border">
-                <div className="flex justify-center pb-2">
-                  <ThemeToggle />
+            <div className="p-3 border-t border-border shrink-0">
+              <Link
+                href="/profile"
+                onClick={onClose}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accent transition-colors"
+              >
+                <div className="avatar w-9 h-9 text-sm">
+                  {user?.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : initials}
                 </div>
-                <Link href="/profile" onClick={() => setOpen(false)}>
-                  <button
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                      pathname === "/profile"
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-                    }`}
-                  >
-                    <User size={20} />
-                    <span className="font-medium">Profile</span>
-                  </button>
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-red-500/10 hover:text-red-400 transition-all"
-                >
-                  <LogOut size={20} />
-                  <span className="font-medium">Logout</span>
-                </button>
-              </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground truncate">{user?.name || "Guest"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email || "Not signed in"}</p>
+                </div>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-danger/10 hover:text-danger transition-colors cursor-pointer"
+              >
+                <LogOut size={19} />
+                Sign out
+              </button>
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

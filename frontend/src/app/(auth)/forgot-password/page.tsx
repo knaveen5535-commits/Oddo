@@ -6,54 +6,87 @@ import { Plane, Mail, ArrowLeft, Send } from "lucide-react";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
+  const [loading, setLoading] = React.useState(false);
+  const [sent, setSent] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [email, setEmail] = React.useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setTimeout(() => {
+      setLoading(false);
+      setSent(true);
+    }, 900);
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-6 bg-background relative overflow-hidden">
-      {/* Premium ambient background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-15%] left-[-10%] w-[45%] h-[45%] bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[45%] h-[45%] bg-blue-500/10 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[45%] h-[45%] bg-secondary/10 rounded-full blur-[120px]" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-md glass-card rounded-3xl border-foreground/10 p-8 sm:p-10 relative z-10 shadow-2xl backdrop-blur-2xl"
+        className="w-full max-w-md bg-card border border-border rounded-3xl p-8 sm:p-10 relative z-10 shadow-xl"
       >
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/10">
-            <Plane className="text-primary w-7 h-7" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mb-5 shadow-lg shadow-primary/25">
+            <Plane className="text-white w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Reset Password</h1>
-          <p className="text-muted-foreground mt-2 text-center text-sm">
-            Enter your email and we'll send you instructions to reset your password
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Reset password</h1>
+          <p className="text-muted-foreground mt-2 text-sm">
+            {sent
+              ? "We've sent a reset link to your inbox. Check your email to continue."
+              : "Enter your email and we'll send you instructions to reset your password."}
           </p>
         </div>
 
-        <form className="space-y-5">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground/80">Email</label>
-            <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-primary transition-colors" />
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full bg-foreground/5 border border-foreground/10 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/40 transition-all text-sm font-medium text-foreground placeholder:text-muted-foreground/60"
-              />
+        {!sent ? (
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="field">
+              <label className="label">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-3.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-shadow"
+                />
+              </div>
             </div>
-          </div>
 
-          <button className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all group">
-            Send Reset Link
-            <Send className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </form>
+            {error && (
+              <p className="text-sm text-danger font-medium bg-danger/10 border border-danger/20 rounded-xl p-3">
+                {error}
+              </p>
+            )}
+
+            <button type="submit" disabled={loading} className="btn btn-primary btn-lg w-full">
+              {loading ? "Sending..." : "Send reset link"}
+              {!loading && <Send className="w-4 h-4" />}
+            </button>
+          </form>
+        ) : (
+          <div className="p-4 rounded-xl bg-success/10 border border-success/20 text-sm text-success font-medium text-center">
+            Check your inbox for the reset link.
+          </div>
+        )}
 
         <div className="mt-8 text-center">
-          <Link href="/login" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+          >
             <ArrowLeft className="w-4 h-4" />
-            Back to Login
+            Back to login
           </Link>
         </div>
       </motion.div>

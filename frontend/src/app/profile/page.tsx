@@ -3,42 +3,42 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { 
-  User as UserIcon, 
-  MapPin, 
-  Calendar, 
-  History,
+import {
+  MapPin,
+  Calendar,
   Plane,
-  Camera,
-  Star,
   Globe,
+  Star,
   Award,
-  Compass,
   ArrowRight,
-  Heart,
   Share2,
-  Edit3
+  Edit3,
+  Camera,
+  Mail,
+  User as UserIcon,
 } from "lucide-react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("expeditions");
 
-  // Fallback for when no user is logged in
   const traveler = {
     name: user?.name || "Guest Explorer",
-    handle: user?.email ? `@${user.email.split('@')[0]}` : "@guest_explorer",
+    handle: user?.email ? `@${user.email.split("@")[0]}` : "@guest_explorer",
     bio: "Adventure seeker and photography enthusiast. I love exploring remote locations and capturing the beauty of nature.",
-    location: "Global Hub",
+    location: "Global",
     joined: "Jan 2024",
-    avatar: user?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop",
-    banner: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop",
+    avatar:
+      user?.avatar ||
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop",
+    banner:
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop",
     stats: [
-      { label: "Voyages", value: "0", icon: <Plane size={18} /> },
-      { label: "Countries", value: "0", icon: <Globe size={18} /> },
-      { label: "Reviews", value: "0", icon: <Star size={18} /> },
-      { label: "Badges", value: "0", icon: <Award size={18} /> },
-    ]
+      { label: "Voyages", value: "0", icon: <Plane size={16} /> },
+      { label: "Countries", value: "0", icon: <Globe size={16} /> },
+      { label: "Reviews", value: "0", icon: <Star size={16} /> },
+      { label: "Badges", value: "0", icon: <Award size={16} /> },
+    ],
   };
 
   const expeditions = [
@@ -52,145 +52,174 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="w-full pb-32 bg-background text-foreground transition-colors duration-300">
-      {/* Cinematic Banner */}
-      <div className="relative h-[320px] sm:h-[450px] w-full overflow-hidden">
-        <img src={traveler.banner} alt="Profile Banner" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute bottom-6 left-4 right-4 sm:bottom-12 sm:left-12 sm:right-12 flex flex-col md:flex-row justify-between items-end gap-8">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
-            <div className="relative group shrink-0">
-              <div className="w-28 h-28 sm:w-44 sm:h-44 rounded-[32px] sm:rounded-[48px] border-8 border-background p-1 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500 bg-background">
-                <img src={traveler.avatar} alt={traveler.name} className="w-full h-full object-cover rounded-[24px] sm:rounded-[40px]" />
-              </div>
-              <button className="absolute -bottom-2 -right-2 p-3 sm:p-4 bg-primary text-white rounded-2xl shadow-xl hover:rotate-12 transition-all border-4 border-background">
-                <Camera size={20} />
-              </button>
+    <div className="space-y-8">
+      {/* Banner */}
+      <div className="relative h-52 sm:h-64 w-full rounded-2xl overflow-hidden border border-border">
+        <img src={traveler.banner} alt="Profile banner" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex gap-2">
+          <button className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25">
+            <Edit3 size={16} />
+            Edit profile
+          </button>
+          <button className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25" aria-label="Share">
+            <Share2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Identity card */}
+      <div className="relative -mt-16 sm:-mt-20 px-5 sm:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+          <div className="relative shrink-0">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-background overflow-hidden shadow-lg bg-card">
+              <img src={traveler.avatar} alt={traveler.name} className="w-full h-full object-cover" />
             </div>
-            <div className="mb-0 sm:mb-4">
-              <div className="flex items-center gap-3 sm:gap-4 mb-2">
-                 <h1 className="text-2xl sm:text-5xl font-black italic uppercase tracking-tighter text-foreground drop-shadow-2xl">{traveler.name}</h1>
-                 <div className="px-3 sm:px-4 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-[10px] sm:text-xs font-black uppercase tracking-widest text-foreground">PRO</div>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-foreground/60 font-black uppercase tracking-widest text-[10px] sm:text-xs">
-                <span className="flex items-center gap-2"><MapPin size={14} className="text-primary" /> {traveler.location}</span>
-                <span className="flex items-center gap-2"><Calendar size={14} className="text-primary" /> Joined {traveler.joined}</span>
-              </div>
-            </div>
+            <button className="absolute -bottom-2 -right-2 w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center shadow-md border-4 border-background hover:scale-105 transition-transform">
+              <Camera size={15} />
+            </button>
           </div>
-          <div className="flex gap-3 sm:gap-4 mb-0 sm:mb-4">
-             <button className="px-5 sm:px-8 py-3 sm:py-4 glass rounded-2xl border-white/10 text-foreground font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all flex items-center gap-3">
-               <Edit3 size={18} /> Edit Profile
-             </button>
-             <button className="p-3 sm:p-4 glass rounded-2xl border-white/10 text-foreground hover:bg-white/10 transition-all">
-               <Share2 size={20} />
-             </button>
+          <div className="pb-1 min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                {traveler.name}
+              </h1>
+              <span className="badge badge-primary">Pro traveler</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <Mail size={14} className="text-primary" />
+                {traveler.handle}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin size={14} className="text-primary" />
+                {traveler.location}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar size={14} className="text-primary" />
+                Joined {traveler.joined}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 sm:p-12 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 -mt-8 sm:-mt-16 lg:-mt-20 relative z-10">
-        {/* Left Column: Bio & Stats */}
-        <div className="lg:col-span-4 space-y-8">
-          <section className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-foreground/5 shadow-2xl relative overflow-hidden group">
-            <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:rotate-12 transition-transform duration-700">
-               <Compass size={150} />
-            </div>
-            <h3 className="text-lg font-black mb-6 uppercase italic tracking-widest text-primary">Explorer Intelligence</h3>
-            <p className="text-foreground/60 leading-relaxed font-medium italic text-sm mb-10">
-              "{traveler.bio}"
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4">
-               {traveler.stats.map((stat, idx) => (
-                 <div key={idx} className="p-6 glass rounded-3xl border-foreground/5 group/stat hover:border-primary/20 transition-all">
-                    <div className="text-primary mb-3 group-hover/stat:scale-110 transition-transform">{stat.icon}</div>
-                    <div className="text-2xl font-black italic">{stat.value}</div>
-                    <div className="text-xs font-black uppercase tracking-widest text-foreground/30">{stat.label}</div>
-                 </div>
-               ))}
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left */}
+        <div className="lg:col-span-4 space-y-5">
+          <section className="card card-pad">
+            <h3 className="section-title mb-4">About</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed italic">"{traveler.bio}"</p>
           </section>
 
-          <section className="p-8 bg-primary text-white rounded-[40px] shadow-2xl shadow-primary/30 relative overflow-hidden group">
-             <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-110 transition-transform">
-                <Heart size={80} />
-             </div>
-             <h4 className="text-2xl font-black italic uppercase tracking-tight mb-2">Adventure Ready</h4>
-             <p className="text-foreground/70 text-xs font-medium uppercase tracking-widest mb-6 italic">Loyalty Member Since 2024</p>
-             <button className="w-full py-4 bg-white text-primary rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl">
-                Claim Weekly Rewards
-             </button>
+          <section className="grid grid-cols-2 gap-4">
+            {traveler.stats.map((stat, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="card card-pad card-hover"
+              >
+                <div className="text-primary mb-2">{stat.icon}</div>
+                <div className="text-xl font-bold text-foreground tracking-tight">{stat.value}</div>
+                <div className="text-xs text-muted-foreground">{stat.label}</div>
+              </motion.div>
+            ))}
+          </section>
+
+          <section className="card card-pad bg-gradient-to-br from-primary to-secondary border-0 text-white relative overflow-hidden">
+            <div className="absolute -top-6 -right-6 opacity-20 pointer-events-none">
+              <UserIcon size={96} />
+            </div>
+            <h4 className="text-lg font-semibold mb-1">Adventure ready</h4>
+            <p className="text-white/80 text-xs mb-5">Loyalty member since 2024</p>
+            <button className="w-full py-2.5 bg-white text-primary rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+              Claim weekly rewards
+            </button>
           </section>
         </div>
 
-        {/* Right Column: Trips */}
-        <div className="lg:col-span-8 space-y-10">
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 glass p-3 sm:p-4 rounded-[28px] sm:rounded-[32px] border-foreground/10">
-            <div className="flex gap-2 flex-1">
-               <button 
+        {/* Right */}
+        <div className="lg:col-span-8 space-y-5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex gap-1 p-1 bg-muted rounded-xl">
+              <button
                 onClick={() => setActiveTab("expeditions")}
-                className={`flex-1 sm:flex-none px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[24px] text-xs font-black uppercase tracking-widest transition-all ${
-                  activeTab === "expeditions" ? "bg-primary text-white shadow-xl shadow-primary/30" : "text-foreground/40 hover:text-foreground"
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                  activeTab === "expeditions"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
-               >
-                 Expeditions
-               </button>
-               <button 
+              >
+                Expeditions
+              </button>
+              <button
                 onClick={() => setActiveTab("archive")}
-                className={`flex-1 sm:flex-none px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[24px] text-xs font-black uppercase tracking-widest transition-all ${
-                  activeTab === "archive" ? "bg-primary text-white shadow-xl shadow-primary/30" : "text-foreground/40 hover:text-foreground"
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                  activeTab === "archive"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
-               >
-                 Archive
-               </button>
+              >
+                Archive
+              </button>
             </div>
-            <div className="sm:pr-6 text-center text-xs font-black uppercase tracking-widest text-foreground/20 italic">
-               {activeTab === "expeditions" ? expeditions.length : archive.length} items logged
-            </div>
+            <span className="text-xs text-muted-foreground">
+              {(activeTab === "expeditions" ? expeditions : archive).length} trips
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
+          <div className="space-y-4">
             <AnimatePresence mode="wait">
-               <motion.div 
+              <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-6"
-               >
-                 {(activeTab === "expeditions" ? expeditions : archive).map((trip) => (
-                   <motion.div 
+                exit={{ opacity: 0, y: -12 }}
+                className="space-y-4"
+              >
+                {(activeTab === "expeditions" ? expeditions : archive).map((trip) => (
+                  <motion.div
                     key={trip.id}
-                    whileHover={{ x: 12 }}
-                    className="group glass-card rounded-[32px] sm:rounded-[40px] overflow-hidden border-foreground/5 hover:border-primary/20 transition-all cursor-pointer flex h-40 sm:h-48 shadow-2xl relative"
-                   >
-                      <div className="w-2/5 sm:w-1/3 overflow-hidden relative">
-                        <img src={trip.image} alt={trip.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                        <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    whileHover={{ x: 4 }}
+                    className="card overflow-hidden card-hover flex h-32 sm:h-36 cursor-pointer"
+                  >
+                    <div className="w-36 sm:w-44 relative overflow-hidden shrink-0">
+                      <img
+                        src={trip.image}
+                        alt={trip.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col justify-center">
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <h4 className="font-semibold text-foreground">{trip.title}</h4>
+                        <span
+                          className={`badge ${
+                            trip.status === "Active"
+                              ? "badge-success"
+                              : trip.status === "Planning"
+                              ? "badge-warning"
+                              : "badge-neutral"
+                          }`}
+                        >
+                          {trip.status}
+                        </span>
                       </div>
-                      <div className="p-4 sm:p-10 flex-1 flex flex-col justify-center relative">
-                        <div className="flex justify-between items-start gap-2 mb-2">
-                           <h4 className="text-xl sm:text-3xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">{trip.title}</h4>
-                           <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest border shrink-0 ${
-                             trip.status === "Active" ? "bg-primary/10 text-primary border-primary/20" : "bg-foreground/5 text-foreground/40 border-foreground/10"
-                           }`}>
-                             {trip.status}
-                           </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 text-[10px] sm:text-xs font-black text-foreground/30 uppercase tracking-[0.2em]">
-                             <Calendar size={14} className="text-primary" />
-                             {trip.date}
-                          </div>
-                          <button className="p-3 sm:p-4 bg-primary/5 text-primary rounded-2xl opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white">
-                             <ArrowRight size={20} />
-                          </button>
-                        </div>
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <Calendar size={14} className="text-primary" />
+                        {trip.date}
                       </div>
-                   </motion.div>
-                 ))}
-               </motion.div>
+                    </div>
+                    <div className="flex items-center pr-5 shrink-0">
+                      <div className="icon-btn hover:bg-primary hover:text-white hover:border-primary">
+                        <ArrowRight size={16} />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
             </AnimatePresence>
           </div>
         </div>

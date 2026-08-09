@@ -2,26 +2,25 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Briefcase, 
-  CheckCircle2, 
-  Circle, 
-  Plus, 
-  Search, 
-  Filter, 
-  ShoppingBag, 
-  Smartphone, 
-  Shirt, 
-  Heart, 
+import {
+  Briefcase,
+  CheckCircle2,
+  Circle,
+  Plus,
+  Search,
+  ShoppingBag,
+  Smartphone,
+  Shirt,
+  Heart,
   MoreHorizontal,
-  Trash2,
-  Package,
   Layers,
-  ArrowRight
+  Package,
+  Trash2,
 } from "lucide-react";
 
 export default function PackingListPage() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [items, setItems] = useState([
     { id: 1, title: "Passport & Visas", category: "Essentials", packed: true },
     { id: 2, title: "Universal Adapter", category: "Electronics", packed: true },
@@ -32,131 +31,173 @@ export default function PackingListPage() {
   ]);
 
   const categories = [
-    { name: "All", icon: <Layers size={18} /> },
-    { name: "Essentials", icon: <Package size={18} /> },
-    { name: "Electronics", icon: <Smartphone size={18} /> },
-    { name: "Clothing", icon: <Shirt size={18} /> },
-    { name: "Health", icon: <Heart size={18} /> },
+    { name: "All", icon: <Layers size={15} /> },
+    { name: "Essentials", icon: <Package size={15} /> },
+    { name: "Electronics", icon: <Smartphone size={15} /> },
+    { name: "Clothing", icon: <Shirt size={15} /> },
+    { name: "Health", icon: <Heart size={15} /> },
   ];
 
   const toggleItem = (id: number) => {
-    setItems(items.map(item => item.id === id ? { ...item, packed: !item.packed } : item));
+    setItems(items.map((item) => (item.id === id ? { ...item, packed: !item.packed } : item)));
   };
 
-  const filteredItems = activeCategory === "All" 
-    ? items 
-    : items.filter(item => item.category === activeCategory);
+  const filteredItems = items.filter((item) => {
+    const matchCategory = activeCategory === "All" || item.category === activeCategory;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || item.title.toLowerCase().includes(q);
+    return matchCategory && matchSearch;
+  });
 
-  const packedCount = items.filter(i => i.packed).length;
-  const progress = Math.round((packedCount / items.length) * 100);
+  const packedCount = items.filter((i) => i.packed).length;
+  const progress = items.length ? Math.round((packedCount / items.length) * 100) : 0;
 
   return (
-    <div className="px-4 sm:px-10 w-full space-y-8 sm:space-y-12 bg-background text-foreground transition-colors duration-300 pb-32">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="space-y-8">
+      <div className="page-header">
         <div>
-          <h1 className="text-3xl sm:text-6xl font-black tracking-tight uppercase italic mb-2">Packing <span className="text-primary drop-shadow-[0_0_15px_rgba(244,63,94,0.4)]">Manifest</span></h1>
-          <p className="text-muted-foreground font-medium italic">Ensure every essential is aboard for your next expedition.</p>
+          <h1 className="page-title">Packing List</h1>
+          <p className="page-subtitle">Ensure every essential is aboard for your next trip.</p>
         </div>
-        <button className="flex items-center gap-3 px-6 py-4 sm:px-10 sm:py-5 bg-primary text-white rounded-2xl sm:rounded-[24px] shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all font-black uppercase tracking-widest text-xs">
-          <Plus size={20} />
-          Add Item
+        <button className="btn btn-primary">
+          <Plus size={16} />
+          Add item
         </button>
-      </header>
+      </div>
 
-      {/* Progress & Stats */}
-      <section className="glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] border-foreground/5 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px]" />
-        <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
-          <div className="space-y-4 text-center md:text-left">
-            <h2 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight">Readiness Status</h2>
-            <p className="text-muted-foreground font-medium italic max-w-sm">You are {progress}% ready for your departure. Check your electronics one last time.</p>
-            <div className="flex gap-4 pt-2">
-              <div className="px-6 py-2 glass rounded-full text-[10px] font-black uppercase tracking-widest text-primary border border-primary/20">
-                {packedCount} Packed
-              </div>
-              <div className="px-6 py-2 glass rounded-full text-[10px] font-black uppercase tracking-widest text-muted-foreground border border-foreground/10">
-                {items.length - packedCount} Remaining
-              </div>
+      {/* Progress */}
+      <section className="card card-pad relative overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="text-center md:text-left">
+            <h2 className="text-lg font-semibold text-foreground mb-1">Readiness status</h2>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              You are {progress}% ready for departure. {packedCount} of {items.length} items packed.
+            </p>
+            <div className="flex gap-2 mt-4 justify-center md:justify-start">
+              <span className="badge badge-success">{packedCount} packed</span>
+              <span className="badge badge-neutral">{items.length - packedCount} remaining</span>
             </div>
           </div>
-          <div className="relative w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
-             <div className="absolute inset-0 rounded-full border-[12px] border-foreground/5" />
-             <div className="absolute inset-0 rounded-full border-[12px] border-primary border-t-transparent border-l-transparent rotate-[-45deg] transition-all duration-1000" style={{ transform: `rotate(${(progress * 3.6) - 90}deg)` }} />
-             <div className="text-center">
-                <span className="text-4xl sm:text-5xl font-black italic">{progress}%</span>
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Ready</p>
-             </div>
+          <div className="relative w-36 h-36 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full border-8 border-muted" />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `conic-gradient(var(--primary) ${progress * 3.6}deg, transparent 0deg)`,
+                WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 14px), black calc(100% - 14px))",
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 14px), black calc(100% - 14px))",
+              }}
+            />
+            <div className="text-center">
+              <div className="text-3xl font-bold text-foreground tracking-tight">{progress}%</div>
+              <div className="text-xs text-muted-foreground">Ready</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-2">
-        {categories.map((cat) => (
-          <button
-            key={cat.name}
-            onClick={() => setActiveCategory(cat.name)}
-            className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all whitespace-nowrap border ${
-              activeCategory === cat.name 
-                ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105" 
-                : "glass border-foreground/10 text-muted-foreground hover:bg-foreground/5"
-            }`}
-          >
-            {cat.icon}
-            {cat.name}
-          </button>
-        ))}
-      </section>
-
-      {/* Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <AnimatePresence mode="popLayout">
-          {filteredItems.map((item, idx) => (
-            <motion.div 
-              key={item.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ delay: idx * 0.05 }}
-              onClick={() => toggleItem(item.id)}
-              className={`group glass-card p-8 rounded-[40px] border-foreground/5 cursor-pointer transition-all hover:translate-y-[-8px] ${
-                item.packed ? "bg-primary/5 border-primary/20" : "hover:border-foreground/20"
-              }`}
+      {/* Toolbar */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+        <div className="relative flex-1 lg:max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search items..."
+            className="input pl-10"
+          />
+        </div>
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          {categories.map((cat) => (
+            <button
+              key={cat.name}
+              onClick={() => setActiveCategory(cat.name)}
+              className={`btn flex-none ${activeCategory === cat.name ? "btn-primary" : "btn-outline"}`}
             >
-              <div className="flex justify-between items-start mb-6">
-                <div className={`p-4 rounded-2xl ${item.packed ? "bg-primary text-white" : "bg-foreground/5 text-muted-foreground"} transition-colors`}>
-                   {item.packed ? <CheckCircle2 size={24} /> : <Circle size={24} />}
+              {cat.icon}
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Items */}
+      {filteredItems.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <AnimatePresence mode="popLayout">
+            {filteredItems.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, scale: 0.97, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ delay: idx * 0.04 }}
+                onClick={() => toggleItem(item.id)}
+                className={`card card-pad cursor-pointer transition-colors group ${
+                  item.packed ? "border-success/40 bg-success/5" : "card-hover"
+                }`}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      item.packed ? "bg-success text-white" : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {item.packed ? <CheckCircle2 size={20} /> : <Circle size={20} />}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      className="icon-btn w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-danger/10 hover:text-danger"
+                      aria-label="Delete"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      className="icon-btn w-8 h-8"
+                      aria-label="More"
+                    >
+                      <MoreHorizontal size={15} />
+                    </button>
+                  </div>
                 </div>
-                <button className="p-2 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-primary transition-all">
-                  <Trash2 size={18} />
-                </button>
-              </div>
-              <div className="space-y-1">
-                <p className={`text-xs font-black uppercase tracking-widest ${item.packed ? "text-primary/60" : "text-muted-foreground"}`}>
-                  {item.category}
-                </p>
-                <h3 className={`text-2xl font-black italic transition-all ${item.packed ? "text-primary line-through" : "text-foreground"}`}>
+                <p className="text-xs font-medium text-muted-foreground mb-1">{item.category}</p>
+                <h3
+                  className={`font-semibold leading-snug transition-colors ${
+                    item.packed ? "text-muted-foreground line-through" : "text-foreground"
+                  }`}
+                >
                   {item.title}
                 </h3>
-              </div>
-              <div className="mt-8 flex justify-end">
-                 <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${item.packed ? "bg-primary/20 text-primary" : "bg-foreground/5 text-muted-foreground opacity-0 group-hover:opacity-100"}`}>
-                   <ArrowRight size={16} />
-                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </section>
-
-      {/* Quick Add Placeholder */}
-      <section className="py-10 border-2 border-dashed border-foreground/10 rounded-[48px] flex flex-col items-center justify-center gap-4 group hover:border-primary/40 transition-all cursor-pointer">
-         <div className="p-6 bg-foreground/5 rounded-full text-muted-foreground group-hover:text-primary transition-colors">
-            <Plus size={32} />
-         </div>
-         <p className="text-muted-foreground font-black uppercase tracking-widest text-xs italic">Assemble New Item</p>
-      </section>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      ) : (
+        <div className="card empty-state">
+          <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mb-4">
+            <ShoppingBag size={26} className="text-muted-foreground" />
+          </div>
+          <h3 className="text-base font-semibold text-foreground mb-1">No items found</h3>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            {searchQuery
+              ? "Nothing matches your search."
+              : "Your packing list is empty. Add items to get started."}
+          </p>
+          {!searchQuery && (
+            <button className="btn btn-primary mt-6">
+              <Plus size={16} />
+              Add your first item
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

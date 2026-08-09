@@ -16,6 +16,7 @@ import {
   Globe2,
   Compass,
   Wallet,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,10 +41,10 @@ interface SignupFormData {
 }
 
 const inputClass =
-  "w-full bg-foreground/5 border border-foreground/10 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/40 transition-all text-sm font-medium text-foreground placeholder:text-muted-foreground/60";
+  "w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-3.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-shadow";
 
 const iconClass =
-  "absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-primary transition-colors";
+  "absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none";
 
 export default function AuthPage({ initialMode }: { initialMode: Mode }) {
   const router = useRouter();
@@ -89,7 +90,6 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
       if (loginError) throw loginError;
 
       if (data.user) {
-        console.log("[AUTH] Access granted for:", data.user.email);
         router.push("/");
       }
     } catch (err) {
@@ -131,7 +131,6 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
       if (loginError) throw loginError;
 
       if (data.user) {
-        console.log("[AUTH] User registered successfully:", data.user.email);
         router.push("/");
       }
     } catch (err) {
@@ -167,228 +166,248 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
   };
 
   const features = [
-    { icon: <Globe2 size={18} />, label: "Plan trips across the globe" },
-    { icon: <Compass size={18} />, label: "AI-powered destination insights" },
-    { icon: <Wallet size={18} />, label: "Smart budget & expense tracking" },
+    { icon: <Globe2 size={16} />, label: "Plan trips across the globe" },
+    { icon: <Compass size={16} />, label: "AI-powered destination insights" },
+    { icon: <Wallet size={16} />, label: "Smart budget & expense tracking" },
   ];
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 bg-background relative overflow-hidden">
-      {/* Premium ambient background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-15%] left-[-10%] w-[45%] h-[45%] bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[45%] h-[45%] bg-blue-500/10 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5" />
-      </div>
+    <div className="min-h-screen w-full flex bg-background">
+      {/* Left panel */}
+      <div className="hidden lg:flex w-[45%] max-w-xl flex-col justify-between p-12 relative overflow-hidden border-r border-border">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-5xl relative z-10 grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-[28px] sm:rounded-[40px] border border-foreground/10 shadow-2xl backdrop-blur-2xl glass-card"
-      >
-        {/* ============ LEFT PANEL ============ */}
-        <div className="relative flex flex-col p-7 sm:p-10 lg:p-14 bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent border-b lg:border-b-0 lg:border-r border-foreground/10 overflow-hidden">
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
-
-          {/* Brand */}
-          <div className="relative flex items-center gap-3">
-            <div className="w-11 h-11 bg-primary/10 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/10">
-              <Plane className="text-primary w-6 h-6" />
-            </div>
-            <h1 className="text-xl font-bold text-gradient tracking-tight">Traveloop</h1>
+        {/* Brand */}
+        <div className="relative flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm">
+            <Plane className="text-white w-6 h-6" />
           </div>
-
-          {/* Login / Sign up toggle */}
-          <div className="relative mt-8 grid grid-cols-2 gap-1.5 p-1.5 glass rounded-2xl border-foreground/10 max-w-sm">
-            {(["login", "signup"] as Mode[]).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => switchMode(m)}
-                className={`relative py-3 rounded-xl text-sm font-bold transition-all ${
-                  mode === m ? "text-white" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {mode === m && (
-                  <motion.span
-                    layoutId="authToggle"
-                    className="absolute inset-0 bg-primary rounded-xl shadow-lg shadow-primary/30"
-                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                  />
-                )}
-                <span className="relative z-10">{m === "login" ? "Login" : "Sign up"}</span>
-              </button>
-            ))}
+          <div>
+            <h1 className="text-lg font-bold tracking-tight text-foreground leading-none">Traveloop</h1>
+            <p className="text-xs text-muted-foreground mt-1">Trip planning suite</p>
           </div>
+        </div>
 
-          {/* Headline */}
-          <div className="relative mt-10 space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight text-foreground">
-              {mode === "login"
-                ? "Welcome back, explorer."
-                : "Start your next adventure."}
+        {/* Copy */}
+        <div className="relative space-y-8">
+          <div className="space-y-3">
+            <span className="badge badge-primary">
+              <Sparkles size={13} />
+              Smart travel planning
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground leading-tight">
+              Everything you need to plan the perfect trip.
             </h2>
-            <p className="text-muted-foreground font-medium">
-              {mode === "login"
-                ? "Sign in to continue planning your journeys."
-                : "Create an account to plan, budget, and track trips anywhere on Earth."}
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
+              Plan itineraries, track budgets, build packing lists, and collaborate with
+              friends — all in one beautifully simple workspace.
             </p>
           </div>
 
-          {/* Feature list */}
-          <ul className="relative mt-10 space-y-4">
+          <ul className="space-y-3.5">
             {features.map((f) => (
-              <li key={f.label} className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
-                <span className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
+              <li key={f.label} className="flex items-center gap-3 text-sm text-foreground">
+                <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
                   {f.icon}
                 </span>
                 {f.label}
               </li>
             ))}
           </ul>
-
-          {/* Decorative */}
-          <div className="relative mt-auto pt-10 hidden lg:flex items-center gap-2 text-xs font-bold text-foreground/30 uppercase tracking-[0.3em]">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Trusted by 12,000+ travelers
-          </div>
         </div>
 
-        {/* ============ RIGHT PANEL ============ */}
-        <div className="p-7 sm:p-10 lg:p-14 bg-card">
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-sm font-medium"
-            >
-              <Zap className="w-4 h-4 shrink-0" />
-              {error}
-            </motion.div>
-          )}
+        <div className="relative flex items-center gap-2 text-xs font-medium text-muted-foreground">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          Trusted by 12,000+ travelers
+        </div>
+      </div>
 
-          <AnimatePresence mode="wait">
-            {mode === "login" ? (
-              <motion.form
-                key="login-form"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleLogin}
-                className="space-y-5"
-              >
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground/80">Email</label>
-                  <div className="relative group">
-                    <Mail className={iconClass} />
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={loginData.email}
-                      onChange={handleChange(setLoginData)}
-                      placeholder="you@example.com"
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
+      {/* Right panel */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
+        <div className="w-full max-w-md">
+          {/* Brand (mobile) */}
+          <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm">
+              <Plane className="text-white w-5 h-5" />
+            </div>
+            <span className="text-lg font-bold tracking-tight text-foreground">Traveloop</span>
+          </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <label className="text-sm font-medium text-foreground/80">Password</label>
-                    <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
-                      Forgot password?
-                    </Link>
-                  </div>
-                  <div className="relative group">
-                    <Lock className={iconClass} />
-                    <input
-                      type="password"
-                      name="password"
-                      required
-                      value={loginData.password}
-                      onChange={handleChange(setLoginData)}
-                      placeholder="••••••••••••"
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* Toggle */}
+            <div className="grid grid-cols-2 gap-1 p-1 bg-muted rounded-xl mb-8">
+              {(["login", "signup"] as Mode[]).map((m) => (
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all group"
-                >
-                  {loading ? "Signing in..." : "Sign in"}
-                  {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                </button>
-
-                <div className="my-2 relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-foreground/10" />
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="bg-card px-4 text-xs font-medium text-muted-foreground">or continue with</span>
-                  </div>
-                </div>
-
-                <button
+                  key={m}
                   type="button"
-                  onClick={googleSignIn}
-                  className="w-full glass rounded-xl border-foreground/10 hover:border-primary/30 transition-all flex items-center justify-center py-3 gap-3 text-foreground font-medium text-sm"
+                  onClick={() => switchMode(m)}
+                  className={`relative py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                    mode === m ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-                  Sign in with Google
+                  {mode === m && (
+                    <motion.span
+                      layoutId="authToggle"
+                      className="absolute inset-0 bg-card rounded-lg shadow-sm"
+                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative z-10">{m === "login" ? "Login" : "Sign up"}</span>
                 </button>
-              </motion.form>
-            ) : (
-              <motion.form
-                key="signup-form"
-                initial={{ opacity: 0, x: 20 }}
+              ))}
+            </div>
+
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                {mode === "login" ? "Welcome back" : "Create your account"}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {mode === "login"
+                  ? "Sign in to continue planning your journeys."
+                  : "Join Traveloop to plan, budget, and track trips anywhere on Earth."}
+              </p>
+            </div>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleSignup}
-                className="space-y-5"
+                className="mb-5 p-3.5 bg-danger/10 border border-danger/20 rounded-xl flex items-center gap-2.5 text-danger text-sm font-medium"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground/80">First name</label>
-                    <div className="relative group">
-                      <User className={iconClass} />
+                <Zap className="w-4 h-4 shrink-0" />
+                {error}
+              </motion.div>
+            )}
+
+            <AnimatePresence mode="wait">
+              {mode === "login" ? (
+                <motion.form
+                  key="login-form"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.2 }}
+                  onSubmit={handleLogin}
+                  className="space-y-4"
+                >
+                  <div className="field">
+                    <label className="label">Email</label>
+                    <div className="relative">
+                      <Mail className={iconClass} />
                       <input
-                        type="text"
-                        name="firstName"
+                        type="email"
+                        name="email"
                         required
-                        value={signupData.firstName}
-                        onChange={handleChange(setSignupData)}
-                        placeholder="John"
+                        value={loginData.email}
+                        onChange={handleChange(setLoginData)}
+                        placeholder="you@example.com"
                         className={inputClass}
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground/80">Last name</label>
-                    <div className="relative group">
-                      <User className={iconClass} />
+                  <div className="field">
+                    <div className="flex justify-between items-center">
+                      <label className="label">Password</label>
+                      <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <div className="relative">
+                      <Lock className={iconClass} />
                       <input
-                        type="text"
-                        name="lastName"
+                        type="password"
+                        name="password"
                         required
-                        value={signupData.lastName}
-                        onChange={handleChange(setSignupData)}
-                        placeholder="Doe"
+                        value={loginData.password}
+                        onChange={handleChange(setLoginData)}
+                        placeholder="••••••••••••"
                         className={inputClass}
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2 space-y-2">
-                    <label className="text-sm font-medium text-foreground/80">Email</label>
-                    <div className="relative group">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn btn-primary btn-lg w-full"
+                  >
+                    {loading ? "Signing in..." : "Sign in"}
+                    {!loading && <ArrowRight className="w-4 h-4" />}
+                  </button>
+
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-background px-4 text-xs font-medium text-muted-foreground">
+                        or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={googleSignIn}
+                    className="btn btn-outline w-full"
+                  >
+                    <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
+                    Sign in with Google
+                  </button>
+                </motion.form>
+              ) : (
+                <motion.form
+                  key="signup-form"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.2 }}
+                  onSubmit={handleSignup}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="field">
+                      <label className="label">First name</label>
+                      <div className="relative">
+                        <User className={iconClass} />
+                        <input
+                          type="text"
+                          name="firstName"
+                          required
+                          value={signupData.firstName}
+                          onChange={handleChange(setSignupData)}
+                          placeholder="John"
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                    <div className="field">
+                      <label className="label">Last name</label>
+                      <div className="relative">
+                        <User className={iconClass} />
+                        <input
+                          type="text"
+                          name="lastName"
+                          required
+                          value={signupData.lastName}
+                          onChange={handleChange(setSignupData)}
+                          placeholder="Doe"
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="field">
+                    <label className="label">Email</label>
+                    <div className="relative">
                       <Mail className={iconClass} />
                       <input
                         type="email"
@@ -402,38 +421,39 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground/80">Phone</label>
-                    <div className="relative group">
-                      <Phone className={iconClass} />
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={signupData.phone}
-                        onChange={handleChange(setSignupData)}
-                        placeholder="+1 234 567 890"
-                        className={inputClass}
-                      />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="field">
+                      <label className="label">Phone</label>
+                      <div className="relative">
+                        <Phone className={iconClass} />
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={signupData.phone}
+                          onChange={handleChange(setSignupData)}
+                          placeholder="+1 234 567 890"
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                    <div className="field">
+                      <label className="label">Date of birth</label>
+                      <div className="relative">
+                        <Calendar className={iconClass} />
+                        <input
+                          type="date"
+                          name="birthDate"
+                          value={signupData.birthDate}
+                          onChange={handleChange(setSignupData)}
+                          className={`${inputClass} text-sm`}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground/80">Date of birth</label>
-                    <div className="relative group">
-                      <Calendar className={iconClass} />
-                      <input
-                        type="date"
-                        name="birthDate"
-                        value={signupData.birthDate}
-                        onChange={handleChange(setSignupData)}
-                        className={inputClass}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-2 space-y-2">
-                    <label className="text-sm font-medium text-foreground/80">Region</label>
-                    <div className="relative group">
+                  <div className="field">
+                    <label className="label">Region</label>
+                    <div className="relative">
                       <Globe className={iconClass} />
                       <select
                         name="region"
@@ -449,85 +469,69 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
                       </select>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-2 pt-1">
-                  <label className="text-sm font-medium text-foreground/80">Password</label>
-                  <div className="relative group">
-                    <Lock className={iconClass} />
-                    <input
-                      type="password"
-                      name="password"
-                      required
-                      value={signupData.password}
-                      onChange={handleChange(setSignupData)}
-                      placeholder="Create a strong password"
-                      className={inputClass}
-                    />
+                  <div className="field">
+                    <label className="label">Password</label>
+                    <div className="relative">
+                      <Lock className={iconClass} />
+                      <input
+                        type="password"
+                        name="password"
+                        required
+                        value={signupData.password}
+                        onChange={handleChange(setSignupData)}
+                        placeholder="Create a strong password"
+                        className={inputClass}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all group"
-                >
-                  {loading ? "Creating account..." : "Create account"}
-                  {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn btn-primary btn-lg w-full"
+                  >
+                    {loading ? "Creating account..." : "Create account"}
+                    {!loading && <ArrowRight className="w-4 h-4" />}
+                  </button>
 
-                <div className="my-2 relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-foreground/10" />
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-background px-4 text-xs font-medium text-muted-foreground">
+                        or continue with
+                      </span>
+                    </div>
                   </div>
-                  <div className="relative flex justify-center">
-                    <span className="bg-card px-4 text-xs font-medium text-muted-foreground">or continue with</span>
-                  </div>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={googleSignIn}
-                  className="w-full glass rounded-xl border-foreground/10 hover:border-primary/30 transition-all flex items-center justify-center py-3 gap-3 text-foreground font-medium text-sm"
-                >
-                  <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-                  Sign up with Google
-                </button>
-              </motion.form>
-            )}
-          </AnimatePresence>
+                  <button
+                    type="button"
+                    onClick={googleSignIn}
+                    className="btn btn-outline w-full"
+                  >
+                    <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
+                    Sign up with Google
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
 
-          <div className="mt-7 flex items-center justify-center gap-6">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
-              <span className="text-xs">Secure encrypted</span>
+            <div className="mt-6 flex items-center justify-center gap-5 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                Secure encrypted
+              </span>
+              <span className="w-1 h-1 bg-border rounded-full" />
+              <span className="inline-flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-warning" />
+                Real-time sync
+              </span>
             </div>
-            <div className="w-1 h-1 bg-foreground/10 rounded-full" />
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Zap className="w-3.5 h-3.5 text-yellow-500" />
-              <span className="text-xs">Real-time sync</span>
-            </div>
-          </div>
-
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            {mode === "login" ? (
-              <>
-                New to Traveloop?{" "}
-                <button onClick={() => switchMode("signup")} className="font-medium text-primary hover:underline">
-                  Create an account
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <button onClick={() => switchMode("login")} className="font-medium text-primary hover:underline">
-                  Sign in
-                </button>
-              </>
-            )}
-          </p>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
