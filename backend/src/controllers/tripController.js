@@ -1,4 +1,4 @@
-const geoapifyService = require('../services/geoapifyService');
+const googlePlacesService = require('../services/googlePlacesService');
 const budgetService = require('../services/budgetService');
 const { prisma } = require('../config/db');
 
@@ -9,8 +9,8 @@ exports.createTrip = async (req, res) => {
 
     // Fetch recommendations and city image in parallel
     const [recommendations, cityImage] = await Promise.all([
-      geoapifyService.getRecommendations(destination),
-      geoapifyService.getCityImage(destination)
+      googlePlacesService.getRecommendations(destination),
+      googlePlacesService.getCityImage(destination)
     ]);
 
     // Flatten recommendations from different categories into a single array
@@ -88,7 +88,7 @@ exports.searchPlaces = async (req, res) => {
     const { query } = req.query;
     if (!query) return res.status(400).json({ success: false, error: "Query is required" });
 
-    const results = await geoapifyService.searchCities(query);
+    const results = await googlePlacesService.searchCities(query);
     res.status(200).json({ success: true, data: results });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -100,7 +100,7 @@ exports.getRecommendations = async (req, res) => {
     const { location } = req.query;
     if (!location) return res.status(400).json({ success: false, error: "Location is required" });
 
-    const results = await geoapifyService.getRecommendations(location);
+    const results = await googlePlacesService.getRecommendations(location);
     res.status(200).json({ success: true, data: results });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

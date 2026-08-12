@@ -5,7 +5,7 @@ const cloudinaryService = require('../services/cloudinaryService');
 const router = express.Router();
 
 // Only proxy images from known safe hosts (no SSRF through arbitrary URLs).
-const ALLOWED_HOST_RE = /(^|\.)(unsplash\.com|wikimedia\.org|openstreetmap\.org|githubusercontent\.com)$/;
+const ALLOWED_HOST_RE = /(^|\.)(unsplash\.com|wikimedia\.org|openstreetmap\.org|githubusercontent\.com|googleapis\.com)$/;
 const MAX_WIDTH_CAP = 4096;
 
 /**
