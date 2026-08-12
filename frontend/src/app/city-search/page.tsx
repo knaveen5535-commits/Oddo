@@ -169,48 +169,47 @@ export default function CitySearchPage() {
   return (
     <div className="space-y-8">
       {/* Hero */}
-      <section className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden border border-border">
-        <img
-          src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2000&auto=format&fit=crop"
-          className="w-full h-full object-cover"
-          alt="Explore destinations"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl">
-            <span className="badge bg-white/15 text-white backdrop-blur mb-4">
-              <Sparkles size={13} />
-              Discover the world
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight mb-3">
-              Explore the world's beauty
-            </h1>
-            <p className="text-white/75 mb-6 hidden sm:block">
-              Search any city to find attractions, dining, activities, and stays.
-            </p>
-
-            <form onSubmit={handleSearch} className="relative flex items-center bg-white rounded-2xl p-1.5 shadow-2xl">
-              <div className="pl-3 pr-2">
-                {isSearching ? (
-                  <Loader2 size={20} className="text-primary animate-spin" />
-                ) : (
-                  <Search size={20} className="text-muted-foreground" />
-                )}
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Enter a city to find attractions..."
-                className="flex-1 bg-transparent border-none text-slate-900 text-sm sm:text-base placeholder:text-slate-400 focus:outline-none focus:ring-0 px-2 py-2.5"
-              />
-              <button type="submit" className="btn btn-primary btn-sm sm:btn-lg rounded-xl">
-                <span className="hidden sm:inline">Search</span>
-                <Search size={16} className="sm:hidden" />
-              </button>
-            </form>
-          </motion.div>
+      <section className="relative w-full rounded-3xl overflow-hidden border border-border bg-gradient-to-br from-primary/5 via-background to-primary/10 py-16 sm:py-24 px-6 flex items-center justify-center">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px] opacity-60" />
+          <div className="absolute top-1/2 -right-24 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px] opacity-50 -translate-y-1/2" />
+          <div className="absolute -bottom-32 left-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-[100px] opacity-50" />
         </div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 w-full max-w-2xl text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-background/80 backdrop-blur border border-border rounded-full mb-6 shadow-sm">
+            <Globe size={14} className="text-primary" />
+            <span className="text-xs font-semibold text-foreground">Discover over 10,000+ cities</span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground tracking-tight leading-tight mb-4">
+            Explore the <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">world's beauty</span>
+          </h1>
+          <p className="text-muted-foreground text-base sm:text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+            Search any city to instantly uncover the best attractions, world-class dining, and highly-rated stays.
+          </p>
+
+          <form onSubmit={handleSearch} className="relative flex items-center bg-background rounded-2xl p-2 shadow-xl shadow-primary/5 border border-border transition-all focus-within:shadow-2xl focus-within:shadow-primary/10 focus-within:border-primary/40 group">
+            <div className="pl-4 pr-2">
+              {isSearching ? (
+                <Loader2 size={20} className="text-primary animate-spin" />
+              ) : (
+                <Search size={20} className="text-muted-foreground group-focus-within:text-primary transition-colors" />
+              )}
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Enter a city (e.g. Paris, Tokyo, Bali)..."
+              className="flex-1 bg-transparent border-none text-foreground text-sm sm:text-base placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 px-2 py-3"
+            />
+            <button type="submit" className="btn btn-primary h-12 px-6 sm:px-8 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+              <span className="hidden sm:inline font-semibold">Search</span>
+              <Search size={18} className="sm:hidden" />
+            </button>
+          </form>
+        </motion.div>
       </section>
 
       {/* Categories */}
@@ -270,54 +269,49 @@ export default function CitySearchPage() {
                   onClick={() => setSelectedPlace(dest)}
                   className="cursor-pointer"
                 >
-                  <div className="card overflow-hidden card-hover flex flex-col">
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={dest.image}
-                        alt={dest.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          const fallbacks = [
-                            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-                            "https://images.unsplash.com/photo-1548013146-72479768bbaa",
-                            "https://images.unsplash.com/photo-1506461883276-594a12b11cf3",
-                            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1",
-                            "https://images.unsplash.com/photo-1537996194471-e657df975ab4",
-                            "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
-                          ];
-                          const hash = dest.name
-                            .split("")
-                            .reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-                          target.src = `${fallbacks[hash % fallbacks.length]}?q=80&w=1200&auto=format&fit=crop`;
-                        }}
-                      />
-                      <span className="absolute top-3 left-3 badge bg-white/90 text-slate-900 backdrop-blur">
-                        {dest.tag}
-                      </span>
+                  <div className="card overflow-hidden card-hover flex flex-col p-6 group h-full border border-border/50 hover:border-primary/30 transition-all duration-300 relative bg-gradient-to-br from-card to-card hover:to-primary/5">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+                          {dest.category === 'Attraction' ? <Umbrella size={22} /> : 
+                           dest.category === 'Dining' ? <Coffee size={22} /> : 
+                           dest.category === 'Stay' ? <Mountain size={22} /> : 
+                           <Compass size={22} />}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="badge bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider w-fit">{dest.tag}</span>
+                          <div className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+                            <Star size={14} className="fill-yellow-400 text-yellow-400" />
+                            {dest.rating || "New"}
+                          </div>
+                        </div>
+                      </div>
                       <button
-                        className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-slate-600 hover:text-danger transition-colors"
+                        className="text-muted-foreground hover:text-danger transition-colors p-2 -mr-2 -mt-2 rounded-full hover:bg-danger/10"
                         onClick={(e) => e.stopPropagation()}
                         aria-label="Save"
                       >
-                        <Heart size={16} />
+                        <Heart size={18} />
                       </button>
-                      <div className="absolute bottom-3 left-3 badge bg-black/50 text-white backdrop-blur">
-                        <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                        {dest.rating || "N/A"}
-                      </div>
                     </div>
-                    <div className="p-5 flex-1 flex flex-col">
-                      <h3 className="font-semibold text-foreground leading-snug mb-1.5 line-clamp-1 group-hover:text-primary transition-colors">
+                    
+                    <div className="flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-foreground leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {dest.name}
                       </h3>
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4 line-clamp-1">
-                        <MapPin size={14} className="text-primary shrink-0" />
-                        <span className="truncate">{dest.location}</span>
+                      <div className="flex items-start gap-2 text-sm text-muted-foreground mb-4">
+                        <MapPin size={16} className="text-primary shrink-0 mt-0.5" />
+                        <span className="line-clamp-2 leading-relaxed">{dest.location}</span>
                       </div>
-                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-border">
-                        <span className="text-sm font-semibold text-foreground">{dest.price}</span>
-                        <span className="text-xs badge badge-primary">{dest.category}</span>
+                    </div>
+                    
+                    <div className="flex items-end justify-between pt-5 border-t border-border/60 mt-auto">
+                      <div>
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Average Cost</div>
+                        <span className="text-lg font-bold text-foreground">{dest.price}</span>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                        <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                       </div>
                     </div>
                   </div>
@@ -355,62 +349,76 @@ export default function CitySearchPage() {
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              className="relative w-full max-w-4xl bg-card rounded-2xl overflow-hidden shadow-2xl border border-border flex flex-col md:flex-row max-h-[90vh]"
+              className="relative w-full max-w-2xl bg-card rounded-3xl overflow-hidden shadow-2xl border border-border max-h-[90vh]"
             >
               <button
                 onClick={() => setSelectedPlace(null)}
-                className="absolute top-4 right-4 z-20 w-9 h-9 bg-black/40 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                className="absolute top-4 right-4 z-20 w-9 h-9 bg-muted rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted-foreground hover:text-white transition-colors"
                 aria-label="Close"
               >
                 <X size={18} />
               </button>
-              <div className="w-full md:w-2/5 h-52 md:h-auto relative overflow-hidden shrink-0">
-                <img src={selectedPlace.image} alt={selectedPlace.name} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r" />
-              </div>
-              <div className="p-6 sm:p-8 flex-1 overflow-y-auto scrollbar-hide">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="badge badge-primary">{selectedPlace.tag}</span>
-                  <span className="text-xs text-muted-foreground">{selectedPlace.category}</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-3">
-                  {selectedPlace.name}
-                </h2>
-                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin size={15} className="text-primary" />
-                    {selectedPlace.location}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 font-medium">
-                    <Star size={15} className="fill-yellow-400 text-yellow-400" />
-                    {selectedPlace.rating || "N/A"}
-                  </span>
+              
+              <div className="p-8 sm:p-10 overflow-y-auto scrollbar-hide">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+                    {selectedPlace.category === 'Attraction' ? <Umbrella size={28} /> : 
+                     selectedPlace.category === 'Dining' ? <Coffee size={28} /> : 
+                     selectedPlace.category === 'Stay' ? <Mountain size={28} /> : 
+                     <Compass size={28} />}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="badge badge-primary uppercase tracking-wider">{selectedPlace.tag}</span>
+                      <span className="text-xs font-semibold text-muted-foreground uppercase">{selectedPlace.category}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-medium text-foreground">
+                      <Star size={16} className="fill-yellow-400 text-yellow-400" />
+                      {selectedPlace.rating || "New"}
+                    </div>
+                  </div>
                 </div>
 
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">{selectedPlace.desc}</p>
+                <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight mb-4 leading-tight">
+                  {selectedPlace.name}
+                </h2>
+                
+                <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-8">
+                  <MapPin size={16} className="text-primary" />
+                  <span className="leading-relaxed">{selectedPlace.location}</span>
+                </div>
+
+                <div className="bg-muted/50 rounded-2xl p-6 mb-8 border border-border/50">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Sparkles size={16} className="text-primary" /> Why visit?
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{selectedPlace.desc}</p>
+                </div>
 
                 {selectedPlace.highlights?.length > 0 && (
                   <div className="mb-8">
-                    <h3 className="text-sm font-semibold text-foreground mb-3">Highlights</h3>
+                    <h3 className="text-sm font-semibold text-foreground mb-4">Highlights</h3>
                     <div className="flex flex-wrap gap-2">
                       {selectedPlace.highlights.map((h: string, i: number) => (
-                        <span key={i} className="chip capitalize">{h}</span>
+                        <span key={i} className="px-4 py-2 bg-background border border-border rounded-xl text-xs font-medium capitalize shadow-sm text-foreground">
+                          {h}
+                        </span>
                       ))}
                     </div>
                   </div>
                 )}
 
-                <div className="pt-5 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="pt-6 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                   <div>
-                    <div className="text-xs text-muted-foreground mb-0.5">Price estimate</div>
-                    <div className="text-2xl font-bold text-foreground">{selectedPlace.price}</div>
+                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Average Cost</div>
+                    <div className="text-3xl font-bold text-foreground">{selectedPlace.price}</div>
                   </div>
                   <button
                     onClick={() => handlePlanTrip(selectedPlace)}
                     disabled={isPlanning}
-                    className="btn btn-primary btn-lg"
+                    className="btn btn-primary h-14 px-8 text-base shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    {isPlanning ? <Loader2 className="animate-spin" size={18} /> : <ArrowRight size={18} />}
+                    {isPlanning ? <Loader2 className="animate-spin" size={20} /> : <ArrowRight size={20} />}
                     Plan a trip here
                   </button>
                 </div>

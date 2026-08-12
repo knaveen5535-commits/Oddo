@@ -45,6 +45,9 @@ router.get('/photo', async (req, res) => {
       timeout: 15000,
       maxRedirects: 5,
       validateStatus: (status) => status < 400,
+      headers: {
+        'User-Agent': 'Oddo/1.0 (contact@oddo.com)'
+      }
     });
     const buffer = Buffer.from(response.data);
 

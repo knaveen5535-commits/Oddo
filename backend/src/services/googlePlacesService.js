@@ -6,11 +6,6 @@ class GooglePlacesService {
     this.searchUrl = 'https://places.googleapis.com/v1/places:searchText';
   }
 
-  /**
-   * Fetches travel recommendations based on a location
-   * @param {string} location - The destination (e.g., "Paris", "Japan")
-   * @returns {Promise<Object>} - Grouped recommendations
-   */
   async getRecommendations(location) {
     try {
       const categories = [
@@ -22,7 +17,6 @@ class GooglePlacesService {
 
       const results = { attractions: [], restaurants: [], hotels: [], activities: [] };
 
-      // Fetch for each category in parallel
       await Promise.all(categories.map(async (cat) => {
         const response = await axios.post(this.searchUrl, {
           textQuery: cat.query,
@@ -34,7 +28,7 @@ class GooglePlacesService {
           }
         });
 
-        results[cat.type] = this.formatResults(response.data.places || []);
+        results[cat.type] = await this.formatResults(response.data.places || []);
       }));
 
       return results;
@@ -44,12 +38,8 @@ class GooglePlacesService {
     }
   }
 
-  /**
-   * Search for places in a city with higher volume (Targeting 50+ results)
-   */
   async searchCities(query) {
     try {
-      // Perform multiple searches to aggregate enough data
       const categories = [
         `top tourist attractions in ${query}`,
         `best restaurants in ${query}`,
@@ -70,17 +60,18 @@ class GooglePlacesService {
 
       const responses = await Promise.all(searchPromises);
       
-      // Flatten and deduplicate results by place_id
       const allResults = responses.flatMap(res => res.data.places || []);
       const uniqueResults = Array.from(new Map(allResults.map(item => [item.id, item])).values());
 
-      return uniqueResults.map(place => {
+      return await Promise.all(uniqueResults.map(async (place) => {
         const photoName = place.photos && place.photos.length > 0 ? place.photos[0].name : null;
+        const imageUrl = await this.getPlaceImageUrl(photoName, place.displayName?.text);
+        
         return {
           id: place.id,
           name: place.displayName?.text || 'Unknown',
           location: place.formattedAddress,
-          image: this.generatePhotoUrl(photoName, place.displayName?.text),
+          image: imageUrl,
           rating: place.rating || 0,
           price: place.priceLevel ? "₹".repeat(place.priceLevel * 2) + "00" : "₹1,200", 
           category: place.primaryType ? place.primaryType.replace(/_/g, ' ') : "Destination",
@@ -88,7 +79,7 @@ class GooglePlacesService {
           desc: `Explore the beautiful ${place.displayName?.text}. ${place.formattedAddress}`,
           highlights: place.primaryType ? [place.primaryType.replace(/_/g, ' ')] : []
         };
-      });
+      }));
     } catch (error) {
       console.error('Google Search Cities Error:', error.response?.data || error.message);
       return [];
@@ -108,22 +99,19 @@ class GooglePlacesService {
       });
 
       const place = response.data.places && response.data.places[0];
-      if (place && place.photos && place.photos.length > 0) {
-        return this.generatePhotoUrl(place.photos[0].name, city);
-      }
-      return this.generatePhotoUrl(null, city);
+      const photoName = place && place.photos && place.photos.length > 0 ? place.photos[0].name : null;
+      return await this.getPlaceImageUrl(photoName, city);
     } catch (error) {
       console.error('City Image Fetch Error:', error.message);
-      return this.generatePhotoUrl(null, city);
+      return await this.getPlaceImageUrl(null, city);
     }
   }
 
-  /**
-   * Formats Google API raw results into clean data
-   */
-  formatResults(places) {
-    return places.slice(0, 20).map(place => {
+  async formatResults(places) {
+    return await Promise.all(places.slice(0, 20).map(async (place) => {
       const photoName = place.photos && place.photos.length > 0 ? place.photos[0].name : null;
+      const imageUrl = await this.getPlaceImageUrl(photoName, place.displayName?.text);
+      
       return {
         place_id: place.id,
         name: place.displayName?.text || 'Unknown',
@@ -131,24 +119,39 @@ class GooglePlacesService {
         address: place.formattedAddress || '',
         type: place.primaryType ? [place.primaryType.replace(/_/g, ' ')] : ['Destination'],
         coordinates: place.location ? { lat: place.location.latitude, lng: place.location.longitude } : null,
-        image: this.generatePhotoUrl(photoName, place.displayName?.text),
+        image: imageUrl,
         mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName?.text || '')}&query_place_id=${place.id}`
       };
-    });
+    }));
   }
 
-  /**
-   * Generates a working proxy URL for a place photo or a varied high-quality fallback
-   */
-  generatePhotoUrl(photoName, placeName = "") {
+  async getPlaceImageUrl(photoName, placeName = "") {
+    const publicUrl = process.env.PUBLIC_BACKEND_URL || 'http://localhost:5001';
+    
+    // 1. Try Google Places Photo
     if (photoName) {
       const googlePhotoUrl = `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=1200&key=${this.apiKey}`;
-      const publicUrl = process.env.PUBLIC_BACKEND_URL || 'http://localhost:5001';
-      // Route through our proxy which uses Cloudinary!
       return `${publicUrl}/api/places/photo?url=${encodeURIComponent(googlePhotoUrl)}`;
     }
     
-    // Fallback: A curated set of high-quality cinematic travel images for variety
+    // 2. Try Wikipedia API fallback
+    if (placeName) {
+      try {
+        const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original|thumbnail&pithumbsize=1200&titles=${encodeURIComponent(placeName)}`;
+        const { data } = await axios.get(wikiUrl, { headers: { 'User-Agent': 'Oddo/1.0 (contact@oddo.com)' }, timeout: 3000 });
+        if (data && data.query && data.query.pages) {
+          const firstPage = Object.values(data.query.pages)[0];
+          const wikiImage = firstPage.thumbnail?.source || firstPage.original?.source;
+          if (wikiImage) {
+            return `${publicUrl}/api/places/photo?url=${encodeURIComponent(wikiImage)}`;
+          }
+        }
+      } catch (e) {
+        console.error(`[Wikipedia API] Failed to fetch image for ${placeName}:`, e.message);
+      }
+    }
+    
+    // 3. Unsplash currated fallback
     const fallbacks = [
       "https://images.unsplash.com/photo-1544465544-1b71aee9dfa3",
       "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a",
@@ -162,7 +165,6 @@ class GooglePlacesService {
       "https://images.unsplash.com/photo-1500835595333-7221d600645a"
     ];
 
-    // Use place name to consistently pick one of the 10 fallbacks
     const hash = (placeName || "").split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const selected = fallbacks[hash % fallbacks.length];
     
