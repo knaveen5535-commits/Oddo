@@ -13,7 +13,6 @@ import {
   Umbrella,
   Mountain,
   Coffee,
-  Navigation,
   X,
   Loader2,
   Compass,
@@ -42,7 +41,6 @@ export default function CitySearchPage() {
         if (result.success && result.data) {
           const all = [
             ...(result.data.attractions || []),
-            ...(result.data.activities || []),
             ...(result.data.restaurants || []),
             ...(result.data.hotels || []),
           ];
@@ -97,8 +95,6 @@ export default function CitySearchPage() {
         const allPlaces: any[] = [];
         if (Array.isArray(result.data.attractions))
           result.data.attractions.forEach((p: any) => allPlaces.push({ ...p, catLabel: "Attraction", tag: "Popular" }));
-        if (Array.isArray(result.data.activities))
-          result.data.activities.forEach((p: any) => allPlaces.push({ ...p, catLabel: "Activity", tag: "Experience" }));
         if (Array.isArray(result.data.restaurants))
           result.data.restaurants.forEach((p: any) => allPlaces.push({ ...p, catLabel: "Dining", tag: "Top Rated" }));
         if (Array.isArray(result.data.hotels))
@@ -164,7 +160,6 @@ export default function CitySearchPage() {
     { name: "All", icon: <Globe size={16} /> },
     { name: "Attraction", icon: <Umbrella size={16} /> },
     { name: "Dining", icon: <Coffee size={16} /> },
-    { name: "Activity", icon: <Navigation size={16} /> },
     { name: "Stay", icon: <Mountain size={16} /> },
   ];
 

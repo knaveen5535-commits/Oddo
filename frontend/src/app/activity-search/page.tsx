@@ -174,7 +174,7 @@ export default function ActivitySearchPage() {
                 />
                 <span className="absolute top-3 left-3 badge bg-black/60 text-white backdrop-blur">
                   <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                  {activity.rating}
+                  {activity.rating ? activity.rating : "N/A"}
                 </span>
               </div>
               <div className="p-6 flex-1 flex flex-col">
@@ -272,7 +272,7 @@ export default function ActivitySearchPage() {
                   </span>
                   <span className="inline-flex items-center gap-1.5 font-medium">
                     <Star size={15} className="fill-yellow-400 text-yellow-400" />
-                    {selectedActivity.rating} / 5
+                    {selectedActivity.rating ? `${selectedActivity.rating} / 5` : "N/A"}
                   </span>
                 </div>
 
