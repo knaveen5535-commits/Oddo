@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 
 export default function CreateTripPage() {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function CreateTripPage() {
     startDate: "",
     endDate: "",
     description: "",
+    budget_level: "moderate",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +87,19 @@ export default function CreateTripPage() {
     }
   };
 
-  const handleConfirmPlan = () => {
+  const handleConfirmPlan = async () => {
+    if (user && suggestedPlan) {
+      await supabase.from("suggested_trips").insert({
+        user_id: user.id,
+        title: suggestedPlan.title,
+        destination: suggestedPlan.location,
+        description: formData.description,
+        duration_days: suggestedPlan.days.length,
+        budget_level: formData.budget_level,
+        itinerary: suggestedPlan.days,
+        cover_image: cityImage,
+      });
+    }
     router.push("/trips");
   };
 
@@ -279,6 +293,30 @@ export default function CreateTripPage() {
                     type="date"
                     className="w-full bg-muted/40 border border-border text-foreground rounded-2xl pl-11 pr-4 py-3.5 focus:bg-background focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none shadow-sm appearance-none"
                   />
+                </div>
+              </div>
+
+              <div className="field sm:col-span-2">
+                <label className="text-sm font-semibold text-foreground mb-2 block">Budget Level</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: "budget", label: "Budget", desc: "Cost-effective" },
+                    { id: "moderate", label: "Moderate", desc: "Balanced" },
+                    { id: "luxury", label: "Luxury", desc: "Premium" }
+                  ].map((tier) => (
+                    <div
+                      key={tier.id}
+                      onClick={() => setFormData({ ...formData, budget_level: tier.id })}
+                      className={`cursor-pointer rounded-2xl border p-3 flex flex-col items-center justify-center text-center transition-all ${
+                        formData.budget_level === tier.id
+                          ? "border-primary bg-primary/10 text-primary shadow-sm"
+                          : "border-border bg-muted/40 text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <span className="text-sm font-bold capitalize">{tier.label}</span>
+                      <span className="text-[10px] opacity-80">{tier.desc}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
