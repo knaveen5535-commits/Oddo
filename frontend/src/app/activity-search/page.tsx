@@ -20,6 +20,7 @@ import {
   Bike,
   Activity as ActivityIcon,
 } from "lucide-react";
+import api from "@/lib/api";
 
 export default function ActivitySearchPage() {
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
@@ -31,15 +32,11 @@ export default function ActivitySearchPage() {
     const fetchPopularActivities = async () => {
       setIsSearching(true);
       try {
-        const response = await fetch(
-          `http://localhost:5001/api/trips/search-places?query=popular%20tourist%20activities%20worldwide`
-        );
+        const response = await api.get(`/trips/search-places`, {
+          params: { query: "popular tourist activities worldwide" },
+        });
 
-        if (!response.ok) {
-          throw new Error(`HTTP Error: ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = response.data;
 
         if (result.success) {
           const mapped = result.data.map((item: any) => ({
@@ -71,10 +68,10 @@ export default function ActivitySearchPage() {
 
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `http://localhost:5001/api/trips/search-places?query=${encodeURIComponent(searchQuery + " things to do")}`
-      );
-      const result = await response.json();
+      const response = await api.get(`/trips/search-places`, {
+        params: { query: `${searchQuery} things to do` },
+      });
+      const result = response.data;
       if (result.success) {
         const mapped = result.data.map((item: any) => ({
           id: item.id,
@@ -177,7 +174,7 @@ export default function ActivitySearchPage() {
                 />
                 <span className="absolute top-3 left-3 badge bg-black/60 text-white backdrop-blur">
                   <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                  {activity.rating}
+                  {activity.rating ? activity.rating : "N/A"}
                 </span>
               </div>
               <div className="p-6 flex-1 flex flex-col">
@@ -275,7 +272,7 @@ export default function ActivitySearchPage() {
                   </span>
                   <span className="inline-flex items-center gap-1.5 font-medium">
                     <Star size={15} className="fill-yellow-400 text-yellow-400" />
-                    {selectedActivity.rating} / 5
+                    {selectedActivity.rating ? `${selectedActivity.rating} / 5` : "N/A"}
                   </span>
                 </div>
 

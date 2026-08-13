@@ -33,8 +33,8 @@ export const menuGroups: MenuGroup[] = [
     label: "Discover",
     items: [
       { label: "Explore Destinations", href: "/city-search", icon: <Globe size={19} />, match: exact("/city-search") },
-      { label: "Smart Search", href: "/smart-search", icon: <Sparkles size={19} />, match: exact("/smart-search") },
-      { label: "Activities", href: "/activity-search", icon: <Compass size={19} />, match: exact("/activity-search") },
+      // { label: "Smart Search", href: "/smart-search", icon: <Sparkles size={19} />, match: exact("/smart-search") },
+      // { label: "Activities", href: "/activity-search", icon: <Compass size={19} />, match: exact("/activity-search") },
     ],
   },
   {

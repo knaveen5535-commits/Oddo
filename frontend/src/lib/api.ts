@@ -2,7 +2,7 @@ import axios from 'axios';
 import { supabase } from './supabase';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5001/api',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
   headers: {
     'Content-Type': 'application/json',
   }

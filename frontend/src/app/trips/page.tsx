@@ -158,7 +158,7 @@ export default function TripsPage() {
                 >
                   <div className="relative h-48 overflow-hidden bg-muted">
                     <img
-                      src={trip.image || getFallbackImage(trip.title)}
+                      src={trip.coverImage || trip.image || getFallbackImage(trip.title)}
                       onError={(e: any) => {
                         e.target.onerror = null;
                         e.target.src = getFallbackImage(trip.title);

@@ -137,39 +137,46 @@ export default function SmartSearchPage() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.96 }}
                     transition={{ delay: idx * 0.04 }}
-                    className="card overflow-hidden card-hover flex flex-col cursor-pointer"
+                    className="card overflow-hidden card-hover flex flex-col p-6 group h-full border border-border/50 hover:border-primary/30 transition-all duration-300 relative bg-gradient-to-br from-card to-card hover:to-primary/5 cursor-pointer"
                   >
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={item.image}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        alt={item.name}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+                          {activeTab === 'attractions' ? <Compass size={22} /> : 
+                           activeTab === 'restaurants' ? <Utensils size={22} /> : 
+                           activeTab === 'hotels' ? <Hotel size={22} /> : 
+                           <TrendingUp size={22} />}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="badge bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider w-fit">{activeTab}</span>
+                          <div className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+                            <Star size={14} className="fill-yellow-400 text-yellow-400" />
+                            {item.rating || "New"}
+                          </div>
+                        </div>
+                      </div>
                       <button
-                        className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-slate-600 hover:text-danger transition-colors"
+                        className="text-muted-foreground hover:text-danger transition-colors p-2 -mr-2 -mt-2 rounded-full hover:bg-danger/10"
+                        onClick={(e) => e.stopPropagation()}
                         aria-label="Save"
                       >
-                        <Heart size={16} />
+                        <Heart size={18} />
                       </button>
-                      <span className="absolute bottom-3 left-3 badge bg-white/90 text-slate-900 backdrop-blur">
-                        <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                        {item.rating}
-                      </span>
                     </div>
-                    <div className="p-5 flex-1 flex flex-col">
-                      <h3 className="font-semibold text-foreground leading-snug mb-1.5 line-clamp-1 group-hover:text-primary transition-colors">
+                    
+                    <div className="flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-foreground leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {item.name}
                       </h3>
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground line-clamp-1 mb-4">
-                        <MapPin size={14} className="text-primary shrink-0" />
-                        <span className="truncate">{item.address}</span>
+                      <div className="flex items-start gap-2 text-sm text-muted-foreground mb-4">
+                        <MapPin size={16} className="text-primary shrink-0 mt-0.5" />
+                        <span className="line-clamp-2 leading-relaxed">{item.address}</span>
                       </div>
-                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-border">
-                        <span className="text-xs text-muted-foreground">{activeTab}</span>
-                        <span className="text-sm font-medium text-primary inline-flex items-center gap-1">
-                          Details <ArrowRight size={14} />
-                        </span>
+                    </div>
+                    
+                    <div className="flex items-end justify-end pt-5 border-t border-border/60 mt-auto">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                        <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                       </div>
                     </div>
                   </motion.div>
