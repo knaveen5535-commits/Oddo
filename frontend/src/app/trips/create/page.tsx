@@ -537,21 +537,18 @@ function RecommendationGroup({ title, data, icon }: { title: string; data: any[]
             transition={{ delay: idx * 0.05 }}
             className="card overflow-hidden card-hover flex flex-col"
           >
-            <div className="relative h-40 overflow-hidden">
-              <img
-                src={place.image}
-                alt={place.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <span className="absolute top-3 right-3 badge bg-black/60 text-white backdrop-blur">
-                <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                {place.rating}
-              </span>
-            </div>
             <div className="p-5 flex-1 flex flex-col">
-              <h4 className="font-semibold text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                {place.name}
-              </h4>
+              <div className="flex justify-between items-start gap-2 mb-2">
+                <h4 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                  {place.name}
+                </h4>
+                {place.rating && (
+                  <span className="badge bg-primary/10 text-primary shrink-0">
+                    <Star size={12} className="fill-primary" />
+                    {place.rating}
+                  </span>
+                )}
+              </div>
               <div className="flex items-start gap-1.5 text-sm text-muted-foreground mb-4">
                 <MapPin size={14} className="text-primary shrink-0 mt-0.5" />
                 <span className="line-clamp-2">{place.address}</span>

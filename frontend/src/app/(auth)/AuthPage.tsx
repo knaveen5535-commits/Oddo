@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plane,
   Mail,
   Lock,
   User,
@@ -187,14 +186,8 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand */}
-        <div className="relative flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm">
-            <Plane className="text-white w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-tight text-foreground leading-none">Traveloop</h1>
-            <p className="text-xs text-muted-foreground mt-1">Trip planning suite</p>
-          </div>
+        <div className="relative flex items-center">
+          <img src="/logo.png" alt="Traveloop" className="h-12 w-auto object-contain" />
         </div>
 
         {/* Copy */}
@@ -235,11 +228,8 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
       <div className="flex-1 flex items-center justify-center p-8 sm:p-12 overflow-y-auto bg-card scrollbar-hide">
         <div className="w-full max-w-[380px] my-auto py-8">
           {/* Brand (mobile) */}
-          <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm">
-              <Plane className="text-white w-5 h-5" />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">Traveloop</span>
+          <div className="lg:hidden flex items-center justify-center mb-8">
+            <img src="/logo.png" alt="Traveloop" className="h-10 w-auto object-contain" />
           </div>
 
           <motion.div
