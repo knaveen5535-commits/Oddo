@@ -6,13 +6,15 @@ class GooglePlacesService {
     this.searchUrl = 'https://places.googleapis.com/v1/places:searchText';
   }
 
-  async getRecommendations(location) {
+  async getRecommendations(location, title = "", description = "") {
     try {
+      const context = (title || description) ? `for a trip called ${title} focusing on ${description}`.trim() : '';
+
       const categories = [
-        { type: 'attractions', query: `best tourist places in ${location}` },
-        { type: 'restaurants', query: `top restaurants in ${location}` },
-        { type: 'hotels', query: `best hotels in ${location}` },
-        { type: 'activities', query: `popular activities in ${location}` }
+        { type: 'attractions', query: `best tourist places in ${location} ${context}`.trim() },
+        { type: 'restaurants', query: `top restaurants in ${location} ${context}`.trim() },
+        { type: 'hotels', query: `best hotels in ${location} ${context}`.trim() },
+        { type: 'activities', query: `popular activities in ${location} ${context}`.trim() }
       ];
 
       const results = { attractions: [], restaurants: [], hotels: [], activities: [] };
