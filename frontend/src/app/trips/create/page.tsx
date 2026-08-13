@@ -246,7 +246,7 @@ export default function CreateTripPage() {
         </section>
 
         {/* Region Selections */}
-        <section
+        {/* <section
           className={`space-y-5 transition-opacity ${
             recommendations ? "opacity-40 pointer-events-none select-none" : "opacity-100"
           }`}
@@ -275,7 +275,7 @@ export default function CreateTripPage() {
               </motion.div>
             ))}
           </div>
-        </section>
+        </section> */}
       </div>
 
       {/* Recommendations & Suggested Plan */}

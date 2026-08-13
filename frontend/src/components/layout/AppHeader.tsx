@@ -36,19 +36,11 @@ export default function AppHeader({ onMenuClick }: { onMenuClick: () => void }) 
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 h-16 bg-background/85 backdrop-blur-xl border-b border-border shrink-0">
-      <button
-        onClick={onMenuClick}
-        aria-label="Open menu"
-        className="icon-btn lg:hidden"
-      >
-        <Menu size={20} />
-      </button>
-
-      <div className="hidden sm:block min-w-0">
-        <h1 className="text-base font-semibold tracking-tight text-foreground truncate leading-tight">
+      <div className="min-w-0 flex-1 lg:flex-none">
+        <h1 className="text-base font-bold tracking-tight text-foreground truncate leading-tight">
           {meta?.title || "Traveloop"}
         </h1>
-        <p className="text-xs text-muted-foreground truncate leading-tight">{meta?.subtitle || ""}</p>
+        <p className="text-[11px] sm:text-xs text-muted-foreground truncate leading-tight">{meta?.subtitle || ""}</p>
       </div>
 
       <div className="flex-1" />
