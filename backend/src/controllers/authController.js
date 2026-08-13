@@ -168,6 +168,9 @@ const supabaseSignup = async (req, res) => {
     const phoneNumber = phone ? parseInt(String(phone).replace(/\D/g, ''), 10) || 0 : 0;
     const dobNumber = dob ? Math.floor(Date.parse(dob) / 1000) : 0;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const rowData = {
       'first name': firstName,
       'last name': lastName,
@@ -175,7 +178,7 @@ const supabaseSignup = async (req, res) => {
       phone: phoneNumber,
       dob: dobNumber,
       region: region || '',
-      password,
+      password: hashedPassword,
     };
 
     const { data: existingRow } = await supabase
