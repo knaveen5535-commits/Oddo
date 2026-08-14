@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 
 const tabs = ["Upcoming", "Draft", "Past"] as const;
 
@@ -38,11 +39,44 @@ export default function TripsPage() {
 
   const fetchTrips = async () => {
     try {
-      const response = await api.get("/trips");
-      const result = response.data;
-      if (result.success) {
-        setTrips(result.data);
+      let allTrips: any[] = [];
+      
+      // 1. Fetch backend Prisma trips
+      try {
+        const response = await api.get("/trips");
+        if (response.data?.success && Array.isArray(response.data.data)) {
+          allTrips = [...response.data.data];
+        }
+      } catch (err) {
+        console.warn("Could not fetch backend trips", err);
       }
+
+      // 2. Fetch newly generated trips from Supabase 'suggested_trips' table
+      if (user?.id) {
+        const { data: supabaseTrips, error } = await supabase
+          .from("suggested_trips")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && supabaseTrips) {
+          const formattedSupabase = supabaseTrips.map(t => ({
+            id: t.id,
+            title: t.title,
+            destination: t.destination,
+            location: t.destination,
+            coverImage: t.cover_image,
+            status: "Upcoming", // Default to Upcoming
+            startDate: t.created_at || new Date().toISOString(),
+            duration: t.duration_days || 3,
+            isSuggested: true,
+          }));
+          
+          allTrips = [...allTrips, ...formattedSupabase];
+        }
+      }
+
+      setTrips(allTrips);
     } catch (error) {
       console.error("Error fetching trips:", error);
     } finally {
@@ -192,7 +226,7 @@ export default function TripsPage() {
                       </span>
                       <span className="chip">
                         <Clock size={13} className="text-primary" />
-                        7-day voyage
+                        {trip.duration || 7}-day voyage
                       </span>
                     </div>
                     <div className="mt-auto flex gap-3 pt-4 border-t border-border">

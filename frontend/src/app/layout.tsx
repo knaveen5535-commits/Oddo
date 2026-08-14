@@ -28,6 +28,7 @@ export const viewport: Viewport = {
 import AppLayout from "@/components/layout/AppLayout";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
+import GlobalLoader from "@/components/GlobalLoader";
 
 export default function RootLayout({
   children,
@@ -44,6 +45,7 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem("theme");var m=t==="light"||t==="dark"?t:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`,
           }}
         />
+        <GlobalLoader />
         <AuthProvider>
           <ThemeProvider>
             <AppLayout>{children}</AppLayout>

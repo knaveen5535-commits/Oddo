@@ -36,11 +36,18 @@ export default function AppHeader({ onMenuClick }: { onMenuClick: () => void }) 
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 h-16 bg-background/85 backdrop-blur-xl border-b border-border shrink-0">
+      {/* Mobile Logo */}
+      <Link href="/" className="lg:hidden shrink-0 pr-2">
+        <img src="/logo.png" alt="TravelLoop" className="h-9 w-auto object-contain" />
+      </Link>
+
       <div className="min-w-0 flex-1 lg:flex-none">
         <h1 className="text-base font-bold tracking-tight text-foreground truncate leading-tight">
-          {meta?.title || "Traveloop"}
+          {meta?.title || "TravelLoop"}
         </h1>
-        <p className="text-[11px] sm:text-xs text-muted-foreground truncate leading-tight">{meta?.subtitle || ""}</p>
+        <p className="hidden sm:block text-[11px] sm:text-xs text-muted-foreground truncate leading-tight">
+          {meta?.subtitle || ""}
+        </p>
       </div>
 
       <div className="flex-1" />
