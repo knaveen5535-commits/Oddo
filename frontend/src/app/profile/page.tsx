@@ -17,16 +17,59 @@ import {
   Mail,
   User as UserIcon,
 } from "lucide-react";
+import api from "@/services/api";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, supabaseUser } = useAuth();
   const [activeTab, setActiveTab] = useState("expeditions");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    bio: "",
+    location: ""
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Initialize edit form when user loads
+  React.useEffect(() => {
+    if (user) {
+      setEditForm({
+        name: user.name || "",
+        bio: supabaseUser?.user_metadata?.bio || "Adventure seeker and photography enthusiast. I love exploring remote locations and capturing the beauty of nature.",
+        location: supabaseUser?.user_metadata?.location || "Global"
+      });
+    }
+  }, [user, supabaseUser]);
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    try {
+      const response = await api.put('/auth/profile', {
+        fullName: editForm.name,
+        bio: editForm.bio,
+        location: editForm.location,
+        email: user?.email
+      }, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        }
+      });
+      
+      // Update local state by forcing a refresh or we can just optimistically update
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const traveler = {
     name: user?.name || "Guest Explorer",
     handle: user?.email ? `@${user.email.split("@")[0]}` : "@guest_explorer",
-    bio: "Adventure seeker and photography enthusiast. I love exploring remote locations and capturing the beauty of nature.",
-    location: "Global",
+    bio: supabaseUser?.user_metadata?.bio || "Adventure seeker and photography enthusiast. I love exploring remote locations and capturing the beauty of nature.",
+    location: supabaseUser?.user_metadata?.location || "Global",
     joined: "Jan 2024",
     avatar:
       user?.avatar ||
@@ -53,23 +96,8 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8">
-      {/* Banner */}
-      <div className="relative h-52 sm:h-64 w-full rounded-2xl overflow-hidden border border-border">
-        <img src={traveler.banner} alt="Profile banner" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex gap-2">
-          <button className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25">
-            <Edit3 size={16} />
-            Edit profile
-          </button>
-          <button className="btn bg-white/15 text-white border border-white/25 hover:bg-white/25" aria-label="Share">
-            <Share2 size={16} />
-          </button>
-        </div>
-      </div>
-
-      {/* Identity card */}
-      <div className="relative -mt-16 sm:-mt-20 px-5 sm:px-8">
+      {/* Header Profile Info without Banner */}
+      <div className="relative pt-6 px-5 sm:px-8 border-b border-border pb-6 flex flex-col sm:flex-row sm:items-end gap-6 justify-between">
         <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="relative shrink-0">
             <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-background overflow-hidden shadow-lg bg-card">
@@ -102,7 +130,22 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+        
+        <div className="flex gap-2 shrink-0">
+          <button 
+            onClick={() => setIsEditModalOpen(true)}
+            className="btn bg-primary text-white hover:bg-primary/90"
+          >
+            <Edit3 size={16} />
+            Edit profile
+          </button>
+          <button className="btn bg-muted text-foreground hover:bg-muted/80" aria-label="Share">
+            <Share2 size={16} />
+          </button>
+        </div>
       </div>
+
+
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left */}
@@ -185,13 +228,7 @@ export default function ProfilePage() {
                     whileHover={{ x: 4 }}
                     className="card overflow-hidden card-hover flex h-32 sm:h-36 cursor-pointer"
                   >
-                    <div className="w-36 sm:w-44 relative overflow-hidden shrink-0">
-                      <img
-                        src={trip.image}
-                        alt={trip.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    </div>
+
                     <div className="p-5 flex-1 flex flex-col justify-center">
                       <div className="flex items-start justify-between gap-2 mb-1.5">
                         <h4 className="font-semibold text-foreground">{trip.title}</h4>
@@ -224,6 +261,77 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      <AnimatePresence>
+        {isEditModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-border"
+            >
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold">Edit Profile</h2>
+                  <button 
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted"
+                  >
+                    ×
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Full Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                      value={editForm.name}
+                      onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Location</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                      value={editForm.location}
+                      onChange={(e) => setEditForm({...editForm, location: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Bio</label>
+                    <textarea 
+                      className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary h-24 resize-none"
+                      value={editForm.bio}
+                      onChange={(e) => setEditForm({...editForm, bio: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-8 flex gap-3 justify-end">
+                  <button 
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="px-5 py-2 rounded-xl bg-muted text-foreground font-medium hover:bg-muted/80"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleSaveProfile}
+                    disabled={isSaving}
+                    className="px-5 py-2 rounded-xl bg-primary text-white font-medium hover:bg-primary/90 disabled:opacity-50"
+                  >
+                    {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

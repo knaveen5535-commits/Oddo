@@ -196,18 +196,10 @@ export default function Dashboard() {
                     >
                       <Link href={`/trips/${trip.id}/itinerary`} className="block h-full">
                         <div className="card overflow-hidden card-hover flex flex-col h-full">
-                          <div className="relative h-44 overflow-hidden">
-                            <img
-                              src={trip.coverImage || fallbackImage}
-                              alt={trip.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                            <span className="absolute top-3 right-3 badge bg-white/90 text-slate-900 backdrop-blur">
+                          <div className="p-5 flex-1 flex flex-col relative">
+                            <span className="absolute top-5 right-5 badge bg-primary text-white backdrop-blur">
                               {trip.status || "Planned"}
                             </span>
-                          </div>
-                          <div className="p-5 flex-1 flex flex-col">
                             <h3 className="text-lg font-semibold text-foreground leading-snug mb-1.5 line-clamp-1">
                               {trip.title}
                             </h3>

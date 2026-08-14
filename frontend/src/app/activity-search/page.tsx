@@ -166,18 +166,11 @@ export default function ActivitySearchPage() {
               onClick={() => setSelectedActivity(activity)}
               className="card overflow-hidden card-hover flex flex-col md:flex-row cursor-pointer"
             >
-              <div className="relative w-full md:w-72 h-52 md:h-auto overflow-hidden shrink-0">
-                <img
-                  src={activity.image}
-                  alt={activity.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <span className="absolute top-3 left-3 badge bg-black/60 text-white backdrop-blur">
-                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
+              <div className="p-6 flex-1 flex flex-col relative">
+                <span className="absolute top-6 right-6 badge bg-primary/10 text-primary backdrop-blur">
+                  <Star size={12} className="fill-yellow-400 text-yellow-400 mr-1" />
                   {activity.rating ? activity.rating : "N/A"}
                 </span>
-              </div>
-              <div className="p-6 flex-1 flex flex-col">
                 <div className="flex justify-between items-start gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mb-1.5">
@@ -245,19 +238,11 @@ export default function ActivitySearchPage() {
             >
               <button
                 onClick={() => setSelectedActivity(null)}
-                className="absolute top-4 right-4 z-20 w-9 h-9 bg-black/40 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                className="absolute top-4 right-4 z-20 w-9 h-9 bg-muted rounded-full flex items-center justify-center hover:bg-muted/80 transition-colors"
                 aria-label="Close"
               >
                 <X size={18} />
               </button>
-              <div className="w-full md:w-2/5 h-52 md:h-auto relative overflow-hidden shrink-0">
-                <img
-                  src={selectedActivity.image}
-                  alt={selectedActivity.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r" />
-              </div>
               <div className="p-6 sm:p-8 flex-1 overflow-y-auto scrollbar-hide">
                 <div className="text-xs font-semibold text-primary uppercase tracking-wider mb-3">
                   Confirmed experience

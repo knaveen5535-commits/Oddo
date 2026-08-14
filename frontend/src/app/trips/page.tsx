@@ -190,19 +190,9 @@ export default function TripsPage() {
                   transition={{ delay: idx * 0.04 }}
                   className="card overflow-hidden card-hover flex flex-col"
                 >
-                  <div className="relative h-48 overflow-hidden bg-muted">
-                    <img
-                      src={trip.coverImage || trip.image || getFallbackImage(trip.title)}
-                      onError={(e: any) => {
-                        e.target.onerror = null;
-                        e.target.src = getFallbackImage(trip.title);
-                      }}
-                      alt={trip.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="p-5 flex-1 flex flex-col relative">
                     <span
-                      className={`absolute top-3 right-3 badge ${
+                      className={`absolute top-5 right-5 badge ${
                         trip.status === "Active" || trip.status === "Upcoming"
                           ? "badge-primary"
                           : trip.status === "Draft"
@@ -212,8 +202,6 @@ export default function TripsPage() {
                     >
                       {trip.status}
                     </span>
-                  </div>
-                  <div className="p-5 flex-1 flex flex-col">
                     <h3 className="text-lg font-semibold text-foreground mb-1.5 line-clamp-1">{trip.title}</h3>
                     <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
                       <MapPin size={14} className="text-primary" />
