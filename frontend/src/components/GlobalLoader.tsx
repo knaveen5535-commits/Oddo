@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export default function GlobalLoader() {
+function GlobalLoaderInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,5 +41,13 @@ export default function GlobalLoader() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GlobalLoader() {
+  return (
+    <React.Suspense fallback={null}>
+      <GlobalLoaderInner />
+    </React.Suspense>
   );
 }
