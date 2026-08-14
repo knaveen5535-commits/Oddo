@@ -96,8 +96,25 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8">
-      {/* Header Profile Info without Banner */}
-      <div className="relative pt-6 px-5 sm:px-8 border-b border-border pb-6 flex flex-col sm:flex-row sm:items-end gap-6 justify-between">
+      {/* Banner */}
+      <div className="relative h-52 sm:h-64 w-full rounded-2xl overflow-hidden border border-border bg-gradient-to-br from-primary/30 via-primary/10 to-background">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex gap-2">
+          <button 
+            onClick={() => setIsEditModalOpen(true)}
+            className="btn bg-white/20 text-white border border-white/25 hover:bg-white/30 backdrop-blur-sm"
+          >
+            <Edit3 size={16} />
+            Edit profile
+          </button>
+          <button className="btn bg-white/20 text-white border border-white/25 hover:bg-white/30 backdrop-blur-sm" aria-label="Share">
+            <Share2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Identity card */}
+      <div className="relative -mt-16 sm:-mt-20 px-5 sm:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="relative shrink-0">
             <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-background overflow-hidden shadow-lg bg-card">
@@ -129,19 +146,6 @@ export default function ProfilePage() {
               </span>
             </div>
           </div>
-        </div>
-        
-        <div className="flex gap-2 shrink-0">
-          <button 
-            onClick={() => setIsEditModalOpen(true)}
-            className="btn bg-primary text-white hover:bg-primary/90"
-          >
-            <Edit3 size={16} />
-            Edit profile
-          </button>
-          <button className="btn bg-muted text-foreground hover:bg-muted/80" aria-label="Share">
-            <Share2 size={16} />
-          </button>
         </div>
       </div>
 
