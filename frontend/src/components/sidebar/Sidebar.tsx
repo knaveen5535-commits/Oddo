@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Plane, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { menuGroups } from "./menuItems";
@@ -26,14 +26,8 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-sidebar border-r border-border flex flex-col hidden lg:flex h-screen sticky top-0">
       {/* Brand */}
-      <div className="flex items-center gap-3 px-6 h-16 border-b border-border shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm shrink-0">
-          <Plane className="text-white w-5 h-5" />
-        </div>
-        <div>
-          <h1 className="text-base font-bold tracking-tight text-foreground leading-none">Traveloop</h1>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Trip planning suite</p>
-        </div>
+      <div className="flex items-center justify-center h-24 border-b border-border shrink-0 py-2 mt-2">
+        <img src="/logo.png" alt="Traveloop" className="h-[72px] w-auto object-contain" />
       </div>
 
       {/* Nav */}

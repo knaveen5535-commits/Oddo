@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -8,13 +8,27 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Traveloop - Plan Your Next Adventure",
-  description: "The ultimate travel planning and budget management platform.",
+  title: "TravelLoop",
+  description: "Your smart travel companion for planning trips, discovering places, and exploring new destinations.",
+  applicationName: "TravelLoop",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "TravelLoop",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0B5CFF",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 import AppLayout from "@/components/layout/AppLayout";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
+import GlobalLoader from "@/components/GlobalLoader";
 
 export default function RootLayout({
   children,
@@ -31,6 +45,7 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem("theme");var m=t==="light"||t==="dark"?t:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`,
           }}
         />
+        <GlobalLoader />
         <AuthProvider>
           <ThemeProvider>
             <AppLayout>{children}</AppLayout>

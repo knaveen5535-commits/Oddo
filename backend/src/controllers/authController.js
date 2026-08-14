@@ -168,6 +168,9 @@ const supabaseSignup = async (req, res) => {
     const phoneNumber = phone ? parseInt(String(phone).replace(/\D/g, ''), 10) || 0 : 0;
     const dobNumber = dob ? Math.floor(Date.parse(dob) / 1000) : 0;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const rowData = {
       'first name': firstName,
       'last name': lastName,
@@ -175,7 +178,7 @@ const supabaseSignup = async (req, res) => {
       phone: phoneNumber,
       dob: dobNumber,
       region: region || '',
-      password,
+      password: hashedPassword,
     };
 
     const { data: existingRow } = await supabase
@@ -248,4 +251,72 @@ const supabaseGoogleUpsert = async (req, res) => {
   }
 };
 
-module.exports = { register, login, googleLogin, supabaseSignup, supabaseGoogleUpsert };
+// @desc    Update user profile data
+// @route   PUT /api/auth/profile
+// @access  Public (should be protected by auth middleware in real app, but using simple check here)
+const updateProfile = async (req, res) => {
+  const { email, fullName, bio, location } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required' });
+  }
+
+  try {
+    // 1. Get the user from Supabase to find their ID
+    const { data: users, error: listError } = await supabase.auth.admin.listUsers();
+    if (listError) {
+      console.error('[PROFILE] Error listing users:', listError.message);
+      return res.status(500).json({ success: false, message: listError.message });
+    }
+    
+    const user = users.users.find(u => u.email === email);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found in auth' });
+    }
+
+    // 2. Update auth user metadata
+    const { error: updateAuthError } = await supabase.auth.admin.updateUserById(user.id, {
+      user_metadata: {
+        ...user.user_metadata,
+        full_name: fullName,
+        bio: bio,
+        location: location
+      }
+    });
+
+    if (updateAuthError) {
+      console.error('[PROFILE] Error updating auth metadata:', updateAuthError.message);
+      return res.status(500).json({ success: false, message: updateAuthError.message });
+    }
+
+    // 3. Try to update the 'sign up' table
+    const firstName = fullName.split(' ')[0] || '';
+    const lastName = fullName.split(' ').slice(1).join(' ') || '';
+    
+    const { data: existingRow } = await supabase
+      .from('sign up')
+      .select('email')
+      .eq('email', email);
+
+    if (existingRow && existingRow.length > 0) {
+      const { error: dbUpdateError } = await supabase
+        .from('sign up')
+        .update({
+          'first name': firstName,
+          'last name': lastName
+        })
+        .eq('email', email);
+        
+      if (dbUpdateError) {
+        console.error('[PROFILE] Error updating sign up table:', dbUpdateError.message);
+      }
+    }
+
+    res.status(200).json({ success: true, message: 'Profile updated successfully' });
+  } catch (err) {
+    console.error('[PROFILE] Profile update error:', err.message);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = { register, login, googleLogin, supabaseSignup, supabaseGoogleUpsert, updateProfile };

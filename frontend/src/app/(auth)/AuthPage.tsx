@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plane,
   Mail,
   Lock,
   User,
@@ -172,22 +171,23 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
   ];
 
   return (
-    <div className="min-h-screen w-full flex bg-background">
-      {/* Left panel */}
-      <div className="hidden lg:flex w-[45%] max-w-xl flex-col justify-between p-12 relative overflow-hidden border-r border-border">
+    <div className="min-h-screen w-full flex items-center justify-center bg-muted/20 p-4 sm:p-8 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[60%] right-[10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px]" />
+      </div>
+      
+      <div className="w-full max-w-5xl flex rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/5 border border-border/40 bg-card relative z-10 max-h-[90vh]">
+        {/* Left panel */}
+        <div className="hidden lg:flex w-[45%] flex-col justify-between p-10 xl:p-12 relative overflow-hidden bg-background border-r border-border/40">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand */}
-        <div className="relative flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm">
-            <Plane className="text-white w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-tight text-foreground leading-none">Traveloop</h1>
-            <p className="text-xs text-muted-foreground mt-1">Trip planning suite</p>
-          </div>
+        <div className="relative flex items-center">
+          <img src="/logo.png" alt="Traveloop" className="h-12 w-auto object-contain" />
         </div>
 
         {/* Copy */}
@@ -225,14 +225,11 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-8 sm:p-12 overflow-y-auto bg-card scrollbar-hide">
+        <div className="w-full max-w-[380px] my-auto py-8">
           {/* Brand (mobile) */}
-          <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm">
-              <Plane className="text-white w-5 h-5" />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">Traveloop</span>
+          <div className="lg:hidden flex items-center justify-center mb-8">
+            <img src="/logo.png" alt="Traveloop" className="h-10 w-auto object-contain" />
           </div>
 
           <motion.div
@@ -531,6 +528,7 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
             </div>
           </motion.div>
         </div>
+      </div>
       </div>
     </div>
   );

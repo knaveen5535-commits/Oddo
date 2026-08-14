@@ -9,7 +9,7 @@ exports.createTrip = async (req, res) => {
 
     // Fetch recommendations and city image in parallel
     const [recommendations, cityImage] = await Promise.all([
-      googlePlacesService.getRecommendations(destination),
+      googlePlacesService.getRecommendations(destination, title, description),
       googlePlacesService.getCityImage(destination)
     ]);
 
@@ -53,7 +53,8 @@ exports.createTrip = async (req, res) => {
       success: true,
       message: "Trip created successfully",
       data: trip,
-      budget: initialBudget
+      budget: initialBudget,
+      recommendations: recommendations // Return original grouped recommendations for frontend rendering
     });
 
   } catch (error) {

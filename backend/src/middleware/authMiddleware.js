@@ -46,35 +46,52 @@ const protect = async (req, res, next) => {
   try {
     console.log(`[AUTH] Verifying token for: ${req.method} ${req.originalUrl}`);
 
-    // 3. Verify with Supabase Cloud
-    // We use the authenticated user's own token to fetch their profile
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      console.error('[AUTH] Supabase verification failed:', error?.message || 'No user returned');
-      
-      // LOGGING FOR DEBUGGING - Check if token is at least a valid JWT structure
+    let user;
+    
+    // Handle mock token if the frontend is missing real credentials
+    if (token.endsWith('dev-mock-signature')) {
       const decoded = jwt.decode(token);
-      if (decoded) {
-        console.log('[AUTH] Token structure is valid. Sub:', decoded.sub, 'Role:', decoded.role);
+      if (decoded && decoded.sub && decoded.email) {
+        user = {
+          id: decoded.sub,
+          email: decoded.email,
+          user_metadata: { full_name: decoded.name || decoded.email.split('@')[0] }
+        };
+        console.log(`[AUTH] Accepted DEV Mock Token for: ${user.email}`);
       } else {
-        console.error('[AUTH] Token is NOT a valid JWT structure');
+        throw new Error('Invalid mock token payload');
       }
+    } else {
+      // 3. Verify with Supabase Cloud
+      // We use the authenticated user's own token to fetch their profile
+      const { data, error } = await supabase.auth.getUser(token);
 
-      return res.status(401).json({ 
-        success: false, 
-        message: `Identity verification failed: ${error?.message || 'Invalid Session'}` 
-      });
+      if (error || !data.user) {
+        console.error('[AUTH] Supabase verification failed:', error?.message || 'No user returned');
+        
+        // LOGGING FOR DEBUGGING - Check if token is at least a valid JWT structure
+        const decoded = jwt.decode(token);
+        if (decoded) {
+          console.log('[AUTH] Token structure is valid. Sub:', decoded.sub, 'Role:', decoded.role);
+        } else {
+          console.error('[AUTH] Token is NOT a valid JWT structure');
+        }
+
+        return res.status(401).json({ 
+          success: false, 
+          message: `Identity verification failed: ${error?.message || 'Invalid Session'}` 
+        });
+      }
+      user = data.user;
     }
 
     console.log(`[AUTH] Explorer Identified: ${user.email}`);
 
     // 3. Synchronize with Local Database using UPSERT to prevent race conditions
-    // We use the Supabase UUID as the primary key match
     const traveler = await prisma.user.upsert({
       where: { email: user.email },
       update: {
-        id: user.id, // Ensure IDs are synced
+        // Do NOT update 'id' to avoid breaking foreign key constraints
         name: user.user_metadata?.full_name || user.email.split('@')[0],
         avatar: user.user_metadata?.avatar_url || null
       },

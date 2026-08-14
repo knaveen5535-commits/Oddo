@@ -18,10 +18,12 @@ import {
   Check,
   RefreshCw,
   ArrowRight,
+  ArrowLeft,
   Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 
 export default function CreateTripPage() {
   const router = useRouter();
@@ -37,6 +39,7 @@ export default function CreateTripPage() {
     startDate: "",
     endDate: "",
     description: "",
+    budget_level: "moderate",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,20 +51,30 @@ export default function CreateTripPage() {
       return;
     }
 
+    const destStr = formData.location.toLowerCase();
+    const foreignKeywords = ["paris", "london", "new york", "dubai", "tokyo", "singapore", "bali", "maldives", "rome", "sydney", "europe", "usa", "america", "africa", "australia"];
+    if (foreignKeywords.some(kw => destStr.includes(kw)) && !destStr.includes("india")) {
+      alert("We currently specialize in Indian destinations. Please search for a place within India.");
+      return;
+    }
+
+    const searchDestination = destStr.includes("india") ? formData.location : `${formData.location}, India`;
+
     setIsLoading(true);
 
     try {
       const response = await api.post("/trips", {
         ...formData,
-        destination: formData.location,
+        destination: searchDestination,
       });
 
       const result = response.data;
 
       if (result.success) {
-        setRecommendations(result.recommendations || result.data?.recommendations);
+        const fetchedRecs = result.recommendations || result.data?.recommendations;
+        setRecommendations(fetchedRecs);
         setCityImage(result.cityImage || result.data?.coverImage);
-        generateSuggestedPlan(formData.location, 0);
+        generateSuggestedPlan(formData.location, 0, fetchedRecs);
 
         setTimeout(() => {
           document.getElementById("recommendations")?.scrollIntoView({ behavior: "smooth" });
@@ -74,8 +87,26 @@ export default function CreateTripPage() {
     }
   };
 
-  const handleConfirmPlan = () => {
+  const handleConfirmPlan = async () => {
+    if (user && suggestedPlan) {
+      await supabase.from("suggested_trips").insert({
+        user_id: user.id,
+        title: suggestedPlan.title,
+        destination: suggestedPlan.location,
+        description: formData.description,
+        duration_days: suggestedPlan.days.length,
+        budget_level: formData.budget_level,
+        itinerary: suggestedPlan.days,
+        cover_image: cityImage,
+      });
+    }
     router.push("/trips");
+  };
+
+  const handleBackToPlanning = () => {
+    setRecommendations(null);
+    setSuggestedPlan(null);
+    setCityImage(null);
   };
 
   const handleChooseAnother = () => {
@@ -83,13 +114,62 @@ export default function CreateTripPage() {
     setTimeout(() => {
       const nextVariant = planVariant + 1;
       setPlanVariant(nextVariant);
-      generateSuggestedPlan(formData.location, nextVariant);
+      generateSuggestedPlan(formData.location, nextVariant, recommendations);
       setIsLoading(false);
       document.getElementById("recommendations")?.scrollIntoView({ behavior: "smooth" });
     }, 800);
   };
 
-  const generateSuggestedPlan = (location: string, variant: number) => {
+  const generateSuggestedPlan = (location: string, variant: number, recs?: any) => {
+    if (recs && (recs.attractions?.length || recs.restaurants?.length || recs.activities?.length)) {
+      const allAttractions = recs.attractions || [];
+      const allRestaurants = recs.restaurants || [];
+      const allActivities = recs.activities || [];
+      
+      const safeGet = (arr: any[], index: number, fallback: string, type: string) => {
+        // Use variant to cycle through items if user clicks "Another plan"
+        const offsetIndex = (index + (variant * 3)) % Math.max(arr.length, 1);
+        if (arr.length > offsetIndex) return { title: arr[offsetIndex].name, type: arr[offsetIndex].type?.[0] || type };
+        return { title: fallback, type };
+      };
+
+      setSuggestedPlan({
+        title: formData.title || `Trip to ${location}`,
+        location,
+        days: [
+          { 
+            day: 1, 
+            title: "Arrival & Exploration", 
+            activities: [
+              { time: "10:00 AM", ...safeGet(allAttractions, 0, `Explore Central ${location}`, "Sightseeing") }, 
+              { time: "01:30 PM", ...safeGet(allRestaurants, 0, "Traditional Local Lunch", "Food") }, 
+              { time: "04:00 PM", ...safeGet(allActivities, 0, "Cultural Visit", "Activity") }
+            ] 
+          },
+          { 
+            day: 2, 
+            title: "Discovering Hidden Gems", 
+            activities: [
+              { time: "09:00 AM", ...safeGet(allActivities, 1, "Scenic Tour", "Activity") }, 
+              { time: "01:00 PM", ...safeGet(allRestaurants, 1, "Famous Local Eatery", "Food") }, 
+              { time: "03:30 PM", ...safeGet(allAttractions, 1, "Market Exploration", "Shopping") }
+            ] 
+          },
+          { 
+            day: 3, 
+            title: "Relax & Reflect", 
+            activities: [
+              { time: "10:30 AM", ...safeGet(allAttractions, 2, "Morning Wellness", "Relax") }, 
+              { time: "02:00 PM", ...safeGet(allActivities, 2, "Leisure Activity", "Activity") }, 
+              { time: "07:30 PM", ...safeGet(allRestaurants, 2, "Farewell Dinner", "Food") }
+            ] 
+          },
+        ],
+      });
+      return;
+    }
+
+    // Fallback to static variants if no API data is available
     const variants = [
       {
         title: "The Classic Discovery",
@@ -105,14 +185,6 @@ export default function CreateTripPage() {
           { day: 1, title: "High-End Arrival", activities: [{ time: "10:00 AM", title: `Private Tour of ${location}`, type: "Luxury" }, { time: "01:00 PM", title: "Michelin Star Lunch", type: "Food" }, { time: "04:00 PM", title: "Exclusive Gallery Access", type: "Culture" }] },
           { day: 2, title: "Yacht & Sea", activities: [{ time: "09:00 AM", title: "Private Boat Charter", type: "Activity" }, { time: "01:00 PM", title: "Seafood on the Deck", type: "Food" }, { time: "05:00 PM", title: "Sunset Cocktails", type: "Leisure" }] },
           { day: 3, title: "Premium Relax", activities: [{ time: "11:00 AM", title: "Elite Spa Treatment", type: "Wellness" }, { time: "03:00 PM", title: "VIP Shopping Session", type: "Shopping" }, { time: "08:00 PM", title: "Private Chef Dinner", type: "Food" }] },
-        ],
-      },
-      {
-        title: "The Local Soul",
-        days: [
-          { day: 1, title: "Street Food & Vibes", activities: [{ time: "09:00 AM", title: `Walk through ${location} Backstreets`, type: "Explore" }, { time: "12:00 PM", title: "Famous Street Food stall", type: "Food" }, { time: "03:00 PM", title: "Meet Local Artisans", type: "Activity" }] },
-          { day: 2, title: "Hidden Gems", activities: [{ time: "08:00 AM", title: "Secret Viewpoint Hike", type: "Nature" }, { time: "01:00 PM", title: "Lunch with a Local Family", type: "Culture" }, { time: "04:00 PM", title: "Untouched Temple/Site", type: "Discovery" }] },
-          { day: 3, title: "Art & Night", activities: [{ time: "10:00 AM", title: "Local Art Workshop", type: "Creative" }, { time: "02:00 PM", title: "Flea Market Hunting", type: "Shopping" }, { time: "09:00 PM", title: "Live Local Music Club", type: "Nightlife" }] },
         ],
       },
     ];
@@ -137,90 +209,134 @@ export default function CreateTripPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Trip Form */}
-        <section
-          className={`lg:col-span-2 card card-pad transition-opacity ${
-            recommendations ? "opacity-50 pointer-events-none select-none" : "opacity-100"
-          }`}
-        >
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <AnimatePresence mode="wait">
+        {!(recommendations || suggestedPlan) && (
+          <motion.div
+            key="planning-form"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, display: "none" }}
+            transition={{ duration: 0.3 }}
+            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          >
+            {/* Trip Form */}
+            <section className="lg:col-span-2 card overflow-hidden border border-border/40 shadow-xl shadow-primary/5 transition-all duration-500">
+          {/* Premium Header for the Form */}
+          <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 sm:p-8 border-b border-border/50 relative overflow-hidden">
+            <div className="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none" />
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground relative z-10">Create Your Itinerary</h2>
+            <p className="text-sm text-muted-foreground mt-1 relative z-10">Let our AI build the perfect travel experience based on your preferences.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-7 bg-card">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="field sm:col-span-2">
-                <label className="label">Trip name</label>
-                <div className="relative">
-                  <Type className="input-icon" />
+                <label className="text-sm font-semibold text-foreground mb-2 block">Trip name</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <Type size={18} />
+                  </div>
                   <input
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     type="text"
                     placeholder="e.g. Summer in Maldives"
-                    className="input has-icon"
+                    className="w-full bg-muted/40 border border-border text-foreground rounded-2xl pl-11 pr-4 py-3.5 focus:bg-background focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none placeholder:text-muted-foreground/60 shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="field sm:col-span-2">
-                <label className="label">Destination</label>
-                <div className="relative">
-                  <MapPin className="input-icon" />
+                <label className="text-sm font-semibold text-foreground mb-2 block">Destination</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <MapPin size={18} />
+                  </div>
                   <input
                     required
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     type="text"
-                    placeholder="e.g. Paris, Tokyo, Goa"
-                    className="input has-icon"
+                    placeholder="e.g. Goa, Jaipur, Kerala (India only)"
+                    className="w-full bg-muted/40 border border-border text-foreground rounded-2xl pl-11 pr-4 py-3.5 focus:bg-background focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none placeholder:text-muted-foreground/60 shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="field">
-                <label className="label">Start date</label>
-                <div className="relative">
-                  <Calendar className="input-icon" />
+                <label className="text-sm font-semibold text-foreground mb-2 block">Start date</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <Calendar size={18} />
+                  </div>
                   <input
                     required
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     type="date"
-                    className="input has-icon"
+                    className="w-full bg-muted/40 border border-border text-foreground rounded-2xl pl-11 pr-4 py-3.5 focus:bg-background focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none shadow-sm appearance-none"
                   />
                 </div>
               </div>
 
               <div className="field">
-                <label className="label">End date</label>
-                <div className="relative">
-                  <Calendar className="input-icon" />
+                <label className="text-sm font-semibold text-foreground mb-2 block">End date</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+                    <Calendar size={18} />
+                  </div>
                   <input
                     required
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     type="date"
-                    className="input has-icon"
+                    className="w-full bg-muted/40 border border-border text-foreground rounded-2xl pl-11 pr-4 py-3.5 focus:bg-background focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none shadow-sm appearance-none"
                   />
                 </div>
               </div>
 
               <div className="field sm:col-span-2">
-                <label className="label">Description</label>
+                <label className="text-sm font-semibold text-foreground mb-2 block">Budget Level</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: "budget", label: "Budget", desc: "Cost-effective" },
+                    { id: "moderate", label: "Moderate", desc: "Balanced" },
+                    { id: "luxury", label: "Luxury", desc: "Premium" }
+                  ].map((tier) => (
+                    <div
+                      key={tier.id}
+                      onClick={() => setFormData({ ...formData, budget_level: tier.id })}
+                      className={`cursor-pointer rounded-2xl border p-3 flex flex-col items-center justify-center text-center transition-all ${
+                        formData.budget_level === tier.id
+                          ? "border-primary bg-primary/10 text-primary shadow-sm"
+                          : "border-border bg-muted/40 text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <span className="text-sm font-bold capitalize">{tier.label}</span>
+                      <span className="text-[10px] opacity-80">{tier.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="field sm:col-span-2">
+                <label className="text-sm font-semibold text-foreground mb-2 block">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="What's the plan?"
+                  placeholder="What's the plan? e.g. Exploring historical sites, trying street food, relaxing at the beach..."
                   rows={4}
-                  className="textarea"
+                  className="w-full bg-muted/40 border border-border text-foreground rounded-2xl px-4 py-3.5 focus:bg-background focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none placeholder:text-muted-foreground/60 shadow-sm resize-none"
                 />
               </div>
             </div>
 
-            <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="btn btn-primary btn-lg flex-1"
+                className="btn btn-primary h-14 text-base rounded-2xl flex-1 shadow-primary/25 shadow-lg group hover:-translate-y-0.5 transition-transform"
               >
                 {isLoading ? (
                   <>
@@ -229,15 +345,15 @@ export default function CreateTripPage() {
                   </>
                 ) : (
                   <>
-                    <Sparkles size={18} />
-                    Create trip & get recommendations
+                    <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
+                    Generate AI Itinerary
                   </>
                 )}
               </button>
               <button
                 type="button"
                 onClick={() => router.push("/trips")}
-                className="btn btn-outline btn-lg"
+                className="btn btn-outline h-14 px-8 text-base rounded-2xl hover:bg-muted/80 transition-colors"
               >
                 Cancel
               </button>
@@ -246,7 +362,7 @@ export default function CreateTripPage() {
         </section>
 
         {/* Region Selections */}
-        <section
+        {/* <section
           className={`space-y-5 transition-opacity ${
             recommendations ? "opacity-40 pointer-events-none select-none" : "opacity-100"
           }`}
@@ -275,8 +391,10 @@ export default function CreateTripPage() {
               </motion.div>
             ))}
           </div>
-        </section>
-      </div>
+        </section> */}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Recommendations & Suggested Plan */}
       <AnimatePresence mode="wait">
@@ -286,8 +404,26 @@ export default function CreateTripPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="space-y-12"
+            className="flex flex-col gap-8"
           >
+            {/* Top Actions */}
+            <div className="flex items-center justify-between w-full">
+              <button 
+                onClick={handleBackToPlanning}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors border border-border/40 bg-card shadow-sm"
+              >
+                <ArrowLeft size={16} />
+                Back to Planning
+              </button>
+
+              <button 
+                onClick={() => router.push("/trips")}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-danger hover:bg-danger/10 transition-colors border border-danger/20 bg-card shadow-sm"
+              >
+                Cancel Trip
+              </button>
+            </div>
+
             {/* Destination Banner */}
             <section className="relative h-72 sm:h-96 w-full rounded-2xl overflow-hidden border border-border">
               {cityImage ? (
@@ -333,33 +469,54 @@ export default function CreateTripPage() {
             {/* Suggested 3-Day Plan */}
             {suggestedPlan && (
               <section>
-                <div className="section-heading">
-                  <Calendar size={18} className="text-primary" />
-                  <h3 className="section-title">Handpicked itinerary</h3>
+                <div className="section-heading mb-8">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/20">
+                    <Calendar size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold tracking-tight text-foreground">Handpicked Itinerary</h3>
+                    <p className="text-sm text-muted-foreground">Premium day-by-day experience for {formData.location}</p>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                   {suggestedPlan.days.map((dayPlan: any, idx: number) => (
                     <motion.div
                       key={idx}
                       layout
-                      initial={{ opacity: 0, scale: 0.97 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4 }}
-                      className="card card-pad card-hover"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: idx * 0.1 }}
+                      className="group relative rounded-3xl overflow-hidden bg-card border border-border/50 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
                     >
-                      <div className="flex justify-between items-center mb-5">
-                        <span className="text-3xl font-bold text-primary/20">0{dayPlan.day}</span>
-                        <h4 className="font-semibold text-foreground">{dayPlan.title}</h4>
-                      </div>
-                      <div className="space-y-4 relative before:absolute before:left-[5px] before:top-2 before:bottom-2 before:w-px before:bg-border">
-                        {dayPlan.activities.map((act: any, aIdx: number) => (
-                          <div key={aIdx} className="relative pl-6">
-                            <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full border-2 border-primary bg-card" />
-                            <div className="text-xs font-semibold text-primary">{act.time}</div>
-                            <div className="text-sm font-medium text-foreground">{act.title}</div>
-                            <div className="text-xs text-muted-foreground">{act.type}</div>
+                      {/* Premium Header */}
+                      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-primary/10 via-card to-background z-0" />
+                      <div className="relative z-10 p-6 sm:p-8">
+                        <div className="flex justify-between items-start mb-8">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Day {dayPlan.day}</span>
+                            <h4 className="text-xl sm:text-2xl font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-300">{dayPlan.title}</h4>
                           </div>
-                        ))}
+                          <span className="text-5xl font-black text-primary/5 group-hover:text-primary/10 transition-colors duration-300 -mt-2 -mr-2">0{dayPlan.day}</span>
+                        </div>
+                        
+                        {/* Activities Timeline */}
+                        <div className="space-y-6 relative before:absolute before:left-[11px] before:top-3 before:bottom-3 before:w-[2px] before:bg-gradient-to-b before:from-primary/50 before:via-border before:to-transparent">
+                          {dayPlan.activities.map((act: any, aIdx: number) => (
+                            <div key={aIdx} className="relative pl-8 group/item hover:-translate-y-1 transition-transform duration-300">
+                              <div className="absolute left-0 top-1.5 w-6 h-6 rounded-full border-4 border-background bg-primary shadow-sm group-hover/item:scale-110 transition-transform" />
+                              <div className="bg-muted/30 rounded-2xl p-4 border border-border/40 group-hover/item:border-primary/20 group-hover/item:bg-primary/5 transition-all">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-background text-[10px] font-bold text-primary mb-2 shadow-sm uppercase tracking-wider">
+                                  {act.time}
+                                </div>
+                                <div className="text-base font-semibold text-foreground mb-1 group-hover/item:text-primary transition-colors">{act.title}</div>
+                                <div className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                                  <div className="w-1 h-1 rounded-full bg-primary/40" />
+                                  {act.type}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </motion.div>
                   ))}
@@ -418,21 +575,18 @@ function RecommendationGroup({ title, data, icon }: { title: string; data: any[]
             transition={{ delay: idx * 0.05 }}
             className="card overflow-hidden card-hover flex flex-col"
           >
-            <div className="relative h-40 overflow-hidden">
-              <img
-                src={place.image}
-                alt={place.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <span className="absolute top-3 right-3 badge bg-black/60 text-white backdrop-blur">
-                <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                {place.rating}
-              </span>
-            </div>
             <div className="p-5 flex-1 flex flex-col">
-              <h4 className="font-semibold text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                {place.name}
-              </h4>
+              <div className="flex justify-between items-start gap-2 mb-2">
+                <h4 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                  {place.name}
+                </h4>
+                {place.rating && (
+                  <span className="badge bg-primary/10 text-primary shrink-0">
+                    <Star size={12} className="fill-primary" />
+                    {place.rating}
+                  </span>
+                )}
+              </div>
               <div className="flex items-start gap-1.5 text-sm text-muted-foreground mb-4">
                 <MapPin size={14} className="text-primary shrink-0 mt-0.5" />
                 <span className="line-clamp-2">{place.address}</span>

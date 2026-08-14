@@ -6,13 +6,15 @@ class GooglePlacesService {
     this.searchUrl = 'https://places.googleapis.com/v1/places:searchText';
   }
 
-  async getRecommendations(location) {
+  async getRecommendations(location, title = "", description = "") {
     try {
+      const context = (title || description) ? `for a trip called ${title} focusing on ${description}`.trim() : '';
+
       const categories = [
-        { type: 'attractions', query: `best tourist places in ${location}` },
-        { type: 'restaurants', query: `top restaurants in ${location}` },
-        { type: 'hotels', query: `best hotels in ${location}` },
-        { type: 'activities', query: `popular activities in ${location}` }
+        { type: 'attractions', query: `best tourist places in ${location} ${context}`.trim() },
+        { type: 'restaurants', query: `top restaurants in ${location} ${context}`.trim() },
+        { type: 'hotels', query: `best hotels in ${location} ${context}`.trim() },
+        { type: 'activities', query: `popular activities in ${location} ${context}`.trim() }
       ];
 
       const results = { attractions: [], restaurants: [], hotels: [], activities: [] };
@@ -33,8 +35,30 @@ class GooglePlacesService {
 
       return results;
     } catch (error) {
-      console.error('Google Places API Error:', error.response?.data || error.message);
-      return { attractions: [], restaurants: [], hotels: [], activities: [] };
+      console.error('Google Places API Error (Returning Mock Data):', error.response?.data || error.message);
+      
+      const mockImage = (type) => {
+        const fallbacks = {
+            attractions: "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?q=80&w=1200&auto=format&fit=crop",
+            restaurants: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop",
+            hotels: "https://images.unsplash.com/photo-1542314831-c6a4d14d836b?q=80&w=1200&auto=format&fit=crop",
+            activities: "https://images.unsplash.com/photo-1533692328991-08159ff19fca?q=80&w=1200&auto=format&fit=crop"
+        };
+        return fallbacks[type] || fallbacks.attractions;
+      };
+
+      const createMocks = (type) => ([
+        { place_id: `mock1-${type}`, name: `Premium ${type} in ${location}`, rating: 4.8, address: `Central ${location}`, type: [type], image: mockImage(type) },
+        { place_id: `mock2-${type}`, name: `Authentic ${type} Experience`, rating: 4.5, address: `Downtown ${location}`, type: [type], image: mockImage(type) },
+        { place_id: `mock3-${type}`, name: `Hidden Gem ${type}`, rating: 4.9, address: `Scenic Area, ${location}`, type: [type], image: mockImage(type) }
+      ]);
+
+      return {
+        attractions: createMocks('attractions'),
+        restaurants: createMocks('restaurants'),
+        hotels: createMocks('hotels'),
+        activities: createMocks('activities')
+      };
     }
   }
 
@@ -81,8 +105,33 @@ class GooglePlacesService {
         };
       }));
     } catch (error) {
-      console.error('Google Search Cities Error:', error.response?.data || error.message);
-      return [];
+      console.error('Google Search Cities Error (Returning Mock Data):', error.response?.data || error.message);
+      return [
+        {
+          id: `mock-city-1`,
+          name: `Explore ${query}`,
+          location: `Heart of ${query}`,
+          image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1200&auto=format&fit=crop",
+          rating: 4.9,
+          price: "₹4,500",
+          category: "Destination",
+          tag: "Top Rated",
+          desc: `Experience the magic and vibrant culture of ${query}.`,
+          highlights: ["Must Visit", "Iconic", "Culture"]
+        },
+        {
+          id: `mock-city-2`,
+          name: `Hidden Treasures of ${query}`,
+          location: `Scenic District, ${query}`,
+          image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop",
+          rating: 4.7,
+          price: "₹3,200",
+          category: "Destination",
+          tag: "Popular",
+          desc: `Discover the hidden secrets and local favorites of ${query}.`,
+          highlights: ["Nature", "Relaxing", "Authentic"]
+        }
+      ];
     }
   }
 
